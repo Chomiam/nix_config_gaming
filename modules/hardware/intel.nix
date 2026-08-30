@@ -18,8 +18,5 @@
       libva-utils
       intel-compute-runtime # OpenCL / OneAPI
     ];
-    extraPackages32 = with pkgs.pkgsi686Linux; [
-      mangohud
-    ];
   };
 }

@@ -28,6 +28,15 @@
   };
 
   # =========================================================================
+  # 🛡️ PARE-FEU RÉSEAU (FIREWALL)
+  # Options disponibles : true | false
+  #
+  # - true  : Active le pare-feu système et ses règles de filtrage.
+  # - false : Désactive le pare-feu système.
+  # =========================================================================
+  firewall = false;
+
+  # =========================================================================
   # 🖥️ ENVIRONNEMENT DE BUREAU
   # Options disponibles : "gnome" | "cosmic" | "both"
   # =========================================================================

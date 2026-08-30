@@ -21,6 +21,7 @@
 
   # Paquets GNOME & Extensions installés pour l'utilisateur principal
   users.users."${vars.user.username}".packages = with pkgs; [
+    networkmanagerapplet
     gnome-tweaks
     gnome-extension-manager
     gnomeExtensions.dash-to-dock
@@ -54,6 +55,7 @@
       "org/gnome/shell" = {
         favorite-apps = [
           "kitty.desktop"
+          "org.gnome.Settings.desktop"
           "org.gnome.Nautilus.desktop"
           "io.github.kolunmi.Bazaar.desktop"
           "google-chrome.desktop"

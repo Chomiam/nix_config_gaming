@@ -20,8 +20,5 @@
       libva
       rocmPackages.clr.icd # Runtime OpenCL AMD officiel
     ];
-    extraPackages32 = with pkgs.pkgsi686Linux; [
-      mangohud
-    ];
   };
 }

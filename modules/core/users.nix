@@ -49,6 +49,8 @@ in
       # 🌐 Réseau
       tailscale
       localsend
+      wireguard-tools
+      motrix
     ];
   };
 

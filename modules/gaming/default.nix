@@ -17,6 +17,9 @@ in
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
     gamescopeSession.enable = true;
+    extraPackages = with pkgs; [
+      pkgs-unstable.mangohud
+    ];
   };
 
   # Feral GameMode (Optimisation priorités CPU/GPU lors des jeux)

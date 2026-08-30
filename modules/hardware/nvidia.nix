@@ -37,8 +37,5 @@
       vkbasalt
       libva
     ];
-    extraPackages32 = with pkgs.pkgsi686Linux; [
-      mangohud
-    ];
   };
 }
