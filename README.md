@@ -186,9 +186,9 @@ nano vars.nix
 ```
 
 ### 3. Application de la configuration
-Appliquez et activez le système avec la commande NixOS Flakes :
+Préparez la configuration pour le prochain démarrage puis redémarrez la machine (recommandé pour charger proprement les pilotes noyau, serveurs d'affichage et modules GPU) :
 ```bash
-sudo nixos-rebuild switch --flake .#
+sudo nixos-rebuild boot --flake .# && sudo reboot
 ```
 
 ---
