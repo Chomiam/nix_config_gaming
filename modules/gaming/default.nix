@@ -1,5 +1,8 @@
-{ pkgs, vars, ... }:
+{ pkgs, vars, inputs, ... }:
 
+let
+  pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+in
 {
   # =========================================================================
   # 🕹️ SUITE GAMING & COMPATIBILITÉ WINDOWS
@@ -48,7 +51,7 @@
     eden
     ludusavi
     protonup-qt
-    mangohud
-    goverlay
+    pkgs-unstable.mangohud
+    pkgs-unstable.goverlay
   ];
 }

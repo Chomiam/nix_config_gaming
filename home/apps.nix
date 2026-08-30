@@ -13,12 +13,20 @@
   # Traitement Audio (EasyEffects)
   services.easyeffects.enable = true;
 
-  # Variables d'environnement de session
-  home.sessionVariables = {
-    TERMINAL = "alacritty";
+  # Client Mail Thunderbird (Langue par défaut en Français via Stratégie Globale)
+  programs.thunderbird = {
+    enable = true;
+    profiles.default = {
+      isDefault = true;
+    };
+    policies = {
+      RequestedLocales = [ "fr" ];
+    };
   };
 
-  # Fastfetch Configuration Preset
-  xdg.configFile."fastfetch/config.jsonc".source =
-    "${pkgs.fastfetch}/share/fastfetch/presets/examples/13.jsonc";
+  # Variables d'environnement de session
+  home.sessionVariables = {
+    TERMINAL = "kitty";
+  };
+
 }

@@ -30,6 +30,7 @@
     ../../modules/services/obs.nix
     ../../modules/services/neovim.nix
     ../../modules/services/davinci-resolve.nix
+    ../../modules/services/godot.nix
     ../../modules/services/ai-suite.nix
   ];
 }

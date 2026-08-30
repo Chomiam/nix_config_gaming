@@ -1,5 +1,8 @@
-{ pkgs, vars, ... }:
+{ pkgs, vars, inputs, ... }:
 
+let
+  pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+in
 {
   # =========================================================================
   # 👤 GESTION DES UTILISATEURS ET PAQUETS SYSTÈME / UTILISATEUR
@@ -19,15 +22,17 @@
       mpv
 
       # 💼 Productivité & Bureautique
-      google-chrome
+      (google-chrome.override {
+        commandLineArgs = "--ozone-platform=x11";
+      })
       firefox
       discord
       onlyoffice-desktopeditors
-      thunderbird
       popsicle
       bazaar
       nil
       antigravity
+      pkgs-unstable.pear-desktop
 
       # 🛠️ Outils CLI & Shell
       fzf
@@ -43,13 +48,19 @@
 
       # 🌐 Réseau
       tailscale
+      localsend
     ];
   };
 
-  # Activation du Shell Fish
+  # Activation du Shell Fish & Lancement de Fastfetch au démarrage
   programs.fish = {
     enable = true;
-    interactiveShellInit = "set fish_greeting";
+    interactiveShellInit = ''
+      set fish_greeting
+      if status is-interactive
+        fastfetch
+      end
+    '';
   };
 
   # Paquets Système Utilitaires

@@ -88,21 +88,24 @@ in
   # 📌 CONFIGURATION DES FAVORIS DU DOCK COSMIC (HOME MANAGER)
   # =========================================================================
   home-manager.users."${vars.user.username}" = {
-    xdg.configFile."cosmic/com.system76.CosmicAppList/v1/favorites".text = ''
-      [
-          "Alacritty",
-          "com.system76.CosmicSettings",
-          "com.system76.CosmicFiles",
-          "io.github.kolunmi.Bazaar",
-          "google-chrome",
-          "discord",
-          "steam",
-          "net.lutris.Lutris",
-          "com.heroicgameslauncher.hgl",
-          "onlyoffice-desktopeditors",
-          "thunderbird",
-          "com.obsproject.Studio",
-      ]
-    '';
+    xdg.configFile."cosmic/com.system76.CosmicAppList/v1/favorites" = {
+      force = true;
+      text = ''
+        [
+            "kitty",
+            "com.system76.CosmicSettings",
+            "com.system76.CosmicFiles",
+            "io.github.kolunmi.Bazaar",
+            "google-chrome",
+            "discord",
+            "steam",
+            "net.lutris.Lutris",
+            "com.heroicgameslauncher.hgl",
+${if (vars.gaming.geforceNow or true) then "            \"com.nvidia.geforcenow\",\n" else ""}            "onlyoffice-desktopeditors",
+            "thunderbird",
+            "com.obsproject.Studio",
+        ]
+      '';
+    };
   };
 }

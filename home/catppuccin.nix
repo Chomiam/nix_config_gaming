@@ -11,7 +11,7 @@
     flavor = "mocha";
     accent = "lavender";
 
-    alacritty.enable = true;
+    kitty.enable = true;
     kvantum.enable = true;
   };
 }

@@ -53,7 +53,7 @@
     dconf.settings = {
       "org/gnome/shell" = {
         favorite-apps = [
-          "Alacritty.desktop"
+          "kitty.desktop"
           "org.gnome.Nautilus.desktop"
           "io.github.kolunmi.Bazaar.desktop"
           "google-chrome.desktop"
@@ -61,6 +61,9 @@
           "steam.desktop"
           "net.lutris.Lutris.desktop"
           "com.heroicgameslauncher.hgl.desktop"
+        ] ++ pkgs.lib.optionals (vars.gaming.geforceNow or true) [
+          "com.nvidia.geforcenow.desktop"
+        ] ++ [
           "onlyoffice-desktopeditors.desktop"
           "thunderbird.desktop"
           "com.obsproject.Studio.desktop"

@@ -31,7 +31,7 @@
   # 🖥️ ENVIRONNEMENT DE BUREAU
   # Options disponibles : "gnome" | "cosmic" | "both"
   # =========================================================================
-  desktopEnv = "cosmic";
+  desktopEnv = "gnome";
 
   # =========================================================================
   # 🎮 SELECTION MATÉRIELLE (GPU)
@@ -47,6 +47,7 @@
   # Options du mode Gaming
   gaming = {
     enable = true;
+    geforceNow = true;
     mountGamesDisk = true;
   };
 
@@ -69,6 +70,15 @@
   # - "studio" : Version Payante (DaVinci Resolve Studio) + Accélération GPU selon vars.gpuDriver
   # =========================================================================
   davinciResolve = "none";
+
+  # =========================================================================
+  # 🎮 MOTEUR DE JEU GODOT ENGINE
+  # Options disponibles : true | false
+  #
+  # - true  : Active l'installation de Godot Engine (Moteur de jeu 2D/3D).
+  # - false : Désactivé (Évite le téléchargement et l'espace disque d'un gros paquet si non utilisé).
+  # =========================================================================
+  godot = true;
 
   # =========================================================================
   # 🤖 SUITE IA LOCALE (OLLAMA + OPEN-WEBUI + SEARXNG)

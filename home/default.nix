@@ -6,9 +6,10 @@
   # =========================================================================
 
   imports = [
-    ./alacritty.nix
+    ./kitty.nix
     ./catppuccin.nix
     ./gtk-theme.nix
+    ./fastfetch.nix
     ./apps.nix
   ];
 
