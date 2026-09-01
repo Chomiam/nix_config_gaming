@@ -1,4 +1,4 @@
-{ pkgs, vars, inputs, ... }:
+{ pkgs, vars, inputs, browserInfo, ... }:
 
 let
   # Source des paquets COSMIC 1.5.0 depuis nixpkgs-unstable
@@ -96,7 +96,7 @@ in
             "com.system76.CosmicSettings",
             "com.system76.CosmicFiles",
             "io.github.kolunmi.Bazaar",
-            "google-chrome",
+            "${browserInfo.cosmicId}",
             "discord",
             "steam",
             "net.lutris.Lutris",

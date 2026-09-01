@@ -28,6 +28,19 @@
   };
 
   # =========================================================================
+  # 🌐 SELECTION DU NAVIGATEUR WEB PRINCIPAL
+  # Options disponibles : "chrome" | "firefox" | "zen" | "librewolf" | "opera" | "opera-gx"
+  #
+  # - "chrome"    : Google Chrome (Paquet Nix avec optimisations X11)
+  # - "firefox"   : Mozilla Firefox (Paquet Nix)
+  # - "librewolf" : LibreWolf (Paquet Nix orienté respect de la vie privée)
+  # - "opera"     : Opera Browser (Flatpak Flathub : com.opera.Opera)
+  # - "opera-gx"  : Opera GX (Flatpak Flathub : com.opera.opera-gx)
+  # - "zen"       : Zen Browser (Flatpak Flathub : app.zen_browser.zen)
+  # =========================================================================
+  browser = "chrome";
+
+  # =========================================================================
   # 🛡️ PARE-FEU RÉSEAU (FIREWALL)
   # Options disponibles : true | false
   #
@@ -81,12 +94,13 @@
   davinciResolve = "none";
 
   # =========================================================================
-  # 🎮 MOTEUR DE JEU GODOT ENGINE
+  # 🎨 LOGICIELS DE CRÉATION 3D & MOTEURS DE JEU (BLENDER & GODOT ENGINE)
   # Options disponibles : true | false
   #
-  # - true  : Active l'installation de Godot Engine (Moteur de jeu 2D/3D).
-  # - false : Désactivé (Évite le téléchargement et l'espace disque d'un gros paquet si non utilisé).
+  # - blender : Active l'installation de Blender 3D (tiré de nixpkgs-unstable).
+  # - godot   : Active l'installation de Godot Engine (tiré de nixpkgs-unstable).
   # =========================================================================
+  blender = true;
   godot = true;
 
   # =========================================================================

@@ -31,6 +31,7 @@
     ../../modules/services/neovim.nix
     ../../modules/services/davinci-resolve.nix
     ../../modules/services/godot.nix
+    ../../modules/services/blender.nix
     ../../modules/services/ai-suite.nix
   ];
 }

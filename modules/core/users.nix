@@ -1,7 +1,10 @@
 { pkgs, vars, inputs, ... }:
 
 let
-  pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+  pkgs-unstable = import inputs.nixpkgs-unstable {
+    system = pkgs.stdenv.hostPlatform.system;
+    config.allowUnfree = true;
+  };
 in
 {
   # =========================================================================
@@ -22,16 +25,12 @@ in
       mpv
 
       # 💼 Productivité & Bureautique
-      (google-chrome.override {
-        commandLineArgs = "--ozone-platform=x11";
-      })
-      firefox
       discord
       onlyoffice-desktopeditors
       popsicle
       bazaar
       nil
-      antigravity
+      pkgs-unstable.antigravity-ide
       pkgs-unstable.pear-desktop
 
       # 🛠️ Outils CLI & Shell

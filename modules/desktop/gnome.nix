@@ -1,4 +1,4 @@
-{ pkgs, vars, ... }:
+{ pkgs, vars, browserInfo, ... }:
 
 {
   # =========================================================================
@@ -10,13 +10,17 @@
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
-  # Exclusions d'applications GNOME indésirables
+  # Exclusion de Xterm au niveau serveur d'affichage
+  services.xserver.excludePackages = [ pkgs.xterm ];
+
+  # Exclusions d'applications GNOME indésirables (Terminaux secondaires, applications inutiles)
   environment.gnome.excludePackages = with pkgs; [
     totem
     gnome-maps
     yelp
     gnome-tour
     epiphany
+    gnome-console
   ];
 
   # Paquets GNOME & Extensions installés pour l'utilisateur principal
@@ -58,7 +62,7 @@
           "org.gnome.Settings.desktop"
           "org.gnome.Nautilus.desktop"
           "io.github.kolunmi.Bazaar.desktop"
-          "google-chrome.desktop"
+          browserInfo.desktopFile
           "discord.desktop"
           "steam.desktop"
           "net.lutris.Lutris.desktop"

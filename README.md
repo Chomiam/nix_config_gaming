@@ -85,6 +85,7 @@ Le fichier `vars.nix` à la racine de la configuration contient toutes les optio
 | `defaultLocale` | `"fr_FR.UTF-8"` | Langue principale et encodage du système. |
 | `user.username` | `"chomiam"` | Nom du compte utilisateur principal. |
 | `user.fullName` | `"Axel Valens"` | Nom complet de l'utilisateur. |
+| `browser` | `"chrome"` | Choix du navigateur principal (`"chrome"`, `"firefox"`, `"librewolf"` via Nixpkgs ; `"opera"`, `"opera-gx"`, `"zen"` via Flatpak Flathub). |
 | `firewall` | `false` | Activer (`true`) ou désactiver (`false`) le pare-feu système. |
 
 ### 3.2. Sélection du Pilote GPU
@@ -122,11 +123,12 @@ gaming = {
 steeringWheelSupport = true; # Active la prise en charge des volants de course (Fanatec, Thrustmaster, Logitech)
 ```
 
-### 3.5. Logiciels de Création (DaVinci Resolve, Godot)
+### 3.5. Logiciels de Création (DaVinci Resolve, Blender, Godot)
 
 ```nix
 davinciResolve = "none"; # Options : "none" | "free" | "studio"
-godot = true;            # Active l'installation de Godot Engine 4 (Moteur de jeu 2D/3D)
+blender = true;          # Active l'installation de Blender 3D (nixpkgs-unstable)
+godot = true;            # Active l'installation de Godot Engine 4 (nixpkgs-unstable)
 ```
 
 ### 3.6. Suite IA Locale (Ollama, Open-WebUI, SearXNG)

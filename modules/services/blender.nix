@@ -2,16 +2,16 @@
 
 let
   pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-  enable = vars.godot or false;
+  enable = vars.blender or false;
 in
 {
   # =========================================================================
-  # 🎮 GODOT ENGINE (MOTEUR DE JEU 2D/3D - NIXPKGS UNSTABLE)
+  # 🎨 BLENDER (SUITE DE MODÉLISATION & ANIMATION 3D - NIXPKGS UNSTABLE)
   # =========================================================================
 
   config = lib.mkIf enable {
     users.users."${vars.user.username}".packages = [
-      pkgs-unstable.godot
+      pkgs-unstable.blender
     ];
   };
 }
