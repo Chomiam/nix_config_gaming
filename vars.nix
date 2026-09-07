@@ -24,6 +24,8 @@
       "wheel"
       "docker"
       "video"
+      "libvirtd"
+      "kvm"
     ];
   };
 
@@ -31,7 +33,7 @@
   # 🌐 SELECTION DU NAVIGATEUR WEB PRINCIPAL
   # Options disponibles : "chrome" | "firefox" | "zen" | "librewolf" | "opera" | "opera-gx"
   #
-  # - "chrome"    : Google Chrome (Paquet Nix avec optimisations X11)
+  # - "chrome"    : Google Chrome (Paquet Nix)
   # - "firefox"   : Mozilla Firefox (Paquet Nix)
   # - "librewolf" : LibreWolf (Paquet Nix orienté respect de la vie privée)
   # - "opera"     : Opera Browser (Flatpak Flathub : com.opera.Opera)

@@ -27,6 +27,8 @@
       nss
       openssl
       glib
+      pcre2
+      libevent
     ];
   };
 }

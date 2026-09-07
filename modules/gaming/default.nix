@@ -38,10 +38,18 @@ in
     capSysNice = false;
   };
 
+  # Sunshine (Serveur d'auto-hébergement et streaming de jeux vers Moonlight)
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true;
+    openFirewall = true;
+  };
+
   # Outils & Launchers de jeu système
   environment.systemPackages = with pkgs; [
     umu-launcher
-    wine64
+    wineWow64Packages.stable
     winetricks
     protontricks
     steam-run
@@ -53,7 +61,7 @@ in
     heroic
     eden
     ludusavi
-    protonup-qt
+    pkgs-unstable.protonplus
     pkgs-unstable.mangohud
     pkgs-unstable.goverlay
   ];

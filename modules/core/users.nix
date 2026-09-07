@@ -72,10 +72,14 @@ in
     libappindicator-gtk3
 
     # 📦 Compression & Archives
+    cabextract
+    ctrtool
     gnutar
+    innoextract
     libarchive
     p7zip
     unrar
+    unshield
     unzip
 
     # 🔤 Polices d'écriture
@@ -90,6 +94,8 @@ in
     wget
     libva-utils
     libxcb
+    pcre2
+    libevent
     killall
   ];
 }

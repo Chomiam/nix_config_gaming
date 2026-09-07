@@ -30,6 +30,7 @@
       "com.github.tchx84.Flatseal"
       "rocks.shy.VacuumTube"
       "it.mijorus.gearlever"
+      "org.vinegarhq.Sober"
     ] ++ lib.optionals (vars.gaming.geforceNow or true) [
       {
         appId = "com.nvidia.geforcenow";

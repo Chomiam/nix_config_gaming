@@ -23,7 +23,7 @@ let
 
   # Paquet système Nix (si le navigateur est disponible dans Nixpkgs)
   pkg =
-    if selected == "chrome" then (pkgs.google-chrome.override { commandLineArgs = "--ozone-platform=x11"; })
+    if selected == "chrome" then pkgs.google-chrome
     else if selected == "firefox" then pkgs.firefox
     else if selected == "librewolf" then pkgs.librewolf
     else null;

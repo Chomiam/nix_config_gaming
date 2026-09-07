@@ -33,5 +33,6 @@
     ../../modules/services/godot.nix
     ../../modules/services/blender.nix
     ../../modules/services/ai-suite.nix
+    ../../modules/services/gnome-boxes.nix
   ];
 }
