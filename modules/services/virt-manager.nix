@@ -1,10 +1,21 @@
 { pkgs, ... }:
 
 let
-  # Package exposant l'ISO officielle virtio-win dans /run/current-system/sw/share/virtio-win/
+  # ISO VirtIO moderne (Windows 10 / 11 / Server récents)
   virtio-win-iso = pkgs.runCommand "virtio-win-iso" { } ''
     mkdir -p $out/share/virtio-win
     ln -s ${pkgs.virtio-win.src} $out/share/virtio-win/virtio-win.iso
+  '';
+
+  # ISO VirtIO 0.1.173 : Dernière version certifiée avec installateur et pilotes compatibles Windows 7 (SHA-1/SHA-2)
+  virtio-win-win7-iso-file = pkgs.fetchurl {
+    url = "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.173-2/virtio-win-0.1.173.iso";
+    sha256 = "0i438xsb417l260w62h6s6cpgv3zfb1ifm904pf2zhg67capv8wd";
+  };
+
+  virtio-win-win7-iso = pkgs.runCommand "virtio-win-win7-iso" { } ''
+    mkdir -p $out/share/virtio-win
+    ln -s ${virtio-win-win7-iso-file} $out/share/virtio-win/virtio-win-win7.iso
   '';
 in
 {
@@ -30,13 +41,15 @@ in
   # Réseau virtuel libvirt : interface virbr0 autorisée dans le pare-feu
   networking.firewall.trustedInterfaces = [ "virbr0" ];
 
-  # Raccourci direct dans /etc/virtio-win.iso
+  # Raccourcis directs dans /etc
   environment.etc."virtio-win.iso".source = pkgs.virtio-win.src;
+  environment.etc."virtio-win-win7.iso".source = virtio-win-win7-iso-file;
 
-  # Placement automatique de l'ISO dans le pool de stockage standard de Virt-Manager
+  # Placement automatique des ISOs dans le pool de stockage standard de Virt-Manager (/var/lib/libvirt/images)
   system.activationScripts.virtio-win-iso = ''
     mkdir -p /var/lib/libvirt/images
     ln -sf ${pkgs.virtio-win.src} /var/lib/libvirt/images/virtio-win.iso
+    ln -sf ${virtio-win-win7-iso-file} /var/lib/libvirt/images/virtio-win-win7.iso
   '';
 
   # Paquets utilitaires pour la virtualisation, SPICE, réseau & pilotes invités
@@ -48,9 +61,12 @@ in
     virt-viewer
     spice-gtk
 
-    # Pilotes VirtIO et outils invités Windows (Windows 7 / 10 / 11)
+    # Pilotes VirtIO modernes (Windows 10 / 11)
     virtio-win
     virtio-win-iso
+
+    # Pilotes VirtIO compatibles Windows 7 (v0.1.173)
+    virtio-win-win7-iso
 
     # Daemon pour le partage direct de répertoires hôte <-> invité (Virtio-FS)
     virtiofsd
