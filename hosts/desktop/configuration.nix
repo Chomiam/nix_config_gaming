@@ -34,5 +34,6 @@
     ../../modules/services/blender.nix
     ../../modules/services/ai-suite.nix
     ../../modules/services/virt-manager.nix
+    ../../modules/services/samba.nix
   ];
 }
