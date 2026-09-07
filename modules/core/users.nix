@@ -39,6 +39,7 @@ in
       btop
       fastfetch
       git
+      gh
       fishPlugins.done
       fishPlugins.fzf-fish
       fishPlugins.forgit

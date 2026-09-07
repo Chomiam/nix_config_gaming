@@ -58,7 +58,13 @@ in
   # Paquets utilisateur gaming pour l'utilisateur principal
   users.users."${vars.user.username}".packages = with pkgs; [
     lutris
-    heroic
+    (heroic.override {
+      extraPkgs = pkgs: with pkgs; [
+        gamemode
+        mangohud
+        gamescope
+      ];
+    })
     eden
     ludusavi
     pkgs-unstable.protonplus
