@@ -9,13 +9,10 @@ in
   # 🐱 MODULE FASTFETCH (PROFIL CATPPUCCIN MACCHIATO)
   # =========================================================================
 
-  # Téléchargement et installation du logo Catppuccin PNG
-  xdg.configFile."fastfetch/logo/catppuccin_logo.png".source = pkgs.fetchurl {
-    url = "https://raw.githubusercontent.com/Nukecraft5419/fastfetch/main/assets/logo/catppuccin_logo.png";
-    hash = "sha256-syWqE+zbTW/e+s40A2iIKD5HD9+lP49MUlDLZFVM+qw=";
-  };
+  # Installation du logo officiel chomiamos PNG
+  xdg.configFile."fastfetch/logo/chomiamos_logo.png".source = ../assets/chomiamos_fastfetch.png;
 
-  # Version ANSI Art du logo Catppuccin (fallback universel)
+  # Version ANSI Art du logo (fallback universel)
   xdg.configFile."fastfetch/logo/catppuccin_logo.txt".source = ./catppuccin_logo.txt;
 
   # Dépendances pour le rendu d'images dans le terminal (Chafa, ImageMagick, Kitty)
@@ -32,7 +29,7 @@ in
       "$schema" = "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json";
       logo = {
         type = "kitty-direct";
-        source = "~/.config/fastfetch/logo/catppuccin_logo.png";
+        source = "~/.config/fastfetch/logo/chomiamos_logo.png";
         width = 40;
         height = 20;
         padding = {
