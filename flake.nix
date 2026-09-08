@@ -95,6 +95,7 @@
         ${vars.hostName} = desktopSystem;
         default = desktopSystem;
         nixos = desktopSystem;
+      } // {
         chomiamos = desktopSystem;
       };
     };
