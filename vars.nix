@@ -24,9 +24,19 @@
       "wheel"
       "docker"
       "video"
-      "libvirtd"
-      "kvm"
     ];
+  };
+
+  # =========================================================================
+  # 🖥️ VIRTUALISATION (VIRT-MANAGER, KVM / QEMU, LIBVIRT)
+  # Options disponibles : true | false
+  #
+  # - true  : Active libvirtd, Virt-Manager, les pilotes VirtIO
+  #           (dont virtio-win compatible Windows 7), SPICE et virbr0.
+  # - false : Désactivé (Aucun service ni paquet de virtualisation chargé).
+  # =========================================================================
+  virtualisation = {
+    enable = true;
   };
 
   # =========================================================================
@@ -71,6 +81,7 @@
   # Options du mode Gaming
   gaming = {
     enable = true;
+    deckyLoader = true;
     geforceNow = true;
     mountGamesDisk = true;
   };

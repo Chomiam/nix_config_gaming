@@ -4,6 +4,10 @@ let
   pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in
 {
+  imports = [
+    ./decky-loader.nix
+  ];
+
   # =========================================================================
   # 🕹️ SUITE GAMING & COMPATIBILITÉ WINDOWS
   # =========================================================================

@@ -31,6 +31,12 @@
       url = "github:wingej0/ext-cosmic-applets-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    # Jovian-NixOS (Fournit le module et le paquet Decky Loader pour Steam)
+    jovian = {
+      url = "github:Jovian-Experiments/Jovian-NixOS";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   # ===========================================================================
