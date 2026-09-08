@@ -1,7 +1,7 @@
-{ pkgs, lib, vars, ... }:
+{ config, pkgs, lib, ... }:
 
 let
-  selected = vars.browser or "chrome";
+  selected = config.chomiamos.browser;
 
   # Identifiant de l'application Flatpak Flathub (si géré via Flatpak)
   flatpakAppId =
@@ -41,7 +41,7 @@ in
   };
 
   # Installation du paquet Nix si le navigateur est géré via Nixpkgs
-  users.users."${vars.user.username}".packages = lib.optionals (pkg != null) [ pkg ];
+  users.users."${config.chomiamos.user.username}".packages = lib.optionals (pkg != null) [ pkg ];
 
   # Installation déclarative Flatpak si le navigateur est distribué via Flathub
   services.flatpak.packages = lib.optionals (flatpakAppId != null) [ flatpakAppId ];

@@ -1,15 +1,16 @@
-{ vars, ... }:
+{ ... }:
 
 {
   # =========================================================================
-  # 🎛️ SECTEUR HARDWARE : CHARGEMENT DYNAMIQUE DU PROFIL GPU
+  # 🎛️ SECTEUR HARDWARE : PROFILS MATÉRIELS & PILOTES GPU
+  # Importation inconditionnelle : chaque profil s'active selon
+  # config.chomiamos.hardware.gpu
   # =========================================================================
   imports = [
-    (if vars.gpuDriver == "amd" then ./amd.nix
-     else if vars.gpuDriver == "nvidia" then ./nvidia.nix
-     else if vars.gpuDriver == "nvidia-legacy" then ./nvidia-legacy.nix
-     else if vars.gpuDriver == "intel" then ./intel.nix
-     else ./amd.nix)
+    ./amd.nix
+    ./nvidia.nix
+    ./nvidia-legacy.nix
+    ./intel.nix
     ./steering-wheels.nix
   ];
 }

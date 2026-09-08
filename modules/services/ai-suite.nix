@@ -1,24 +1,19 @@
-{ pkgs, lib, vars, ... }:
+{ config, pkgs, lib, ... }:
 
 let
-  cfg = vars.aiSuite or {
-    enable = false;
-    rocmOverrideGfx = "12.0.1";
-    keepAlive = "0s";
-    openWebUiPort = 8080;
-    searxPort = 8888;
-  };
+  cfg = config.chomiamos.services.aiSuite;
+  gpu = config.chomiamos.hardware.gpu;
 
-  # Sélection du paquet Ollama adapté au GPU configuré dans vars.nix
+  # Sélection du paquet Ollama adapté au GPU configuré
   ollamaPkg =
-    if vars.gpuDriver == "amd" then pkgs.ollama-rocm
-    else if vars.gpuDriver == "nvidia" || vars.gpuDriver == "nvidia-legacy" then pkgs.ollama-cuda
+    if gpu == "amd" then pkgs.ollama-rocm
+    else if gpu == "nvidia" || gpu == "nvidia-legacy" then pkgs.ollama-cuda
     else pkgs.ollama;
 
   # Variables d'environnement d'Ollama (VRAM keep-alive + GPU GFX Override AMD)
   ollamaEnv = {
-    OLLAMA_KEEP_ALIVE = cfg.keepAlive or "0s";
-  } // (lib.optionalAttrs (vars.gpuDriver == "amd" && (cfg.rocmOverrideGfx or "") != "") {
+    OLLAMA_KEEP_ALIVE = cfg.keepAlive;
+  } // (lib.optionalAttrs (gpu == "amd" && cfg.rocmOverrideGfx != "") {
     HSA_OVERRIDE_GFX_VERSION = cfg.rocmOverrideGfx;
   });
 in
@@ -27,13 +22,13 @@ in
   # 🤖 MODULE IA LOCALE : OLLAMA + SEARXNG + OPEN-WEBUI
   # =========================================================================
 
-  config = lib.mkIf (cfg.enable or false) {
+  config = lib.mkIf cfg.enable {
 
     # 1. 🦙 Service Ollama avec accélération GPU dynamique (AMD ROCm / Nvidia CUDA / Intel / CPU)
     services.ollama = {
       enable = true;
       package = ollamaPkg;
-      rocmOverrideGfx = lib.mkIf (vars.gpuDriver == "amd" && (cfg.rocmOverrideGfx or "") != "") cfg.rocmOverrideGfx;
+      rocmOverrideGfx = lib.mkIf (gpu == "amd" && cfg.rocmOverrideGfx != "") cfg.rocmOverrideGfx;
       environmentVariables = ollamaEnv;
     };
 
@@ -42,7 +37,7 @@ in
       enable = true;
       settings = {
         server = {
-          port = cfg.searxPort or 8888;
+          port = cfg.searxPort;
           bind_address = "127.0.0.1";
           secret_key = "secret_key_chomiam_local_ia_searxng";
         };
@@ -56,22 +51,22 @@ in
     # 3. 🌐 Service Open-WebUI : Interface graphique & Agent connecté à Ollama et SearXNG
     services.open-webui = {
       enable = true;
-      port = cfg.openWebUiPort or 8080;
+      port = cfg.openWebUiPort;
       environment = {
         OLLAMA_BASE_URL = "http://127.0.0.1:11434";
         ENABLE_RAG_WEB_SEARCH = "True";
         RAG_WEB_SEARCH_ENGINE = "searxng";
-        SEARXNG_QUERY_URL = "http://127.0.0.1:${toString (cfg.searxPort or 8888)}/search?q=<query>";
+        SEARXNG_QUERY_URL = "http://127.0.0.1:${toString cfg.searxPort}/search?q=<query>";
       };
     };
 
     # Prise en charge des drivers ROCm pour GPU AMD
-    hardware.graphics = lib.mkIf (vars.gpuDriver == "amd") {
+    hardware.graphics = lib.mkIf (gpu == "amd") {
       enable = true;
       extraPackages = with pkgs; [
         rocmPackages.clr.icd
       ];
     };
-    hardware.amdgpu.opencl.enable = lib.mkIf (vars.gpuDriver == "amd") true;
+    hardware.amdgpu.opencl.enable = lib.mkIf (gpu == "amd") true;
   };
 }

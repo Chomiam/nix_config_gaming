@@ -1,12 +1,13 @@
-{ vars, ... }:
+{ ... }:
 
 {
   # =========================================================================
-  # 🖥️ SECTEUR DESKTOP : SÉLECTION DYNAMIQUE DE L'ENVIRONNEMENT DE BUREAU
+  # 🖥️ SECTEUR DESKTOP : ENVIRONNEMENTS GRAPHIQUES
+  # Importation inconditionnelle : chaque environnement s'active selon
+  # config.chomiamos.desktop.env ("gnome" | "cosmic" | "both" | "none")
   # =========================================================================
-  imports =
-    if vars.desktopEnv == "gnome" then [ ./gnome.nix ]
-    else if vars.desktopEnv == "cosmic" then [ ./cosmic.nix ]
-    else if vars.desktopEnv == "both" then [ ./gnome.nix ./cosmic.nix ]
-    else [ ./cosmic.nix ];
+  imports = [
+    ./gnome.nix
+    ./cosmic.nix
+  ];
 }

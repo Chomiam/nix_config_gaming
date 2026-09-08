@@ -1,7 +1,8 @@
-{ config, pkgs, lib, vars, ... }:
+{ config, pkgs, lib, ... }:
 
 let
-  cfg = vars.steeringWheelSupport or false;
+  cfg = config.chomiamos.hardware.steeringWheels.enable;
+  username = config.chomiamos.user.username;
 in
 {
   # =========================================================================
@@ -33,7 +34,7 @@ in
     ];
 
     # 3. 🎮 Application GUI Oversteer pour la gestion des volants (rotation, force, profils)
-    users.users."${vars.user.username}".packages = with pkgs; [
+    users.users."${username}".packages = with pkgs; [
       oversteer
     ];
   };

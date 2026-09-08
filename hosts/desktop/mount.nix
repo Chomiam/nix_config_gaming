@@ -1,5 +1,8 @@
-{ config, pkgs, vars, ... }:
+{ config, ... }:
 
+let
+  username = config.chomiamos.user.username;
+in
 {
   # =========================================================================
   # 💾 MONTAGE DISQUE DE JEUX (/mnt/Games)
@@ -7,7 +10,7 @@
 
   # Permission dynamique pour le dossier de jeux attribué à l'utilisateur principal
   systemd.tmpfiles.rules = [
-    "z /mnt/Games 0775 ${vars.user.username} users -"
+    "z /mnt/Games 0775 ${username} users -"
   ];
 
   # Configuration du montage BTRFS avec compression ZSTD

@@ -1,16 +1,17 @@
-{ pkgs, lib, vars, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 let
+  cfg = config.chomiamos.services.blender;
+  username = config.chomiamos.user.username;
   pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-  enable = vars.blender or false;
 in
 {
   # =========================================================================
   # 🎨 BLENDER (SUITE DE MODÉLISATION & ANIMATION 3D - NIXPKGS UNSTABLE)
   # =========================================================================
 
-  config = lib.mkIf enable {
-    users.users."${vars.user.username}".packages = [
+  config = lib.mkIf cfg.enable {
+    users.users."${username}".packages = [
       pkgs-unstable.blender
     ];
   };

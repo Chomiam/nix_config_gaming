@@ -85,6 +85,12 @@
       };
     in
     {
+      # 📦 Export du module Chomiamos pour réutilisation externe / partage
+      nixosModules = {
+        default = ./modules;
+        chomiamos = ./modules;
+      };
+
       nixosConfigurations = {
         ${vars.hostName} = desktopSystem;
         default = desktopSystem;

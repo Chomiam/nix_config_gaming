@@ -1,5 +1,8 @@
-{ config, pkgs, lib, vars, ... }:
+{ config, pkgs, lib, ... }:
 
+let
+  cfg = config.chomiamos;
+in
 {
   # =========================================================================
   # ⚙️ SOCLE SYSTÈME NIXOS (CORE MODULE)
@@ -9,6 +12,7 @@
     ./sysctl-gaming.nix
     ./firewall.nix
     ./browser.nix
+    ./users.nix
   ];
 
   # -------------------------------------------------------------------------
@@ -78,7 +82,7 @@
   # 🌐 RÉSEAU, NOM D'HÔTE & LOCALISATION
   # -------------------------------------------------------------------------
   networking = {
-    hostName = vars.hostName;
+    hostName = cfg.hostName;
     networkmanager = {
       enable = true;
       settings = {
@@ -95,21 +99,21 @@
   };
 
   services.resolved.enable = true;
-  time.timeZone = vars.timeZone;
+  time.timeZone = cfg.timeZone;
   console.keyMap = "fr";
 
   i18n = {
-    defaultLocale = vars.defaultLocale;
+    defaultLocale = cfg.defaultLocale;
     extraLocaleSettings = {
-      LC_ADDRESS = vars.defaultLocale;
-      LC_IDENTIFICATION = vars.defaultLocale;
-      LC_MEASUREMENT = vars.defaultLocale;
-      LC_MONETARY = vars.defaultLocale;
-      LC_NAME = vars.defaultLocale;
-      LC_NUMERIC = vars.defaultLocale;
-      LC_PAPER = vars.defaultLocale;
-      LC_TELEPHONE = vars.defaultLocale;
-      LC_TIME = vars.defaultLocale;
+      LC_ADDRESS = cfg.defaultLocale;
+      LC_IDENTIFICATION = cfg.defaultLocale;
+      LC_MEASUREMENT = cfg.defaultLocale;
+      LC_MONETARY = cfg.defaultLocale;
+      LC_NAME = cfg.defaultLocale;
+      LC_NUMERIC = cfg.defaultLocale;
+      LC_PAPER = cfg.defaultLocale;
+      LC_TELEPHONE = cfg.defaultLocale;
+      LC_TIME = cfg.defaultLocale;
     };
   };
 
@@ -133,5 +137,5 @@
   };
 
   # Version du système
-  system.stateVersion = vars.stateVersion;
+  system.stateVersion = cfg.stateVersion;
 }

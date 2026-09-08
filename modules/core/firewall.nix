@@ -1,4 +1,4 @@
-{ pkgs, vars, ... }:
+{ config, pkgs, ... }:
 
 {
   # =========================================================================
@@ -6,7 +6,7 @@
   # =========================================================================
 
   networking.firewall = {
-    enable = vars.firewall.enable or (if builtins.isBool (vars.firewall or false) then vars.firewall else false);
+    enable = config.chomiamos.firewall.enable;
 
     # Ports TCP autorisés
     allowedTCPPorts = [

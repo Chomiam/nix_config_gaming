@@ -1,7 +1,8 @@
-{ pkgs, lib, vars, ... }:
+{ config, pkgs, lib, ... }:
 
 let
-  cfg = vars.virtualisation.enable or false;
+  cfg = config.chomiamos.services.virtualisation.enable;
+  username = config.chomiamos.user.username;
 
   # ISO VirtIO moderne (Windows 10 / 11 / Server récents)
   virtio-win-iso = pkgs.runCommand "virtio-win-iso" { } ''
@@ -27,7 +28,7 @@ in
 
   config = lib.mkIf cfg {
     # Ajout automatique de l'utilisateur aux groupes de virtualisation
-    users.users."${vars.user.username}".extraGroups = [ "libvirtd" "kvm" ];
+    users.users."${username}".extraGroups = [ "libvirtd" "kvm" ];
 
     # Activation et configuration du daemon libvirtd
     virtualisation.libvirtd = {

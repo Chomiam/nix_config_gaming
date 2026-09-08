@@ -1,7 +1,8 @@
-{ config, lib, pkgs, inputs, vars, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 let
-  cfg = vars.gaming;
+  cfg = config.chomiamos.gaming;
+  username = config.chomiamos.user.username;
 in
 {
   # Import du module decky-loader officiel de Jovian-NixOS
@@ -9,12 +10,12 @@ in
     "${inputs.jovian}/modules/decky-loader.nix"
   ];
 
-  config = lib.mkIf (cfg.enable && (cfg.deckyLoader or false)) {
+  config = lib.mkIf (cfg.enable && cfg.deckyLoader) {
     # Configuration de Decky Loader (Jovian-NixOS)
     jovian.decky-loader = {
       enable = true;
       package = inputs.jovian.legacyPackages.${pkgs.stdenv.hostPlatform.system}.decky-loader-prerelease;
-      user = vars.user.username;
+      user = username;
       extraPackages = with pkgs; [
         curl
         unzip
@@ -34,7 +35,7 @@ in
       description = "Activer le débogage distant Steam CEF pour Decky Loader";
       serviceConfig = {
         Type = "oneshot";
-        User = vars.user.username;
+        User = username;
         ExecStart = "${pkgs.bash}/bin/bash -c 'mkdir -p ~/.steam/steam ~/.local/share/Steam && touch ~/.steam/steam/.cef-enable-remote-debugging ~/.local/share/Steam/.cef-enable-remote-debugging'";
       };
       wantedBy = [ "multi-user.target" ];

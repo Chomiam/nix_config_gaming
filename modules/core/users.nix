@@ -1,6 +1,7 @@
-{ pkgs, vars, inputs, ... }:
+{ config, pkgs, inputs, ... }:
 
 let
+  cfg = config.chomiamos.user;
   pkgs-unstable = import inputs.nixpkgs-unstable {
     system = pkgs.stdenv.hostPlatform.system;
     config.allowUnfree = true;
@@ -11,12 +12,12 @@ in
   # 👤 GESTION DES UTILISATEURS ET PAQUETS SYSTÈME / UTILISATEUR
   # =========================================================================
 
-  # Compte Utilisateur Principal (basé sur vars.nix)
-  users.users."${vars.user.username}" = {
+  # Compte Utilisateur Principal (configuré via chomiamos.user)
+  users.users."${cfg.username}" = {
     isNormalUser = true;
-    description = vars.user.fullName;
-    extraGroups = vars.user.extraGroups;
-    shell = pkgs.${vars.user.shell};
+    description = cfg.fullName;
+    extraGroups = cfg.extraGroups;
+    shell = pkgs.${cfg.shell};
 
     packages = with pkgs; [
       # 📺 Multimédia
