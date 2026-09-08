@@ -62,9 +62,9 @@ in
       };
 
       shell = lib.mkOption {
-        type = lib.types.str;
+        type = lib.types.enum [ "fish" "zsh" "bash" ];
         default = "fish";
-        description = "Shell interactif par défaut de l'utilisateur.";
+        description = "Shell interactif par défaut de l'utilisateur (fish, zsh ou bash).";
       };
 
       extraGroups = lib.mkOption {

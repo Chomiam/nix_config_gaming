@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 let
   cfg = config.chomiamos.user;
@@ -55,14 +55,27 @@ in
     ];
   };
 
-  # Activation du Shell Fish & Lancement de Fastfetch au démarrage
-  programs.fish = {
+  # Activation dynamique du Shell choisi & Lancement de Fastfetch
+  programs.fish = lib.mkIf (cfg.shell == "fish") {
     enable = true;
     interactiveShellInit = ''
       set fish_greeting
       if status is-interactive
         fastfetch
       end
+    '';
+  };
+
+  programs.zsh = lib.mkIf (cfg.shell == "zsh") {
+    enable = true;
+    interactiveShellInit = ''
+      fastfetch
+    '';
+  };
+
+  programs.bash = lib.mkIf (cfg.shell == "bash") {
+    interactiveShellInit = ''
+      fastfetch
     '';
   };
 
