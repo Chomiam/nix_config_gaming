@@ -81,6 +81,12 @@
   # Options du mode Gaming
   gaming = {
     enable = true;
+    launchers = {
+      steam = true;
+      lutris = true;
+      heroic = true;
+      faugus = true;
+    };
     deckyLoader = true;
     geforceNow = true;
     mountGamesDisk = true;

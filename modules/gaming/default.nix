@@ -15,10 +15,10 @@ in
 
   config = lib.mkIf cfg.gaming.enable {
     # Support du matériel Steam (Manettes, Steam Deck / Controller, etc.)
-    hardware.steam-hardware.enable = true;
+    hardware.steam-hardware.enable = cfg.gaming.launchers.steam;
 
     # Client Steam principal
-    programs.steam = {
+    programs.steam = lib.mkIf cfg.gaming.launchers.steam {
       enable = true;
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
@@ -63,19 +63,20 @@ in
 
     # Paquets utilisateur gaming pour l'utilisateur principal
     users.users."${cfg.user.username}".packages = with pkgs; [
-      lutris
-      (heroic.override {
-        extraPkgs = pkgs: with pkgs; [
-          gamemode
-          mangohud
-          gamescope
-        ];
-      })
       eden
       ludusavi
       pkgs-unstable.protonplus
       pkgs-unstable.mangohud
       pkgs-unstable.goverlay
-    ];
+    ]
+    ++ lib.optional cfg.gaming.launchers.lutris lutris
+    ++ lib.optional cfg.gaming.launchers.heroic (heroic.override {
+      extraPkgs = pkgs: with pkgs; [
+        gamemode
+        mangohud
+        gamescope
+      ];
+    })
+    ++ lib.optional cfg.gaming.launchers.faugus pkgs-unstable.faugus-launcher;
   };
 }

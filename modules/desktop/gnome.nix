@@ -97,9 +97,14 @@ in
             "io.github.kolunmi.Bazaar.desktop"
             browserInfo.desktopFile
             "discord.desktop"
+          ] ++ pkgs.lib.optionals cfg.gaming.launchers.steam [
             "steam.desktop"
+          ] ++ pkgs.lib.optionals cfg.gaming.launchers.lutris [
             "net.lutris.Lutris.desktop"
+          ] ++ pkgs.lib.optionals cfg.gaming.launchers.heroic [
             "com.heroicgameslauncher.hgl.desktop"
+          ] ++ pkgs.lib.optionals cfg.gaming.launchers.faugus [
+            "faugus-launcher.desktop"
           ] ++ pkgs.lib.optionals cfg.gaming.geforceNow [
             "com.nvidia.geforcenow.desktop"
           ] ++ [

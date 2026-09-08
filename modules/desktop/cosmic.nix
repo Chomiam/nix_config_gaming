@@ -102,10 +102,12 @@ in
               "io.github.kolunmi.Bazaar",
               "${browserInfo.cosmicId}",
               "discord",
-              "steam",
-              "net.lutris.Lutris",
-              "com.heroicgameslauncher.hgl",
-  ${if cfg.gaming.geforceNow then "            \"com.nvidia.geforcenow\",\n" else ""}            "onlyoffice-desktopeditors",
+${if cfg.gaming.launchers.steam then "              \"steam\",\n" else ""}\
+${if cfg.gaming.launchers.lutris then "              \"net.lutris.Lutris\",\n" else ""}\
+${if cfg.gaming.launchers.heroic then "              \"com.heroicgameslauncher.hgl\",\n" else ""}\
+${if cfg.gaming.launchers.faugus then "              \"faugus-launcher\",\n" else ""}\
+${if cfg.gaming.geforceNow then "              \"com.nvidia.geforcenow\",\n" else ""}\
+              "onlyoffice-desktopeditors",
               "thunderbird",
               "com.obsproject.Studio",
           ]

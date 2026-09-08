@@ -116,7 +116,33 @@ in
       enable = lib.mkOption {
         type = lib.types.bool;
         default = true;
-        description = "Active la suite complète gaming (Steam, GameMode, GameScope, Sunshine, Wine/Proton).";
+        description = "Active la suite complète gaming (GameMode, GameScope, Sunshine, Wine/Proton).";
+      };
+
+      launchers = {
+        steam = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active le client Steam et ses optimisations intégrées.";
+        };
+
+        lutris = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe Lutris pour la gestion et l'installation de jeux.";
+        };
+
+        heroic = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe Heroic Games Launcher (Epic Games, GOG, Amazon Prime).";
+        };
+
+        faugus = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe Faugus Launcher (tiré de nixpkgs-unstable).";
+        };
       };
 
       deckyLoader = lib.mkOption {

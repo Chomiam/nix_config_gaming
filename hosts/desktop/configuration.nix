@@ -46,6 +46,12 @@
 
     gaming = {
       enable = vars.gaming.enable or true;
+      launchers = {
+        steam = vars.gaming.launchers.steam or true;
+        lutris = vars.gaming.launchers.lutris or true;
+        heroic = vars.gaming.launchers.heroic or true;
+        faugus = vars.gaming.launchers.faugus or true;
+      };
       deckyLoader = vars.gaming.deckyLoader or false;
       geforceNow = vars.gaming.geforceNow or true;
       mountGamesDisk = vars.gaming.mountGamesDisk or true;

@@ -10,7 +10,7 @@ in
     "${inputs.jovian}/modules/decky-loader.nix"
   ];
 
-  config = lib.mkIf (cfg.enable && cfg.deckyLoader) {
+  config = lib.mkIf (cfg.enable && cfg.deckyLoader && cfg.launchers.steam) {
     # Configuration de Decky Loader (Jovian-NixOS)
     jovian.decky-loader = {
       enable = true;
