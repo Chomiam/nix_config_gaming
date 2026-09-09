@@ -187,7 +187,7 @@ in
 
       frontend = lib.mkOption {
         type = lib.types.enum [ "none" "es-de" ];
-        default = "none";
+        default = "es-de";
         description = "Frontend graphique d'émulation (ex: es-de pour EmulationStation Desktop Edition).";
       };
 
@@ -202,6 +202,64 @@ in
           type = lib.types.bool;
           default = true;
           description = "Vérifier automatiquement les mises à jour d'ES-DE lors des opérations de mise à jour système.";
+        };
+      };
+
+      retroarch = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active RetroArch avec son pack complet de cœurs 2D et Arcade recommandés.";
+        };
+      };
+
+      standalone = {
+        eden = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active l'émulateur Nintendo Switch Eden (standalone unstable).";
+        };
+
+        dolphin = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active l'émulateur GameCube et Wii Dolphin (standalone unstable).";
+        };
+
+        pcsx2 = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active l'émulateur PlayStation 2 PCSX2 (standalone unstable).";
+        };
+
+        ppsspp = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active l'émulateur PlayStation Portable PPSSPP (standalone unstable).";
+        };
+
+        melonds = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active l'émulateur Nintendo DS melonDS (standalone unstable).";
+        };
+
+        mgba = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active l'émulateur Game Boy / GBC / GBA mGBA (standalone Qt unstable).";
+        };
+
+        duckstation = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active l'émulateur PlayStation 1 DuckStation (standalone).";
+        };
+
+        rpcs3 = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Active l'émulateur PlayStation 3 RPCS3 (standalone unstable).";
         };
       };
     };

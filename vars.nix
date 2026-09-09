@@ -108,13 +108,30 @@
   # =========================================================================
   # 🕹️ SUITE D'ÉMULATION & RÉTROGAMING
   # Options disponibles :
-  # - enable   : true | false (Active la suite d'émulation)
-  # - frontend : "none" | "es-de" (Frontend ES-DE AppImage)
+  # - enable   : true | false (Active la suite d'émulation globale)
+  # - frontend : "none" | "es-de" (Frontend ES-DE AppImage avec auto-update)
+  # - retroarch : true | false (Pack RetroArch avec cœurs 2D/Arcade préconfigurés)
+  # - standalone : Émulateurs autonomes dédiés
   # =========================================================================
   emulation = {
     enable = true;
     frontend = "es-de";
     autoCheckUpdates = true;
+
+    retroarch = {
+      enable = true;
+    };
+
+    standalone = {
+      eden = true;        # Nintendo Switch (Eden unstable)
+      dolphin = true;     # GameCube & Wii
+      pcsx2 = true;       # PlayStation 2
+      ppsspp = true;      # PlayStation Portable
+      melonds = true;     # Nintendo DS
+      mgba = true;        # Game Boy / GBC / GBA
+      duckstation = true; # PlayStation 1
+      rpcs3 = false;      # PlayStation 3 (optionnel)
+    };
   };
 
   # =========================================================================

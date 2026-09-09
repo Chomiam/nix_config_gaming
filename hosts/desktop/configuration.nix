@@ -61,10 +61,23 @@
 
     emulation = {
       enable = vars.emulation.enable or false;
-      frontend = vars.emulation.frontend or "none";
+      frontend = vars.emulation.frontend or "es-de";
       es-de = {
-        enable = (vars.emulation.enable or false) && ((vars.emulation.frontend or "es-de") == "es-de");
+        enable = vars.emulation.esDe or vars.emulation.es-de or (vars.emulation.enable or false);
         autoCheckUpdates = vars.emulation.autoCheckUpdates or true;
+      };
+      retroarch = {
+        enable = vars.emulation.retroarch.enable or (vars.emulation.enable or false);
+      };
+      standalone = {
+        eden = vars.emulation.standalone.eden or true;
+        dolphin = vars.emulation.standalone.dolphin or true;
+        pcsx2 = vars.emulation.standalone.pcsx2 or true;
+        ppsspp = vars.emulation.standalone.ppsspp or true;
+        melonds = vars.emulation.standalone.melonds or true;
+        mgba = vars.emulation.standalone.mgba or true;
+        duckstation = vars.emulation.standalone.duckstation or true;
+        rpcs3 = vars.emulation.standalone.rpcs3 or false;
       };
     };
 
