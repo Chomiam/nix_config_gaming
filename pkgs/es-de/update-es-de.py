@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
 """
-update-es-de - Gestionnaire de vérification et mise à jour de l'AppImage ES-DE pour ChomiamOS.
+update-es-de - Gestionnaire de vérification et mise à jour
+de l'AppImage ES-DE pour ChomiamOS.
 """
 
 import argparse
@@ -11,7 +11,10 @@ import subprocess
 import sys
 import urllib.request
 
-GITLAB_API_URL = "https://gitlab.com/api/v4/projects/es-de%2Femulationstation-de/releases"
+GITLAB_API_URL = (
+    "https://gitlab.com/api/v4/projects/"
+    "es-de%2Femulationstation-de/releases"
+)
 DEFAULT_JSON_PATH = "/etc/nixos/pkgs/es-de/version.json"
 
 
@@ -31,7 +34,7 @@ def get_current_info(json_path: str) -> dict:
 
 
 def fetch_latest_release() -> tuple[str, str]:
-    """Récupère la dernière version et l'URL de téléchargement de l'AppImage x64."""
+    """Récupère la dernière version et l'URL de l'AppImage x64."""
     req = urllib.request.Request(
         GITLAB_API_URL,
         headers={"User-Agent": "ChomiamOS-ESDE-Updater/1.0"},
@@ -45,11 +48,21 @@ def fetch_latest_release() -> tuple[str, str]:
         for link in links:
             name = link.get("name", "")
             # On cible l'AppImage x86_64 standard (hors SteamDeck ou arm64)
-            if name == "ES-DE_x64.AppImage" or (name.endswith(".AppImage") and "x64" in name and "SteamDeck" not in name):
+            is_match = (
+                name == "ES-DE_x64.AppImage"
+                or (
+                    name.endswith(".AppImage")
+                    and "x64" in name
+                    and "SteamDeck" not in name
+                )
+            )
+            if is_match:
                 url = link.get("direct_asset_url") or link.get("url")
                 return tag, url
 
-    raise RuntimeError("Aucune AppImage x64 trouvée dans les dernières releases GitLab")
+    raise RuntimeError(
+        "Aucune AppImage x64 trouvée dans les dernières releases GitLab"
+    )
 
 
 def compute_nix_hash(url: str) -> str:
@@ -63,7 +76,16 @@ def compute_nix_hash(url: str) -> str:
     )
     nix32_hash = res.stdout.strip()
     sri_res = subprocess.run(
-        ["nix", "hash", "convert", "--to", "sri", "--hash-algo", "sha256", nix32_hash],
+        [
+            "nix",
+            "hash",
+            "convert",
+            "--to",
+            "sri",
+            "--hash-algo",
+            "sha256",
+            nix32_hash,
+        ],
         capture_output=True,
         text=True,
         check=True,
@@ -83,12 +105,34 @@ def parse_version_tuple(v: str) -> tuple[int, ...]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Vérification et mise à jour d'ES-DE pour ChomiamOS")
-    parser.add_argument("--json-path", default=DEFAULT_JSON_PATH, help="Chemin vers version.json")
-    parser.add_argument("--check", action="store_true", help="Vérifie seulement si une màj est disponible")
-    parser.add_argument("--update", action="store_true", help="Met à jour version.json avec la dernière version")
-    parser.add_argument("--switch", action="store_true", help="Lance nh os switch après mise à jour")
-    parser.add_argument("--quiet", action="store_true", help="Sortie minimale")
+    parser = argparse.ArgumentParser(
+        description="Vérification et mise à jour d'ES-DE pour ChomiamOS"
+    )
+    parser.add_argument(
+        "--json-path",
+        default=DEFAULT_JSON_PATH,
+        help="Chemin vers version.json",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Vérifie seulement si une màj est disponible",
+    )
+    parser.add_argument(
+        "--update",
+        action="store_true",
+        help="Met à jour version.json avec la dernière version",
+    )
+    parser.add_argument(
+        "--switch",
+        action="store_true",
+        help="Lance nh os switch après mise à jour",
+    )
+    parser.add_argument(
+        "--quiet",
+        action="store_true",
+        help="Sortie minimale",
+    )
     args = parser.parse_args()
 
     current = get_current_info(args.json_path)
@@ -98,7 +142,10 @@ def main():
         latest_ver, latest_url = fetch_latest_release()
     except Exception as e:
         if not args.quiet:
-            print(f"❌ Erreur lors de la vérification des releases GitLab: {e}", file=sys.stderr)
+            print(
+                f"❌ Erreur lors de la vérification GitLab: {e}",
+                file=sys.stderr,
+            )
         sys.exit(1)
 
     curr_tuple = parse_version_tuple(current_ver)
@@ -108,7 +155,10 @@ def main():
     if args.check:
         if update_available:
             if not args.quiet:
-                print(f"🔔 Mise à jour disponible pour ES-DE : v{latest_ver} (version installée : v{current_ver})")
+                print(
+                    f"🔔 Mise à jour disponible pour ES-DE : v{latest_ver} "
+                    f"(version installée : v{current_ver})"
+                )
             sys.exit(10)
         else:
             if not args.quiet:
@@ -117,7 +167,10 @@ def main():
 
     if not update_available and not args.update:
         if not args.quiet:
-            print(f"✅ ES-DE est déjà sur la version la plus récente : v{current_ver}")
+            print(
+                "✅ ES-DE est déjà sur la version la plus récente : "
+                f"v{current_ver}"
+            )
         sys.exit(0)
 
     # Procédure de mise à jour
@@ -132,7 +185,10 @@ def main():
         with open(args.json_path, "w", encoding="utf-8") as f:
             json.dump(new_data, f, indent=2)
             f.write("\n")
-        print(f"✅ Fichier {args.json_path} mis à jour avec succès (hash: {new_hash})")
+        print(
+            f"✅ Fichier {args.json_path} mis à jour avec succès "
+            f"(hash: {new_hash})"
+        )
     except Exception as e:
         print(f"❌ Échec de la mise à jour : {e}", file=sys.stderr)
         sys.exit(2)

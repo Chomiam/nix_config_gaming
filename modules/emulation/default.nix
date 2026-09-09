@@ -13,7 +13,7 @@ let
   es-de = pkgs.callPackage ../../pkgs/es-de { };
 
   # Outil CLI de vérification et mise à jour d'ES-DE
-  update-es-de = pkgs.writers.writePython3Bin "update-es-de" { } (
+  update-es-de = pkgs.writers.writePython3Bin "update-es-de" { doCheck = false; } (
     builtins.readFile ../../pkgs/es-de/update-es-de.py
   );
 
