@@ -19,6 +19,7 @@
     fullName = "Axel Valens";
     homeDirectory = "/home/chomiam";
     shell = "fish";
+    initialHashedPassword = null;
     extraGroups = [
       "networkmanager"
       "wheel"

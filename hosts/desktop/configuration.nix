@@ -29,6 +29,7 @@
       homeDirectory = vars.user.homeDirectory;
       shell = vars.user.shell;
       extraGroups = vars.user.extraGroups;
+      initialHashedPassword = vars.user.initialHashedPassword or null;
     };
 
     firewall.enable = if builtins.isBool (vars.firewall or false) then vars.firewall else (vars.firewall.enable or false);

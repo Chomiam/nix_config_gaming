@@ -18,6 +18,7 @@ in
     description = cfg.fullName;
     extraGroups = cfg.extraGroups;
     shell = pkgs.${cfg.shell};
+    initialHashedPassword = lib.mkIf (cfg.initialHashedPassword != null) cfg.initialHashedPassword;
 
     packages = with pkgs; [
       # 📺 Multimédia

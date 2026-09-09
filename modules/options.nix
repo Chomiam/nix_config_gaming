@@ -67,6 +67,12 @@ in
         description = "Shell interactif par défaut de l'utilisateur (fish, zsh ou bash).";
       };
 
+      initialHashedPassword = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Mot de passe initial hashé de l'utilisateur principal.";
+      };
+
       extraGroups = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [
