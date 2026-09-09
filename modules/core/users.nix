@@ -75,8 +75,21 @@ in
   programs.zsh = lib.mkIf (cfg.shell == "zsh") {
     enable = true;
     interactiveShellInit = ''
-      fastfetch
+      if [[ -o interactive ]]; then
+        fastfetch
+      fi
     '';
+    ohMyZsh = {
+      enable = true;
+      theme = "catppuccin";
+      plugins = [ "git" ];
+      custom = "${./catppuccin-zsh}";
+      preLoaded = ''
+        export CATPPUCCIN_FLAVOR="mocha"
+        export CATPPUCCIN_SHOW_TIME=true
+        export CATPPUCCIN_SHOW_HOSTNAME="never"
+      '';
+    };
   };
 
   programs.bash = lib.mkIf (cfg.shell == "bash") {
