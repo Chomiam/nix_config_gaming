@@ -144,11 +144,22 @@ in
   programs.git = {
     enable = true;
     config = {
-      safe.directory = [ "/etc/nixos" ];
+      safe.directory = [
+        "/etc/nixos"
+        "/etc/nixos/*"
+        "/etc/nixos/.git"
+      ];
     };
   };
 
   # 🔑 Droits d'accès et modification pour l'utilisateur sur /etc/nixos
+  system.activationScripts.etcNixosPermissions = lib.stringAfter [ "users" "groups" ] ''
+    if [ -d /etc/nixos ]; then
+      chown -R ${cfg.username}:users /etc/nixos
+      chmod -R u+rwX,g+rwX /etc/nixos
+    fi
+  '';
+
   systemd.tmpfiles.rules = [
     "Z /etc/nixos 0775 ${cfg.username} users - -"
   ];
