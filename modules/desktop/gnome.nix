@@ -48,11 +48,12 @@ in
         settings = {
           "org/gnome/shell" = {
             enabled-extensions = [
-              "blur-my-shell@aunetx"
               "appindicatorsupport@rgcjonas.gmail.com"
               "Vitals@CoreCoding.com"
               "clipboard-indicator@tudmotu.com"
               "arcmenu@arcmenu.com"
+              "blur-my-shell@aunetx"
+              "dash-to-dock@micxgx.gmail.com"
             ];
           };
         };
@@ -90,6 +91,15 @@ in
 
       dconf.settings = {
         "org/gnome/shell" = {
+          enabled-extensions = [
+            "appindicatorsupport@rgcjonas.gmail.com"
+            "Vitals@CoreCoding.com"
+            "clipboard-indicator@tudmotu.com"
+            "arcmenu@arcmenu.com"
+            "blur-my-shell@aunetx"
+            "dash-to-dock@micxgx.gmail.com"
+          ];
+
           favorite-apps = [
             "kitty.desktop"
             "org.gnome.Settings.desktop"
@@ -114,6 +124,10 @@ in
           ];
         };
 
+        "org/gnome/desktop/wm/preferences" = {
+          button-layout = "icon:minimize,maximize,close";
+        };
+
         "org/gnome/mutter" = {
           experimental-features = [
             "scale-monitor-framebuffer"
@@ -125,6 +139,8 @@ in
         "org/gnome/desktop/interface" = {
           accent-color = "purple";
           color-scheme = "prefer-dark";
+          gtk-theme = "adw-gtk3-dark";
+          icon-theme = "Papirus-Dark";
         };
 
         "org/gnome/shell/extensions/dash-to-dock" = {
@@ -132,6 +148,62 @@ in
           dock-fixed = true;
           extend-height = true;
           dash-max-icon-size = 48;
+          height-fraction = lib.gvariant.mkDouble 0.9;
+          background-opacity = lib.gvariant.mkDouble 0.8;
+          custom-theme-shrink = true;
+          hide-tooltip = false;
+          preferred-monitor = -2;
+          show-icons-notifications-counter = false;
+          show-show-apps-button = false;
+        };
+
+        "org/gnome/shell/extensions/arcmenu" = {
+          menu-button-appearance = "None";
+          menu-layout = "runner";
+          prefs-visible-page = 0;
+          search-entry-border-radius = lib.gvariant.mkTuple [ (lib.gvariant.mkBoolean true) (lib.gvariant.mkInt32 25) ];
+          update-notifier-project-version = 73;
+        };
+
+        "org/gnome/shell/extensions/blur-my-shell" = {
+          settings-version = 2;
+        };
+
+        "org/gnome/shell/extensions/blur-my-shell/appfolder" = {
+          brightness = lib.gvariant.mkDouble 0.6;
+          sigma = 30;
+        };
+
+        "org/gnome/shell/extensions/blur-my-shell/applications" = {
+          blur = true;
+          blur-on-overview = true;
+          dynamic-opacity = false;
+          enable-all = false;
+          pipeline = "pipeline_default";
+          sigma = 30;
+          static-blur = false;
+          whitelist = [ "org.gnome.Nautilus" ];
+        };
+
+        "org/gnome/shell/extensions/blur-my-shell/dash-to-dock" = {
+          blur = true;
+          brightness = lib.gvariant.mkDouble 0.6;
+          pipeline = "pipeline_default_rounded";
+          sigma = 30;
+          static-blur = true;
+          style-dash-to-dock = 0;
+        };
+
+        "org/gnome/shell/extensions/blur-my-shell/panel" = {
+          brightness = lib.gvariant.mkDouble 0.6;
+          corner-radius = 0;
+          pipeline = "pipeline_default";
+          sigma = 30;
+        };
+
+        "org/gnome/shell/extensions/blur-my-shell/window-list" = {
+          brightness = lib.gvariant.mkDouble 0.6;
+          sigma = 30;
         };
       };
     };
