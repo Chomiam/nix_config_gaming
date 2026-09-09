@@ -21,11 +21,6 @@ in
     initialHashedPassword = lib.mkIf (cfg.initialHashedPassword != null) cfg.initialHashedPassword;
 
     packages = with pkgs; [
-      # 📺 Multimédia
-      stremio-linux-shell
-      vlc
-      mpv
-
       # 💼 Productivité & Bureautique
       onlyoffice-desktopeditors
       popsicle
@@ -48,12 +43,20 @@ in
       fishPlugins.grc
 
       # 🌐 Réseau
-      tailscale
-      localsend
       wireguard-tools
-      motrix
-    ] ++ lib.optional (config.chomiamos.discordClient == "discord") pkgs.discord;
+    ]
+    ++ lib.optional (config.chomiamos.discordClient == "discord") pkgs.discord
+    ++ lib.optional (config.chomiamos.services.stremio.enable) pkgs.stremio-linux-shell
+    ++ lib.optional (config.chomiamos.services.vlc.enable) pkgs.vlc
+    ++ lib.optional (config.chomiamos.services.mpv.enable) pkgs.mpv
+    ++ lib.optional (config.chomiamos.services.tailscale.enable) pkgs.tailscale
+    ++ lib.optional (config.chomiamos.services.localsend.enable) pkgs.localsend
+    ++ lib.optional (config.chomiamos.services.motrix.enable) pkgs.motrix;
   };
+
+  # Activation du démon Tailscale
+  services.tailscale.enable = config.chomiamos.services.tailscale.enable;
+
 
 
   # Activation dynamique du Shell choisi & Lancement de Fastfetch

@@ -251,6 +251,57 @@ in
         };
       };
 
+      # 🌐 Réseau & Partage
+      tailscale = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active le service et le client Tailscale VPN.";
+        };
+      };
+
+      localsend = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe l'application de partage local LocalSend.";
+        };
+      };
+
+      motrix = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe le gestionnaire de téléchargements Motrix.";
+        };
+      };
+
+      # 📺 Multimédia
+      stremio = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe le centre multimédia et streaming Stremio.";
+        };
+      };
+
+      vlc = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe le lecteur multimédia VLC.";
+        };
+      };
+
+      mpv = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe le lecteur vidéo MPV.";
+        };
+      };
+
+
       davinciResolve = {
         version = lib.mkOption {
           type = lib.types.enum [ "none" "free" "studio" ];

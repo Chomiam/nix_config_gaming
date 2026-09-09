@@ -69,7 +69,14 @@
       neovim.enable = true;
       blender.enable = vars.blender or false;
       godot.enable = vars.godot or false;
+      tailscale.enable = vars.tailscale or true;
+      localsend.enable = vars.localsend or true;
+      motrix.enable = vars.motrix or true;
+      stremio.enable = vars.stremio or true;
+      vlc.enable = vars.vlc or true;
+      mpv.enable = vars.mpv or true;
       davinciResolve.version = vars.davinciResolve or "none";
+
       aiSuite = {
         enable = vars.aiSuite.enable or false;
         rocmOverrideGfx = vars.aiSuite.rocmOverrideGfx or "12.0.1";
