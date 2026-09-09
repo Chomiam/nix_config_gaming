@@ -42,7 +42,10 @@ in
       gnomeExtensions.arcmenu
     ];
 
-    # Activation au niveau dconf système des extensions GNOME
+    # Déploiement du fond d'écran officiel par défaut
+    environment.etc."backgrounds/chomiamos/wallpaper.jpeg".source = ../../assets/wallpaper.jpeg;
+
+    # Activation au niveau dconf système des extensions et du fond d'écran GNOME
     programs.dconf.profiles.user.databases = [
       {
         settings = {
@@ -55,6 +58,17 @@ in
               "blur-my-shell@aunetx"
               "dash-to-dock@micxgx.gmail.com"
             ];
+          };
+
+          "org/gnome/desktop/background" = {
+            picture-uri = "file:///etc/backgrounds/chomiamos/wallpaper.jpeg";
+            picture-uri-dark = "file:///etc/backgrounds/chomiamos/wallpaper.jpeg";
+            picture-options = "zoom";
+          };
+
+          "org/gnome/desktop/screensaver" = {
+            picture-uri = "file:///etc/backgrounds/chomiamos/wallpaper.jpeg";
+            picture-options = "zoom";
           };
         };
       }
@@ -141,6 +155,17 @@ in
           color-scheme = "prefer-dark";
           gtk-theme = "adw-gtk3-dark";
           icon-theme = "Papirus-Dark";
+        };
+
+        "org/gnome/desktop/background" = {
+          picture-uri = "file:///etc/backgrounds/chomiamos/wallpaper.jpeg";
+          picture-uri-dark = "file:///etc/backgrounds/chomiamos/wallpaper.jpeg";
+          picture-options = "zoom";
+        };
+
+        "org/gnome/desktop/screensaver" = {
+          picture-uri = "file:///etc/backgrounds/chomiamos/wallpaper.jpeg";
+          picture-options = "zoom";
         };
 
         "org/gnome/shell/extensions/dash-to-dock" = {

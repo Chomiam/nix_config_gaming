@@ -57,6 +57,12 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # -------------------------------------------------------------------------
+  # 🏷️ IDENTITÉ DU SYSTÈME & BRANDING DU BOOTLOADER (GRUB)
+  # -------------------------------------------------------------------------
+  system.nixos.distroName = "ChomiamOS";
+  system.nixos.distroId = "chomiamos";
+
+  # -------------------------------------------------------------------------
   # 🚀 DEMARRAGE & BOOTLOADER
   # -------------------------------------------------------------------------
   boot = {
