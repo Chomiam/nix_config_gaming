@@ -133,4 +133,23 @@ in
     libevent
     killall
   ];
+
+  # 🛠️ Outil CLI 'nh' (Nix Helper) avec chemin flake par défaut
+  programs.nh = {
+    enable = true;
+    flake = "/etc/nixos";
+  };
+
+  # 🔒 Configuration globale Git pour autoriser /etc/nixos
+  programs.git = {
+    enable = true;
+    config = {
+      safe.directory = [ "/etc/nixos" ];
+    };
+  };
+
+  # 🔑 Droits d'accès et modification pour l'utilisateur sur /etc/nixos
+  systemd.tmpfiles.rules = [
+    "Z /etc/nixos 0775 ${cfg.username} users - -"
+  ];
 }
