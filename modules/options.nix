@@ -301,6 +301,22 @@ in
         };
       };
 
+      antigravity = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe l'environnement de développement et IDE Antigravity.";
+        };
+      };
+
+      pearDesktop = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe l'application de bureau Pear Desktop.";
+        };
+      };
+
 
       davinciResolve = {
         version = lib.mkOption {

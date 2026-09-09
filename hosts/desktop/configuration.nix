@@ -75,6 +75,8 @@
       stremio.enable = vars.stremio or true;
       vlc.enable = vars.vlc or true;
       mpv.enable = vars.mpv or true;
+      antigravity.enable = vars.antigravity or true;
+      pearDesktop.enable = vars.pearDesktop or true;
       davinciResolve.version = vars.davinciResolve or "none";
 
       aiSuite = {

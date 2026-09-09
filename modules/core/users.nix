@@ -26,8 +26,6 @@ in
       popsicle
       bazaar
       nil
-      pkgs-unstable.antigravity-ide
-      pkgs-unstable.pear-desktop
 
       # 🛠️ Outils CLI & Shell
       fzf
@@ -36,22 +34,26 @@ in
       fastfetch
       git
       gh
-      fishPlugins.done
-      fishPlugins.fzf-fish
-      fishPlugins.forgit
-      fishPlugins.hydro
-      fishPlugins.grc
 
       # 🌐 Réseau
       wireguard-tools
     ]
+    ++ lib.optional (config.chomiamos.services.antigravity.enable) pkgs-unstable.antigravity-ide
+    ++ lib.optional (config.chomiamos.services.pearDesktop.enable) pkgs-unstable.pear-desktop
     ++ lib.optional (config.chomiamos.discordClient == "discord") pkgs.discord
     ++ lib.optional (config.chomiamos.services.stremio.enable) pkgs.stremio-linux-shell
     ++ lib.optional (config.chomiamos.services.vlc.enable) pkgs.vlc
     ++ lib.optional (config.chomiamos.services.mpv.enable) pkgs.mpv
     ++ lib.optional (config.chomiamos.services.tailscale.enable) pkgs.tailscale
     ++ lib.optional (config.chomiamos.services.localsend.enable) pkgs.localsend
-    ++ lib.optional (config.chomiamos.services.motrix.enable) pkgs.motrix;
+    ++ lib.optional (config.chomiamos.services.motrix.enable) pkgs.motrix
+    ++ lib.optionals (cfg.shell == "fish") [
+      fishPlugins.done
+      fishPlugins.fzf-fish
+      fishPlugins.forgit
+      fishPlugins.hydro
+      fishPlugins.grc
+    ];
   };
 
   # Activation du démon Tailscale
