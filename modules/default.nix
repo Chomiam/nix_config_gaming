@@ -12,6 +12,7 @@
     ./hardware
     ./desktop
     ./gaming
+    ./emulation
     ./services
   ];
 }

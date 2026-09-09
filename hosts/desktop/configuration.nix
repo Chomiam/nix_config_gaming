@@ -59,6 +59,15 @@
       mountGamesDisk = vars.gaming.mountGamesDisk or true;
     };
 
+    emulation = {
+      enable = vars.emulation.enable or false;
+      frontend = vars.emulation.frontend or "none";
+      es-de = {
+        enable = (vars.emulation.enable or false) && ((vars.emulation.frontend or "es-de") == "es-de");
+        autoCheckUpdates = vars.emulation.autoCheckUpdates or true;
+      };
+    };
+
     services = {
       virtualisation.enable = vars.virtualisation.enable or false;
       samba.enable = true;

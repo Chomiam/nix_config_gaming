@@ -177,6 +177,35 @@ in
       };
     };
 
+    # Suite d'Émulation & Rétrogaming
+    emulation = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Active la suite d'émulation et de rétrogaming.";
+      };
+
+      frontend = lib.mkOption {
+        type = lib.types.enum [ "none" "es-de" ];
+        default = "none";
+        description = "Frontend graphique d'émulation (ex: es-de pour EmulationStation Desktop Edition).";
+      };
+
+      es-de = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Active EmulationStation Desktop Edition (ES-DE) AppImage.";
+        };
+
+        autoCheckUpdates = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Vérifier automatiquement les mises à jour d'ES-DE lors des opérations de mise à jour système.";
+        };
+      };
+    };
+
     # Services Système & Applications
     services = {
       virtualisation = {

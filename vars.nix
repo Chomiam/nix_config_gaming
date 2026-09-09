@@ -106,6 +106,18 @@
   };
 
   # =========================================================================
+  # 🕹️ SUITE D'ÉMULATION & RÉTROGAMING
+  # Options disponibles :
+  # - enable   : true | false (Active la suite d'émulation)
+  # - frontend : "none" | "es-de" (Frontend ES-DE AppImage)
+  # =========================================================================
+  emulation = {
+    enable = true;
+    frontend = "es-de";
+    autoCheckUpdates = true;
+  };
+
+  # =========================================================================
   # 🏎️ PRISE EN CHARGE DES VOLANTS & PERIPHERIQUES DE SIMRACING (OVERSTEER)
   # Options disponibles : true | false
   #
