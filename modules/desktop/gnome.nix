@@ -12,7 +12,7 @@ let
     value = str;
     __toString = self: str;
   };
-  blurPipelines = mkRawGVariant "{'pipeline_default': {'name': <'Default'>, 'effects': <[{'type': <'native_static_gaussian_blur'>, 'id': <'effect_000000000000'>, 'params': <{'radius': <30>, 'brightness': <0.6>}>}]>}, 'pipeline_default_rounded': {'name': <'Default rounded'>, 'effects': <[{'type': <'native_static_gaussian_blur'>, 'id': <'effect_000000000001'>, 'params': <{'radius': <30>, 'brightness': <0.6>}>}]>}}";
+  blurPipelines = mkRawGVariant "{'pipeline_default': {'name': <'Default'>, 'effects': <[<{'type': <'native_static_gaussian_blur'>, 'id': <'effect_000000000000'>, 'params': <{'radius': <30>, 'brightness': <0.6>}>}>]>}, 'pipeline_default_rounded': {'name': <'Default rounded'>, 'effects': <[<{'type': <'native_static_gaussian_blur'>, 'id': <'effect_000000000001'>, 'params': <{'radius': <30>, 'brightness': <0.6>}>}>]>}}";
 in
 {
   # =========================================================================
