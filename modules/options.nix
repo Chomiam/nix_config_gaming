@@ -250,12 +250,6 @@ in
           description = "Active l'émulateur Game Boy / GBC / GBA mGBA (standalone Qt unstable).";
         };
 
-        duckstation = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Active l'émulateur PlayStation 1 DuckStation (standalone).";
-        };
-
         rpcs3 = lib.mkOption {
           type = lib.types.bool;
           default = false;

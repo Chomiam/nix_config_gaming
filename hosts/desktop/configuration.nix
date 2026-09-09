@@ -76,7 +76,6 @@
         ppsspp = vars.emulation.standalone.ppsspp or true;
         melonds = vars.emulation.standalone.melonds or true;
         mgba = vars.emulation.standalone.mgba or true;
-        duckstation = vars.emulation.standalone.duckstation or true;
         rpcs3 = vars.emulation.standalone.rpcs3 or false;
       };
     };

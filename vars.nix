@@ -129,7 +129,6 @@
       ppsspp = true;      # PlayStation Portable
       melonds = true;     # Nintendo DS
       mgba = true;        # Game Boy / GBC / GBA
-      duckstation = true; # PlayStation 1
       rpcs3 = false;      # PlayStation 3 (optionnel)
     };
   };

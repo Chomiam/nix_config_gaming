@@ -56,10 +56,12 @@ let
     fbneo
     mame
 
-    # 🎮 3D Rétro & Consoles de salon (fallback RetroArch)
-    mupen64plus
+    # 🎮 PlayStation 1 (SwanStation haute performance & Beetle PSX HW précision)
     swanstation
     beetle-psx-hw
+
+    # 🎮 3D Rétro & Consoles de salon
+    mupen64plus
     beetle-saturn
     flycast
     melonds
@@ -69,11 +71,6 @@ let
     prosystem
   ]);
 
-  # Wrapper pour DuckStation (lance la version Flatpak officielle de manière transparente)
-  duckstation-bin = pkgs.writeShellScriptBin "duckstation" ''
-    exec flatpak run org.duckstation.DuckStation "$@"
-  '';
-
   # Liste des émulateurs autonomes (standalone) sélectionnés
   standalonePackages = [ ]
     ++ lib.optional (cfg.standalone.eden) pkgs-unstable.eden
@@ -82,8 +79,7 @@ let
     ++ lib.optional (cfg.standalone.ppsspp) pkgs-unstable.ppsspp
     ++ lib.optional (cfg.standalone.melonds) pkgs-unstable.melonds
     ++ lib.optional (cfg.standalone.mgba) pkgs-unstable.mgba
-    ++ lib.optional (cfg.standalone.rpcs3) pkgs-unstable.rpcs3
-    ++ lib.optional (cfg.standalone.duckstation) duckstation-bin;
+    ++ lib.optional (cfg.standalone.rpcs3) pkgs-unstable.rpcs3;
 
 in
 {
@@ -103,10 +99,7 @@ in
       ++ lib.optional cfg.retroarch.enable retroarchWithCores
       ++ standalonePackages;
 
-    # 3. Installation automatique de DuckStation via Flatpak si activé
-    services.flatpak.packages = lib.optional cfg.standalone.duckstation "org.duckstation.DuckStation";
-
-    # 4. Création déclarative de l'arborescence des ROMs et BIOS
+    # 3. Création déclarative de l'arborescence des ROMs et BIOS
     system.activationScripts.emulationDirs = lib.stringAfter [ "users" ] ''
       homeDir="/home/${cfgUser}"
       if [ -d "$homeDir" ]; then
