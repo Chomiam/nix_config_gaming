@@ -49,6 +49,7 @@ in
       gnomeExtensions.vitals
       gnomeExtensions.clipboard-indicator
       gnomeExtensions.arcmenu
+      gnomeExtensions.no-overview
     ];
 
     # Déploiement du fond d'écran officiel par défaut
@@ -66,6 +67,7 @@ in
               "arcmenu@arcmenu.com"
               "blur-my-shell@aunetx"
               "dash-to-dock@micxgx.gmail.com"
+              "no-overview@fthx"
             ];
           };
 
