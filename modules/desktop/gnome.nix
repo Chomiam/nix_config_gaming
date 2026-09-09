@@ -120,8 +120,13 @@ in
             "org.gnome.Nautilus.desktop"
             "io.github.kolunmi.Bazaar.desktop"
             browserInfo.desktopFile
-            "discord.desktop"
-          ] ++ pkgs.lib.optionals cfg.gaming.launchers.steam [
+          ] ++ (
+            if cfg.discordClient == "discord" then [ "discord.desktop" ]
+            else if cfg.discordClient == "equibop" then [ "io.github.equicord.equibop.desktop" ]
+            else if cfg.discordClient == "vesktop" then [ "dev.vencord.Vesktop.desktop" ]
+            else []
+          ) ++ pkgs.lib.optionals cfg.gaming.launchers.steam [
+
             "steam.desktop"
           ] ++ pkgs.lib.optionals cfg.gaming.launchers.lutris [
             "net.lutris.Lutris.desktop"

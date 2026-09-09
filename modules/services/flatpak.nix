@@ -42,8 +42,11 @@ in
           appId = "com.nvidia.geforcenow";
           origin = "GeForceNOW";
         }
-      ];
+      ]
+      ++ lib.optional (config.chomiamos.discordClient == "equibop") "io.github.equicord.equibop"
+      ++ lib.optional (config.chomiamos.discordClient == "vesktop") "dev.vencord.Vesktop";
     };
+
 
     # 📌 Override du fichier .desktop de GeForce NOW avec StartupWMClass
     # Permet à GNOME et COSMIC d'associer la fenêtre ouverte (WMClass: GeForceNOW) au raccourci du dock

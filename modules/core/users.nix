@@ -27,7 +27,6 @@ in
       mpv
 
       # 💼 Productivité & Bureautique
-      discord
       onlyoffice-desktopeditors
       popsicle
       bazaar
@@ -53,8 +52,9 @@ in
       localsend
       wireguard-tools
       motrix
-    ];
+    ] ++ lib.optional (config.chomiamos.discordClient == "discord") pkgs.discord;
   };
+
 
   # Activation dynamique du Shell choisi & Lancement de Fastfetch
   programs.fish = lib.mkIf (cfg.shell == "fish") {

@@ -54,6 +54,18 @@
   browser = "chrome";
 
   # =========================================================================
+  # 💬 CLIENT DE COMMUNICATION DISCORD
+  # Options disponibles : "discord" | "equibop" | "vesktop" | "none"
+  #
+  # - "discord" : Client officiel Discord (Paquet Nix natif)
+  # - "equibop" : Client Equibop (Flatpak Flathub : io.github.equicord.equibop)
+  # - "vesktop" : Client Vesktop Vencord (Flatpak Flathub : dev.vencord.Vesktop)
+  # - "none"    : Aucun client Discord installé
+  # =========================================================================
+  discordClient = "discord";
+
+
+  # =========================================================================
   # 🛡️ PARE-FEU RÉSEAU (FIREWALL)
   # Options disponibles : true | false
   #

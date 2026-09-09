@@ -101,8 +101,9 @@ in
               "com.system76.CosmicFiles",
               "io.github.kolunmi.Bazaar",
               "${browserInfo.cosmicId}",
-              "discord",
+${if cfg.discordClient == "discord" then "              \"discord\",\n" else if cfg.discordClient == "equibop" then "              \"io.github.equicord.equibop\",\n" else if cfg.discordClient == "vesktop" then "              \"dev.vencord.Vesktop\",\n" else ""}\
 ${if cfg.gaming.launchers.steam then "              \"steam\",\n" else ""}\
+
 ${if cfg.gaming.launchers.lutris then "              \"net.lutris.Lutris\",\n" else ""}\
 ${if cfg.gaming.launchers.heroic then "              \"com.heroicgameslauncher.hgl\",\n" else ""}\
 ${if cfg.gaming.launchers.faugus then "              \"faugus-launcher\",\n" else ""}\

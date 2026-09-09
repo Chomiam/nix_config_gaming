@@ -117,6 +117,13 @@ in
       description = "Navigateur web par défaut du système.";
     };
 
+    discordClient = lib.mkOption {
+      type = lib.types.enum [ "discord" "equibop" "vesktop" "none" ];
+      default = "discord";
+      description = "Client Discord à installer (discord système, equibop flatpak, vesktop flatpak ou none).";
+    };
+
+
     # Gaming & Divertissement
     gaming = {
       enable = lib.mkOption {

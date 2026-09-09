@@ -44,6 +44,7 @@
     };
 
     browser = vars.browser;
+    discordClient = vars.discordClient or "discord";
 
     gaming = {
       enable = vars.gaming.enable or true;
