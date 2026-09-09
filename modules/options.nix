@@ -88,7 +88,7 @@ in
     # Matériel & Graphisme
     hardware = {
       gpu = lib.mkOption {
-        type = lib.types.enum [ "amd" "nvidia" "nvidia-legacy" "intel" "none" ];
+        type = lib.types.enum [ "amd" "nvidia" "nvidia-legacy" "intel" "vm" "none" ];
         default = "amd";
         description = "Sélection du pilote graphique principal et optimisations noyau associées.";
       };

@@ -11,6 +11,7 @@
     ./nvidia.nix
     ./nvidia-legacy.nix
     ./intel.nix
+    ./vm.nix
     ./steering-wheels.nix
   ];
 }
