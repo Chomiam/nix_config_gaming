@@ -77,6 +77,7 @@
       mpv.enable = vars.mpv or true;
       antigravity.enable = vars.antigravity or true;
       pearDesktop.enable = vars.pearDesktop or true;
+      kdenlive.enable = vars.kdenlive or false;
       davinciResolve.version = vars.davinciResolve or "none";
 
       aiSuite = {

@@ -317,6 +317,13 @@ in
         };
       };
 
+      kdenlive = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe l'éditeur vidéo non-linéaire libre Kdenlive.";
+        };
+      };
 
       davinciResolve = {
         version = lib.mkOption {
