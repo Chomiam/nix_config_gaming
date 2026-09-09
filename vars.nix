@@ -129,6 +129,7 @@
       ppsspp = true;      # PlayStation Portable
       melonds = true;     # Nintendo DS
       mgba = true;        # Game Boy / GBC / GBA
+      azahar = true;      # Nintendo 3DS (Azahar Qt unstable)
       rpcs3 = false;      # PlayStation 3 (optionnel)
     };
   };

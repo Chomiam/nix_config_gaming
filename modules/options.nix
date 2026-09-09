@@ -250,6 +250,12 @@ in
           description = "Active l'émulateur Game Boy / GBC / GBA mGBA (standalone Qt unstable).";
         };
 
+        azahar = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active l'émulateur Nintendo 3DS Azahar (standalone Qt unstable).";
+        };
+
         rpcs3 = lib.mkOption {
           type = lib.types.bool;
           default = false;

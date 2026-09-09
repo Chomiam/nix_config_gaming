@@ -79,6 +79,7 @@ let
     ++ lib.optional (cfg.standalone.ppsspp) pkgs-unstable.ppsspp
     ++ lib.optional (cfg.standalone.melonds) pkgs-unstable.melonds
     ++ lib.optional (cfg.standalone.mgba) pkgs-unstable.mgba
+    ++ lib.optional (cfg.standalone.azahar) pkgs-unstable.azahar
     ++ lib.optional (cfg.standalone.rpcs3) pkgs-unstable.rpcs3;
 
 in
@@ -105,7 +106,8 @@ in
       if [ -d "$homeDir" ]; then
         romsDir="$homeDir/Jeux/ROMs"
         biosDir="$homeDir/Jeux/BIOS"
-        mkdir -p "$romsDir"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,gamecube,wii,switch,psx,ps2,psp,arcade} "$biosDir"
+        mkdir -p "$romsDir"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,n3ds,gamecube,wii,switch,psx,ps2,psp,arcade} "$biosDir"
+        ln -sfn "$romsDir/n3ds" "$romsDir/3ds"
         chown -R ${cfgUser}:users "$homeDir/Jeux"
         chmod -R u+rwX,g+rwX "$homeDir/Jeux"
       fi

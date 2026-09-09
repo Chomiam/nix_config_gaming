@@ -76,6 +76,7 @@
         ppsspp = vars.emulation.standalone.ppsspp or true;
         melonds = vars.emulation.standalone.melonds or true;
         mgba = vars.emulation.standalone.mgba or true;
+        azahar = vars.emulation.standalone.azahar or true;
         rpcs3 = vars.emulation.standalone.rpcs3 or false;
       };
     };
