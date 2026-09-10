@@ -31,12 +31,13 @@ in
     };
 
     # Active automatiquement le débogage CEF dans Steam (requis par Decky Loader pour injecter son interface)
+    # ⚠️ Ne JAMAIS faire 'mkdir -p ~/.steam/steam' car Steam exige que ~/.steam/steam soit un lien symbolique vers ~/.local/share/Steam.
     systemd.services.steam-cef-debug = {
       description = "Activer le débogage distant Steam CEF pour Decky Loader";
       serviceConfig = {
         Type = "oneshot";
         User = username;
-        ExecStart = "${pkgs.bash}/bin/bash -c 'mkdir -p ~/.steam/steam ~/.local/share/Steam && touch ~/.steam/steam/.cef-enable-remote-debugging ~/.local/share/Steam/.cef-enable-remote-debugging'";
+        ExecStart = "${pkgs.bash}/bin/bash -c 'mkdir -p ~/.local/share/Steam ~/.steam && if [ -d ~/.steam/steam ] && [ ! -L ~/.steam/steam ]; then rm -rf ~/.steam/steam; fi && if [ ! -e ~/.steam/steam ]; then ln -s ~/.local/share/Steam ~/.steam/steam; fi && touch ~/.local/share/Steam/.cef-enable-remote-debugging'";
       };
       wantedBy = [ "multi-user.target" ];
     };

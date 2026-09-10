@@ -143,7 +143,7 @@ in
     flake = "/etc/nixos";
   };
 
-  # 🔒 Configuration globale Git pour autoriser /etc/nixos
+  # 🔒 Configuration globale Git pour autoriser /etc/nixos et protéger les fichiers machine
   programs.git = {
     enable = true;
     config = {
@@ -152,6 +152,11 @@ in
         "/etc/nixos/*"
         "/etc/nixos/.git"
       ];
+      merge = {
+        ours = {
+          driver = "true";
+        };
+      };
     };
   };
 
@@ -160,6 +165,46 @@ in
     if [ -d /etc/nixos ]; then
       chown -R ${cfg.username}:users /etc/nixos
       chmod -R u+rwX,g+rwX /etc/nixos
+      # Garantir que git utilise le merge driver 'ours' localement
+      if [ -d /etc/nixos/.git ]; then
+        ${pkgs.git}/bin/git -C /etc/nixos config merge.ours.driver true || true
+      fi
+    fi
+  '';
+
+  # 🛡️ Sauvegarde permanente et inviolable du vars.nix et hardware-configuration.nix
+  system.activationScripts.etcNixosBackup = lib.stringAfter [ "users" "groups" ] ''
+    # 1. Sauvegarde et sécurisation de vars.nix
+    if [ -f /etc/nixos/vars.nix ]; then
+      # Si vars.nix est corrompu par des marqueurs de conflit Git, tenter restauration d'urgence
+      if grep -qE '^(<{7}|={7}|>{7})' /etc/nixos/vars.nix 2>/dev/null; then
+        if [ -f /etc/nixos/.vars.nix.backup ]; then
+          echo "⚠️ Détection de conflits Git dans vars.nix ! Restauration automatique depuis la sauvegarde..."
+          cp -f /etc/nixos/.vars.nix.backup /etc/nixos/vars.nix
+        fi
+      fi
+
+      # Sauvegarder uniquement si la sauvegarde n'existe pas encore ou si elle est saine
+      if [ ! -f /etc/nixos/.vars.nix.backup ]; then
+        cp -f /etc/nixos/vars.nix /etc/nixos/.vars.nix.backup
+        chmod 0600 /etc/nixos/.vars.nix.backup
+      else
+        BACKUP_USER=$(grep -oP 'username\s*=\s*"\K[^"]+' /etc/nixos/.vars.nix.backup 2>/dev/null || true)
+        CURRENT_USER=$(grep -oP 'username\s*=\s*"\K[^"]+' /etc/nixos/vars.nix 2>/dev/null || true)
+        # Ne jamais écraser un compte utilisateur personnalisé par le compte générique
+        if [ -n "$CURRENT_USER" ] && { [ "$BACKUP_USER" = "$CURRENT_USER" ] || [ "$BACKUP_USER" = "chomiam" ]; }; then
+          cp -f /etc/nixos/vars.nix /etc/nixos/.vars.nix.backup
+          chmod 0600 /etc/nixos/.vars.nix.backup
+        fi
+      fi
+    fi
+
+    # 2. Sauvegarde de hardware-configuration.nix
+    if [ -f /etc/nixos/hosts/desktop/hardware-configuration.nix ]; then
+      if [ ! -f /etc/nixos/.hardware-configuration.nix.backup ]; then
+        cp -f /etc/nixos/hosts/desktop/hardware-configuration.nix /etc/nixos/.hardware-configuration.nix.backup
+        chmod 0600 /etc/nixos/.hardware-configuration.nix.backup
+      fi
     fi
   '';
 

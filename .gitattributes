@@ -1,0 +1,5 @@
+# 🛡️ Protection des fichiers de configuration spécifiques à chaque machine
+# Empêche tout écrasement ou conflit lors d'un 'git pull' ou 'git merge'
+vars.nix merge=ours
+hosts/desktop/hardware-configuration.nix merge=ours
+hardware-configuration.nix merge=ours
