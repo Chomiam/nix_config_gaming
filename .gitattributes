@@ -3,3 +3,5 @@
 vars.nix merge=ours
 hosts/desktop/hardware-configuration.nix merge=ours
 hardware-configuration.nix merge=ours
+hosts/desktop/mount.nix merge=ours
+mount.nix merge=ours
