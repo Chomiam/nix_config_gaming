@@ -12,11 +12,42 @@ let
   # Frontend ES-DE brut
   es-de-base = pkgs.callPackage ../../pkgs/es-de { };
 
-  # Émulateurs devant être accessibles directement dans le PATH d'ES-DE (dont Eden pour la Switch)
+  # Wrapper DuckStation reliant ES-DE au cœur SwanStation / DuckStation de RetroArch
+  duckstation-wrapper = pkgs.runCommand "duckstation-wrapper" { } ''
+    mkdir -p $out/bin
+    cat << 'EOF' > $out/bin/duckstation
+#!/usr/bin/env bash
+set -euo pipefail
+CORE="${retroarchWithCores}/lib/retroarch/cores/swanstation_libretro.so"
+ROM=""
+EXTRA_ARGS=()
+for arg in "$@"; do
+  case "$arg" in
+    -batch|-nogui|-fullscreen|-fastboot) ;;
+    -*) EXTRA_ARGS+=("$arg") ;;
+    *) ROM="$arg" ;;
+  esac
+done
+
+if [ -n "$ROM" ]; then
+  exec ${retroarchWithCores}/bin/retroarch -L "$CORE" "''${EXTRA_ARGS[@]}" "$ROM"
+else
+  exec ${retroarchWithCores}/bin/retroarch -L "$CORE" "$@"
+fi
+EOF
+    chmod +x $out/bin/duckstation
+    ln -s duckstation $out/bin/duckstation-qt
+    ln -s duckstation $out/bin/duckstation-nogui
+  '';
+
+  # Émulateurs devant être accessibles directement dans le PATH d'ES-DE (dont Eden pour la Switch et DuckStation)
   emulatorsPath = lib.makeBinPath (
     [ pkgs-unstable.eden ]
     ++ standalonePackages
-    ++ lib.optional cfg.retroarch.enable retroarchWithCores
+    ++ lib.optionals cfg.retroarch.enable [
+      retroarchWithCores
+      duckstation-wrapper
+    ]
   );
 
   # Frontend ES-DE enveloppé avec le PATH des émulateurs
@@ -109,13 +140,19 @@ in
       chomiamos-update
     ]
     ++ lib.optional (cfg.frontend == "es-de" || cfg.es-de.enable) es-de
-    ++ lib.optional cfg.retroarch.enable retroarchWithCores
+    ++ lib.optionals cfg.retroarch.enable [
+      retroarchWithCores
+      duckstation-wrapper
+    ]
     ++ standalonePackages;
 
     # 2. Ajout des raccourcis au profil utilisateur
     users.users."${cfgUser}".packages = [ ]
       ++ lib.optional (cfg.frontend == "es-de" || cfg.es-de.enable) es-de
-      ++ lib.optional cfg.retroarch.enable retroarchWithCores
+      ++ lib.optionals cfg.retroarch.enable [
+        retroarchWithCores
+        duckstation-wrapper
+      ]
       ++ standalonePackages;
 
     # 3. Création déclarative de l'arborescence des ROMs et BIOS
@@ -129,10 +166,23 @@ in
         chown -R ${cfgUser}:users "$homeDir/Jeux"
         chmod -R u+rwX,g+rwX "$homeDir/Jeux"
 
-        # Raccourci local de détection statique pour ES-DE (Nintendo Switch Eden)
+        # Raccourcis locaux de détection statique pour ES-DE
         mkdir -p "$homeDir/.local/bin"
-        ln -sfn "${pkgs-unstable.eden}/bin/eden" "$homeDir/.local/bin/eden"
-        chown ${cfgUser}:users "$homeDir/.local/bin/eden" || true
+        ${lib.optionalString cfg.standalone.eden ''
+          ln -sfn "${pkgs-unstable.eden}/bin/eden" "$homeDir/.local/bin/eden"
+          chown ${cfgUser}:users "$homeDir/.local/bin/eden" || true
+        ''}
+
+        ${lib.optionalString cfg.retroarch.enable ''
+          ln -sfn "${duckstation-wrapper}/bin/duckstation" "$homeDir/.local/bin/duckstation"
+          ln -sfn "${duckstation-wrapper}/bin/duckstation-qt" "$homeDir/.local/bin/duckstation-qt"
+          chown ${cfgUser}:users "$homeDir/.local/bin/duckstation"* || true
+
+          # Lien direct vers les cœurs RetroArch (SwanStation, Beetle PSX HW, etc.) pour ES-DE
+          mkdir -p "$homeDir/.config/retroarch"
+          ln -sfn "${retroarchWithCores}/lib/retroarch/cores" "$homeDir/.config/retroarch/cores"
+          chown -R ${cfgUser}:users "$homeDir/.config/retroarch" || true
+        ''}
       fi
     '';
 
