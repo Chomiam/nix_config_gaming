@@ -132,11 +132,22 @@ in
   };
 
   # -------------------------------------------------------------------------
-  # 🔊 AUDIO, IMPRESSION & MATÉRIEL
+  # 🔊 AUDIO, BLUETOOTH, IMPRESSION & MATÉRIEL
   # -------------------------------------------------------------------------
   services.printing.enable = true;
   hardware.enableAllFirmware = true;
   security.rtkit.enable = true;
+
+  # Support Bluetooth BlueZ (Casques audio, manettes Xbox/PS5, périphériques)
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    settings = {
+      General = {
+        Experimental = true; # Remontée du niveau de batterie des manettes et casques
+      };
+    };
+  };
 
   # -------------------------------------------------------------------------
   # 🔐 SÉCURITÉ & PRIVILÈGES SUDO (Feedback visuel des mots de passe avec des étoiles *)

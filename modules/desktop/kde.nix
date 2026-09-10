@@ -55,6 +55,8 @@ in
       kdePackages.kconfig
       kdePackages.plasma-workspace
       kdePackages.partitionmanager
+      kdePackages.bluedevil
+      kdePackages.bluez-qt
     ];
 
     # Déploiement du fond d'écran officiel par défaut
