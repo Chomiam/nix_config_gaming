@@ -63,7 +63,6 @@ in
 
     # Paquets utilisateur gaming pour l'utilisateur principal
     users.users."${cfg.user.username}".packages = with pkgs; [
-      eden
       ludusavi
       pkgs-unstable.protonplus
       pkgs-unstable.mangohud
