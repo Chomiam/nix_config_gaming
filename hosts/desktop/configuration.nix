@@ -87,7 +87,7 @@
       docker.enable = true;
       nix-ld.enable = true;
       flatpak.enable = true;
-      obs.enable = true;
+      obs.enable = vars.obsStudio or true;
       neovim.enable = true;
       blender.enable = vars.blender or false;
       godot.enable = vars.godot or false;

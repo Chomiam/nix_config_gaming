@@ -150,6 +150,7 @@ in
           ] ++ [
             "onlyoffice-desktopeditors.desktop"
             "thunderbird.desktop"
+          ] ++ pkgs.lib.optionals cfg.services.obs.enable [
             "com.obsproject.Studio.desktop"
           ];
         };

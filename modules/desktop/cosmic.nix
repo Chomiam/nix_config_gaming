@@ -110,7 +110,7 @@ ${if cfg.gaming.launchers.faugus then "              \"faugus-launcher\",\n" els
 ${if cfg.gaming.geforceNow then "              \"com.nvidia.geforcenow\",\n" else ""}\
               "onlyoffice-desktopeditors",
               "thunderbird",
-              "com.obsproject.Studio",
+${if cfg.services.obs.enable then "              \"com.obsproject.Studio\",\n" else ""}\
           ]
         '';
       };

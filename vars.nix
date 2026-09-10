@@ -184,6 +184,7 @@
   antigravity = true;
   pearDesktop = true;
   kdenlive = true;
+  obsStudio = true;
 
 
   # =========================================================================
