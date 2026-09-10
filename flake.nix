@@ -1,6 +1,15 @@
 {
   description = "Configuration NixOS Modulaire pour Gaming, Matériel (AMD/NVIDIA/Intel) et Home Manager";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://chomiamos-dashboard.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "chomiamos-dashboard.cachix.org-1:DrjJpGp7tzIMJo6s4dQdwWDopszgo1EFkm34PEN+D+w="
+    ];
+  };
+
   # ===========================================================================
   # 📦 INPUTS (SOURCES DES PAQUETS ET MODULES)
   # ===========================================================================
