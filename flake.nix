@@ -58,8 +58,21 @@
   # ===========================================================================
   outputs = { self, nixpkgs, ... }@inputs:
     let
-      # Chargement du fichier unique de variables utilisateur & hôte
-      vars = import ./vars.nix;
+      # Fusion récursive : vars-defaults.nix (schéma de référence) + vars.nix (personnalisations utilisateur)
+      # Les nouvelles variables ajoutées dans vars-defaults.nix sont automatiquement disponibles
+      # chez tous les utilisateurs, même si leur vars.nix ne les contient pas encore.
+      defaults = import ./vars-defaults.nix;
+      userVars = import ./vars.nix;
+      vars = let
+        recursiveMerge = base: override:
+          builtins.mapAttrs (name: baseValue:
+            if override ? ${name} then
+              if builtins.isAttrs baseValue && builtins.isAttrs override.${name}
+              then recursiveMerge baseValue override.${name}
+              else override.${name}
+            else baseValue
+          ) base // (builtins.removeAttrs override (builtins.attrNames base));
+      in recursiveMerge defaults userVars;
 
       desktopSystem = nixpkgs.lib.nixosSystem {
         # Transmet 'inputs' et 'vars' à tous les modules NixOS
