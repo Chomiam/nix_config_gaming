@@ -40,6 +40,7 @@ in
       gnomeExtensions.vitals
       gnomeExtensions.clipboard-indicator
       gnomeExtensions.arcmenu
+      gnomeExtensions.user-themes
       gnomeExtensions.no-overview
     ];
 

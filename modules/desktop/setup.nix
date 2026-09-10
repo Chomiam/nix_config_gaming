@@ -6,6 +6,11 @@ let
   enableCosmic = cfg.desktop.env == "cosmic" || cfg.desktop.env == "both";
   enableCinnamon = cfg.desktop.env == "cinnamon" || cfg.desktop.env == "both";
 
+  catppuccinTheme = pkgs.catppuccin-gtk.override {
+    variant = "mocha";
+    accents = [ "lavender" ];
+  };
+
   # =========================================================================
   # 1. CONFIGURATION INITIALE POUR GNOME SHELL (DCONF)
   # =========================================================================
@@ -42,6 +47,7 @@ let
   gnomeFavoritesStr = "[" + (lib.concatMapStringsSep ", " (x: "'${x}'") gnomeFavorites) + "]";
 
   gnomeExtensions = [
+    "user-theme@gnome-shell-extensions.gcampax.github.com"
     "appindicatorsupport@rgcjonas.gmail.com"
     "Vitals@CoreCoding.com"
     "clipboard-indicator@tudmotu.com"
@@ -58,6 +64,9 @@ let
     enabled-extensions=${gnomeExtensionsStr}
     favorite-apps=${gnomeFavoritesStr}
 
+    [org/gnome/shell/extensions/user-theme]
+    name='catppuccin-mocha-lavender-standard'
+
     [org/gnome/desktop/wm/preferences]
     button-layout='icon:minimize,maximize,close'
 
@@ -67,7 +76,8 @@ let
     [org/gnome/desktop/interface]
     accent-color='purple'
     color-scheme='prefer-dark'
-    gtk-theme='adw-gtk3-dark'
+    gtk-theme='catppuccin-mocha-lavender-standard'
+    cursor-theme='catppuccin-mocha-lavender-cursors'
     icon-theme='Papirus-Dark'
 
     [org/gnome/desktop/background]
@@ -230,7 +240,8 @@ let
 
     [org/cinnamon/desktop/interface]
     clock-use-24h=true
-    gtk-theme='adw-gtk3-dark'
+    gtk-theme='catppuccin-mocha-lavender-standard'
+    cursor-theme='catppuccin-mocha-lavender-cursors'
     icon-theme='Papirus-Dark'
 
     [org/cinnamon/desktop/background]
@@ -264,6 +275,15 @@ let
     if [ "$FORCE" -eq 1 ] || [ ! -f "$SENTINEL" ]; then
       echo "[ChomiamOS] Initialisation de l'interface utilisateur..."
       ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/chomiamos"
+
+      # Déploiement sécurisé du thème Catppuccin GTK4 et GTK3 dans le profil utilisateur
+      ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/gtk-4.0" "$HOME/.config/gtk-3.0"
+      ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
+      ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk-dark.css" "$HOME/.config/gtk-4.0/gtk-dark.css"
+      ${pkgs.coreutils}/bin/ln -sfn "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/assets" "$HOME/.config/gtk-4.0/assets"
+      ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
+      ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk-dark.css" "$HOME/.config/gtk-3.0/gtk-dark.css"
+      ${pkgs.coreutils}/bin/ln -sfn "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/assets" "$HOME/.config/gtk-3.0/assets"
 
       ${lib.optionalString enableGnome ''
       # Initialisation GNOME (dconf)
@@ -331,7 +351,17 @@ in
   environment.systemPackages = [
     setupScript
     resetScript
+    catppuccinTheme
+    pkgs.catppuccin-cursors.mochaLavender
   ];
+
+  # Thème système global GTK4 & GTK3 (Fallback XDG pour Libadwaita et toutes les sessions)
+  environment.etc."xdg/gtk-4.0/gtk.css".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk.css";
+  environment.etc."xdg/gtk-4.0/gtk-dark.css".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk-dark.css";
+  environment.etc."xdg/gtk-4.0/assets".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/assets";
+  environment.etc."xdg/gtk-3.0/gtk.css".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk.css";
+  environment.etc."xdg/gtk-3.0/gtk-dark.css".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk-dark.css";
+  environment.etc."xdg/gtk-3.0/assets".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/assets";
 
   # Dconf global activé
   programs.dconf.enable = lib.mkDefault true;
