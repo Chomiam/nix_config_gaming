@@ -28,11 +28,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789037270,
-        "narHash": "sha256-qHDJvyT5tCAj/VRaNJZm0RU9/qzy+wyPCAODpWw4SLE=",
+        "lastModified": 1789038442,
+        "narHash": "sha256-tKkIt4cJ2GLwnBv0n7Fu2bLCAxnOA2Z4JurWpjwLWVw=",
         "owner": "Chomiam",
         "repo": "chomiamos-dashboard",
-        "rev": "d0c5197b447c7c8488806e0bf6696183c8342317",
+        "rev": "12a3691487fa9e81fb015b2a4737758944fc9dc4",
         "type": "github"
       },
       "original": {
