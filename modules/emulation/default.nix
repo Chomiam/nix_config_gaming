@@ -12,42 +12,14 @@ let
   # Frontend ES-DE brut
   es-de-base = pkgs.callPackage ../../pkgs/es-de { };
 
-  # Wrapper DuckStation reliant ES-DE au cœur SwanStation / DuckStation de RetroArch
-  duckstation-wrapper = pkgs.runCommand "duckstation-wrapper" { } ''
-    mkdir -p $out/bin
-    cat << 'EOF' > $out/bin/duckstation
-#!/usr/bin/env bash
-set -euo pipefail
-CORE="${retroarchWithCores}/lib/retroarch/cores/swanstation_libretro.so"
-ROM=""
-EXTRA_ARGS=()
-for arg in "$@"; do
-  case "$arg" in
-    -batch|-nogui|-fullscreen|-fastboot) ;;
-    -*) EXTRA_ARGS+=("$arg") ;;
-    *) ROM="$arg" ;;
-  esac
-done
+  # Émulateur PlayStation 1 DuckStation autonome (compilé depuis les sources)
+  duckstationPkg = inputs.duckstation.packages.${pkgs.stdenv.hostPlatform.system}.duckstation;
 
-if [ -n "$ROM" ]; then
-  exec ${retroarchWithCores}/bin/retroarch -L "$CORE" "''${EXTRA_ARGS[@]}" "$ROM"
-else
-  exec ${retroarchWithCores}/bin/retroarch -L "$CORE" "$@"
-fi
-EOF
-    chmod +x $out/bin/duckstation
-    ln -s duckstation $out/bin/duckstation-qt
-    ln -s duckstation $out/bin/duckstation-nogui
-  '';
-
-  # Émulateurs devant être accessibles directement dans le PATH d'ES-DE (dont Eden pour la Switch et DuckStation)
+  # Émulateurs devant être accessibles directement dans le PATH d'ES-DE (dont Eden et DuckStation)
   emulatorsPath = lib.makeBinPath (
     [ pkgs-unstable.eden ]
     ++ standalonePackages
-    ++ lib.optionals cfg.retroarch.enable [
-      retroarchWithCores
-      duckstation-wrapper
-    ]
+    ++ lib.optional cfg.retroarch.enable retroarchWithCores
   );
 
   # Frontend ES-DE enveloppé avec le PATH des émulateurs
@@ -122,6 +94,7 @@ EOF
 
   # Liste des émulateurs autonomes (standalone) sélectionnés
   standalonePackages = [ ]
+    ++ lib.optional (cfg.standalone.duckstation) duckstationPkg
     ++ lib.optional (cfg.standalone.eden) pkgs-unstable.eden
     ++ lib.optional (cfg.standalone.dolphin) pkgs-unstable.dolphin-emu
     ++ lib.optional (cfg.standalone.pcsx2) pkgs-unstable.pcsx2
@@ -140,19 +113,13 @@ in
       chomiamos-update
     ]
     ++ lib.optional (cfg.frontend == "es-de" || cfg.es-de.enable) es-de
-    ++ lib.optionals cfg.retroarch.enable [
-      retroarchWithCores
-      duckstation-wrapper
-    ]
+    ++ lib.optional cfg.retroarch.enable retroarchWithCores
     ++ standalonePackages;
 
     # 2. Ajout des raccourcis au profil utilisateur
     users.users."${cfgUser}".packages = [ ]
       ++ lib.optional (cfg.frontend == "es-de" || cfg.es-de.enable) es-de
-      ++ lib.optionals cfg.retroarch.enable [
-        retroarchWithCores
-        duckstation-wrapper
-      ]
+      ++ lib.optional cfg.retroarch.enable retroarchWithCores
       ++ standalonePackages;
 
     # 3. Création déclarative de l'arborescence des ROMs et BIOS
@@ -173,11 +140,13 @@ in
           chown ${cfgUser}:users "$homeDir/.local/bin/eden" || true
         ''}
 
-        ${lib.optionalString cfg.retroarch.enable ''
-          ln -sfn "${duckstation-wrapper}/bin/duckstation" "$homeDir/.local/bin/duckstation"
-          ln -sfn "${duckstation-wrapper}/bin/duckstation-qt" "$homeDir/.local/bin/duckstation-qt"
+        ${lib.optionalString cfg.standalone.duckstation ''
+          ln -sfn "${duckstationPkg}/bin/duckstation" "$homeDir/.local/bin/duckstation"
+          ln -sfn "${duckstationPkg}/bin/duckstation-qt" "$homeDir/.local/bin/duckstation-qt"
           chown ${cfgUser}:users "$homeDir/.local/bin/duckstation"* || true
+        ''}
 
+        ${lib.optionalString cfg.retroarch.enable ''
           # Lien direct vers les cœurs RetroArch (SwanStation, Beetle PSX HW, etc.) pour ES-DE
           mkdir -p "$homeDir/.config/retroarch"
           ln -sfn "${retroarchWithCores}/lib/retroarch/cores" "$homeDir/.config/retroarch/cores"

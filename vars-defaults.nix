@@ -85,6 +85,7 @@
     };
 
     standalone = {
+      duckstation = true;
       eden = true;
       dolphin = true;
       pcsx2 = true;

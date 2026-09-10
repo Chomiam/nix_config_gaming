@@ -3,9 +3,11 @@
 
   nixConfig = {
     extra-substituters = [
+      "https://duckstation.cachix.org"
       "https://chomiamos-dashboard.cachix.org"
     ];
     extra-trusted-public-keys = [
+      "duckstation.cachix.org-1:tNC6UMoM5ZojxBRDdPNHC3xBlk7hnClCtsGsho3YiY4="
       "chomiamos-dashboard.cachix.org-1:DrjJpGp7tzIMJo6s4dQdwWDopszgo1EFkm34PEN+D+w="
     ];
   };
@@ -50,6 +52,12 @@
     # ChomiamOS Dashboard (Tableau de bord système officiel en Rust / Tauri v2 / xterm.js)
     chomiamos-dashboard = {
       url = "github:Chomiam/chomiamos-dashboard";
+    };
+
+    # Émulateur PlayStation 1 DuckStation (compilé depuis les sources avec cache Cachix)
+    duckstation = {
+      url = "github:Chomiam/duckstation-nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
 

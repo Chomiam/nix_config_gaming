@@ -214,6 +214,12 @@ in
       };
 
       standalone = {
+        duckstation = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active l'émulateur PlayStation 1 DuckStation (standalone source / Cachix).";
+        };
+
         eden = lib.mkOption {
           type = lib.types.bool;
           default = true;

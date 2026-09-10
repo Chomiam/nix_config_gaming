@@ -70,6 +70,7 @@
         enable = vars.emulation.retroarch.enable or (vars.emulation.enable or false);
       };
       standalone = {
+        duckstation = vars.emulation.standalone.duckstation or true;
         eden = vars.emulation.standalone.eden or true;
         dolphin = vars.emulation.standalone.dolphin or true;
         pcsx2 = vars.emulation.standalone.pcsx2 or true;

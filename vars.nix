@@ -123,6 +123,7 @@
     };
 
     standalone = {
+      duckstation = true; # PlayStation 1 (DuckStation)
       eden = true;        # Nintendo Switch (Eden unstable)
       dolphin = true;     # GameCube & Wii
       pcsx2 = true;       # PlayStation 2
