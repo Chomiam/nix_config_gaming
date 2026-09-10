@@ -47,7 +47,7 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    # ChomiamOS Dashboard (Tableau de bord système officiel en Rust/Slint)
+    # ChomiamOS Dashboard (Tableau de bord système officiel en Rust / Tauri v2 / xterm.js)
     chomiamos-dashboard = {
       url = "github:Chomiam/chomiamos-dashboard";
       inputs.nixpkgs.follows = "nixpkgs";

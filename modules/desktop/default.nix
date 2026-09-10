@@ -9,6 +9,7 @@
   imports = [
     ./gnome.nix
     ./cosmic.nix
+    ./cinnamon.nix
     ./setup.nix
   ];
 }

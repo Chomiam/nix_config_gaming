@@ -4,6 +4,7 @@ let
   cfg = config.chomiamos;
   enableGnome = cfg.desktop.env == "gnome" || cfg.desktop.env == "both";
   enableCosmic = cfg.desktop.env == "cosmic" || cfg.desktop.env == "both";
+  enableCinnamon = cfg.desktop.env == "cinnamon" || cfg.desktop.env == "both";
 
   # =========================================================================
   # 1. CONFIGURATION INITIALE POUR GNOME SHELL (DCONF)
@@ -186,7 +187,66 @@ let
   );
 
   # =========================================================================
-  # 3. SCRIPTS DE PROVISIONNEMENT ET DE RÉINITIALISATION
+  # 3. CONFIGURATION INITIALE POUR CINNAMON (DCONF)
+  # =========================================================================
+
+  cinnamonFavorites = [
+    "chomiamos-dashboard.desktop"
+    "kitty.desktop"
+    "cinnamon-settings.desktop"
+    "nemo.desktop"
+    "io.github.kolunmi.Bazaar.desktop"
+    browserInfo.desktopFile
+  ] ++ (
+    if cfg.discordClient == "discord" then [ "discord.desktop" ]
+    else if cfg.discordClient == "equibop" then [ "io.github.equicord.equibop.desktop" ]
+    else if cfg.discordClient == "vesktop" then [ "dev.vencord.Vesktop.desktop" ]
+    else []
+  ) ++ pkgs.lib.optionals cfg.gaming.launchers.steam [
+    "steam.desktop"
+  ] ++ pkgs.lib.optionals cfg.gaming.launchers.lutris [
+    "net.lutris.Lutris.desktop"
+  ] ++ pkgs.lib.optionals cfg.gaming.launchers.heroic [
+    "com.heroicgameslauncher.hgl.desktop"
+  ] ++ pkgs.lib.optionals cfg.gaming.launchers.faugus [
+    "faugus-launcher.desktop"
+  ] ++ pkgs.lib.optionals cfg.gaming.geforceNow [
+    "com.nvidia.geforcenow.desktop"
+  ] ++ [
+    "onlyoffice-desktopeditors.desktop"
+    "thunderbird.desktop"
+  ] ++ pkgs.lib.optionals cfg.services.obs.enable [
+    "com.obsproject.Studio.desktop"
+  ];
+
+  cinnamonFavoritesStr = "[" + (lib.concatMapStringsSep ", " (x: "'${x}'") cinnamonFavorites) + "]";
+
+  cinnamonDefaultsIni = pkgs.writeText "chomiamos-cinnamon-defaults.ini" ''
+    [org/cinnamon]
+    favorite-apps=${cinnamonFavoritesStr}
+
+    [org/cinnamon/desktop/wm/preferences]
+    button-layout='icon:minimize,maximize,close'
+
+    [org/cinnamon/desktop/interface]
+    clock-use-24h=true
+    gtk-theme='adw-gtk3-dark'
+    icon-theme='Papirus-Dark'
+
+    [org/cinnamon/desktop/background]
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
+    picture-options='zoom'
+
+    [org/cinnamon/desktop/screensaver]
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
+    picture-options='zoom'
+
+    [org/cinnamon/theme]
+    name='Mint-Y-Dark'
+  '';
+
+  # =========================================================================
+  # 4. SCRIPTS DE PROVISIONNEMENT ET DE RÉINITIALISATION
   # =========================================================================
 
   setupScript = pkgs.writeShellScriptBin "chomiamos-desktop-setup" ''
@@ -221,6 +281,14 @@ let
         echo "[ChomiamOS] Déploiement des favoris COSMIC par défaut..."
         ${pkgs.coreutils}/bin/cp -f "${cosmicFavoritesJson}" "$COSMIC_FAV_DIR/favorites"
         ${pkgs.coreutils}/bin/chmod 644 "$COSMIC_FAV_DIR/favorites"
+      fi
+      ''}
+
+      ${lib.optionalString enableCinnamon ''
+      # Initialisation Cinnamon (dconf)
+      if [ -x "${pkgs.dconf}/bin/dconf" ]; then
+        echo "[ChomiamOS] Déploiement des réglages Cinnamon par défaut (fond d'écran, thème, favoris)..."
+        ${pkgs.dconf}/bin/dconf load / < "${cinnamonDefaultsIni}" || true
       fi
       ''}
 
@@ -287,7 +355,7 @@ in
     Type=Application
     Name=ChomiamOS Desktop Setup
     Exec=${setupScript}/bin/chomiamos-desktop-setup
-    OnlyShowIn=GNOME;COSMIC;
+    OnlyShowIn=GNOME;COSMIC;X-Cinnamon;Cinnamon;
     NoDisplay=true
     X-GNOME-Autostart-Phase=Initialization
   '';
