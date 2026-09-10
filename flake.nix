@@ -50,7 +50,6 @@
     # ChomiamOS Dashboard (Tableau de bord système officiel en Rust / Tauri v2 / xterm.js)
     chomiamos-dashboard = {
       url = "github:Chomiam/chomiamos-dashboard";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
