@@ -137,6 +137,13 @@ in
   hardware.enableAllFirmware = true;
   security.rtkit.enable = true;
 
+  # -------------------------------------------------------------------------
+  # 🔐 SÉCURITÉ & PRIVILÈGES SUDO (Feedback visuel des mots de passe avec des étoiles *)
+  # -------------------------------------------------------------------------
+  security.sudo.extraConfig = ''
+    Defaults pwfeedback
+  '';
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;
