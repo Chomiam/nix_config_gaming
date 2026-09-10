@@ -2,7 +2,7 @@
   # =========================================================================
   # 📦 PAQUETS NIX PERSONNALISÉS (CHOMIAMOS)
   # =========================================================================
-  # Ce fichier est géré par l'onglet Paquets du Dashboard ChomiamOS.
+  # Ce fichier est géré par l'onglet Logithèque du Dashboard ChomiamOS.
   # Vous pouvez également y ajouter ou supprimer des paquets manuellement.
   #
   # - stable   : Paquets issus de la branche stable (NixOS 26.05)
