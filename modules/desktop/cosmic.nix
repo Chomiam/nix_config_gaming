@@ -87,33 +87,5 @@ in
       "d /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1 0755 cosmic-greeter cosmic-greeter -"
       "f+ /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1/xkb_config 0644 cosmic-greeter cosmic-greeter - (\n    rules: \"\",\n    model: \"\",\n    layout: \"fr\",\n    variant: \"\",\n    options: None,\n)"
     ];
-
-    # =========================================================================
-    # 📌 CONFIGURATION DES FAVORIS DU DOCK COSMIC (HOME MANAGER)
-    # =========================================================================
-    home-manager.users."${username}" = {
-      xdg.configFile."cosmic/com.system76.CosmicAppList/v1/favorites" = {
-        force = true;
-        text = ''
-          [
-              "kitty",
-              "com.system76.CosmicSettings",
-              "com.system76.CosmicFiles",
-              "io.github.kolunmi.Bazaar",
-              "${browserInfo.cosmicId}",
-${if cfg.discordClient == "discord" then "              \"discord\",\n" else if cfg.discordClient == "equibop" then "              \"io.github.equicord.equibop\",\n" else if cfg.discordClient == "vesktop" then "              \"dev.vencord.Vesktop\",\n" else ""}\
-${if cfg.gaming.launchers.steam then "              \"steam\",\n" else ""}\
-
-${if cfg.gaming.launchers.lutris then "              \"net.lutris.Lutris\",\n" else ""}\
-${if cfg.gaming.launchers.heroic then "              \"com.heroicgameslauncher.hgl\",\n" else ""}\
-${if cfg.gaming.launchers.faugus then "              \"faugus-launcher\",\n" else ""}\
-${if cfg.gaming.geforceNow then "              \"com.nvidia.geforcenow\",\n" else ""}\
-              "onlyoffice-desktopeditors",
-              "thunderbird",
-${if cfg.services.obs.enable then "              \"com.obsproject.Studio\",\n" else ""}\
-          ]
-        '';
-      };
-    };
   };
 }
