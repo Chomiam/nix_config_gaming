@@ -108,6 +108,7 @@
         keepAlive = vars.aiSuite.keepAlive or "0s";
         openWebUiPort = vars.aiSuite.openWebUiPort or 8080;
         searxPort = vars.aiSuite.searxPort or 8888;
+        openFirewall = vars.aiSuite.openFirewall or false;
       };
     };
   };

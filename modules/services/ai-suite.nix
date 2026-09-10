@@ -35,6 +35,9 @@ in
     # 2. 🔍 Service SearXNG : Moteur de recherche local privé pour l'agent IA
     services.searx = {
       enable = true;
+      uwsgiConfig = {
+        http = "127.0.0.1:${toString cfg.searxPort}";
+      };
       settings = {
         server = {
           port = cfg.searxPort;
@@ -52,6 +55,8 @@ in
     services.open-webui = {
       enable = true;
       port = cfg.openWebUiPort;
+      host = if cfg.openFirewall then "0.0.0.0" else "127.0.0.1";
+      openFirewall = cfg.openFirewall;
       environment = {
         OLLAMA_BASE_URL = "http://127.0.0.1:11434";
         ENABLE_RAG_WEB_SEARCH = "True";

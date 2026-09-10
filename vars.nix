@@ -201,8 +201,11 @@
     # Libération instantanée de la VRAM (0s = déchargement immédiat du modèle après génération)
     keepAlive = "0s";
 
-    # Ports des services locaux
+    # Ports des services locaux (Open-WebUI: 8080, SearXNG: 8888, Ollama: 11434)
     openWebUiPort = 8080;
     searxPort = 8888;
+
+    # Pare-feu réseau : autorise l'accès à Open-WebUI depuis d'autres machines du réseau local
+    openFirewall = false;
   };
 }

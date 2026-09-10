@@ -450,6 +450,12 @@ in
           default = 8888;
           description = "Port HTTP du métamoteur SearXNG.";
         };
+
+        openFirewall = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Ouvre le port HTTP d'Open-WebUI dans le pare-feu réseau.";
+        };
       };
     };
   };
