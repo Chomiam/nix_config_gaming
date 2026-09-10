@@ -47,11 +47,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789082344,
-        "narHash": "sha256-EPh02MrQ+9JQxPQkM69H4Lg8P6fW1slLpOHAxoguedc=",
+        "lastModified": 1789082769,
+        "narHash": "sha256-sh3dyGLo/AB+MJOOHhYVRGyz4B6GxyYTzE8HXSD8Pfg=",
         "owner": "Chomiam",
         "repo": "duckstation-nix",
-        "rev": "2a2afd353cb2e58f793a1a60e64ea7f7fabff5fb",
+        "rev": "17e01293fe60ab869c24c532cfdd93f5c47c4251",
         "type": "github"
       },
       "original": {
