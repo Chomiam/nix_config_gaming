@@ -112,7 +112,7 @@ in
     };
 
     browser = lib.mkOption {
-      type = lib.types.enum [ "chrome" "firefox" "zen" "librewolf" "opera" "opera-gx" ];
+      type = lib.types.enum [ "chrome" "firefox" "brave" "zen" "librewolf" "opera" "opera-gx" ];
       default = "chrome";
       description = "Navigateur web par défaut du système.";
     };

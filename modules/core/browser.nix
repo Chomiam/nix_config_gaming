@@ -14,6 +14,7 @@ let
   cosmicId =
     if selected == "chrome" then "google-chrome"
     else if selected == "firefox" then "firefox"
+    else if selected == "brave" then "brave-browser"
     else if selected == "librewolf" then "librewolf"
     else if flatpakAppId != null then flatpakAppId
     else "google-chrome";
@@ -25,6 +26,7 @@ let
   pkg =
     if selected == "chrome" then pkgs.google-chrome
     else if selected == "firefox" then pkgs.firefox
+    else if selected == "brave" then pkgs.brave
     else if selected == "librewolf" then pkgs.librewolf
     else null;
 in
