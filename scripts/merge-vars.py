@@ -28,13 +28,33 @@ MAGENTA = "\033[1;35m"
 CYAN = "\033[1;36m"
 RED = "\033[1;31m"
 
-def find_matching_brace(text, open_idx):
-    """Trouve l'indice de l'accolade fermante '}' correspondant à '{' à open_idx."""
-    depth = 0
+def strip_comment(line):
+    """Retourne la ligne sans le commentaire `# ...` éventuel (en respectant les chaînes)."""
     in_str = False
     escape = False
-    for idx in range(open_idx, len(text)):
-        ch = text[idx]
+    for idx, ch in enumerate(line):
+        if escape:
+            escape = False
+            continue
+        if ch == '\\':
+            escape = True
+            continue
+        if ch == '"':
+            in_str = not in_str
+            continue
+        if not in_str and ch == '#':
+            return line[:idx]
+    return line
+
+def count_delims(line):
+    """Compte les délimiteurs { } [ ] ( ) hors chaînes et hors commentaires."""
+    code_part = strip_comment(line)
+    in_str = False
+    escape = False
+    braces = 0
+    brackets = 0
+    parens = 0
+    for ch in code_part:
         if escape:
             escape = False
             continue
@@ -45,6 +65,50 @@ def find_matching_brace(text, open_idx):
             in_str = not in_str
             continue
         if not in_str:
+            if ch == '{':
+                braces += 1
+            elif ch == '}':
+                braces -= 1
+            elif ch == '[':
+                brackets += 1
+            elif ch == ']':
+                brackets -= 1
+            elif ch == '(':
+                parens += 1
+            elif ch == ')':
+                parens -= 1
+    return braces, brackets, parens
+
+def ends_statement(line):
+    """Vérifie si la partie code d'une ligne se termine par ';'."""
+    code_part = strip_comment(line).rstrip()
+    return code_part.endswith(';')
+
+def find_matching_brace(text, open_idx):
+    """Trouve l'indice de l'accolade fermante '}' correspondant à '{' à open_idx."""
+    depth = 0
+    in_str = False
+    escape = False
+    in_comment = False
+    for idx in range(open_idx, len(text)):
+        ch = text[idx]
+        if in_comment:
+            if ch == '\n':
+                in_comment = False
+            continue
+        if escape:
+            escape = False
+            continue
+        if ch == '\\':
+            escape = True
+            continue
+        if ch == '"':
+            in_str = not in_str
+            continue
+        if not in_str:
+            if ch == '#':
+                in_comment = True
+                continue
             if ch == '{':
                 depth += 1
             elif ch == '}':
@@ -91,23 +155,18 @@ def extract_items(text):
             current_comment = []
 
             accum = [line]
-            brace_count = line.count('{') - line.count('}')
-            paren_count = line.count('(') - line.count(')')
-            bracket_count = line.count('[') - line.count(']')
+            braces, brackets, parens = count_delims(line)
 
-            def ends_statement(l):
-                s = l.strip()
-                return s.endswith(';')
-
-            if not (brace_count == 0 and bracket_count == 0 and paren_count == 0 and ends_statement(line)):
+            if not (braces == 0 and brackets == 0 and parens == 0 and ends_statement(line)):
                 i += 1
                 while i < len(lines):
                     l = lines[i]
                     accum.append(l)
-                    brace_count += l.count('{') - l.count('}')
-                    bracket_count += l.count('[') - l.count(']')
-                    paren_count += l.count('(') - l.count(')')
-                    if brace_count == 0 and bracket_count == 0 and paren_count == 0 and ends_statement(l):
+                    d_b, d_k, d_p = count_delims(l)
+                    braces += d_b
+                    brackets += d_k
+                    parens += d_p
+                    if braces == 0 and brackets == 0 and parens == 0 and ends_statement(l):
                         break
                     i += 1
 
@@ -170,7 +229,7 @@ def insert_missing_in_block(block_text, def_items, user_items, indent=2):
             if dinfo['is_block'] and uinfo['is_block']:
                 sub_def = extract_items(dinfo['block_content'])
                 sub_user = extract_items(uinfo['block_content'])
-                m = re.search(rf'(\b{re.escape(key)}\s*=\s*)', body)
+                m = re.search(rf'^[ \t]*{re.escape(key)}\s*=', body, re.MULTILINE)
                 if m:
                     key_idx = m.end()
                     sub_open = body.find('{', key_idx - 1)
