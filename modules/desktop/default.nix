@@ -10,6 +10,7 @@
     ./gnome.nix
     ./cosmic.nix
     ./cinnamon.nix
+    ./kde.nix
     ./setup.nix
   ];
 }

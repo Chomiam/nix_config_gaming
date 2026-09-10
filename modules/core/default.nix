@@ -81,6 +81,7 @@ in
         enable = true;
         device = "nodev";
         efiSupport = true;
+        theme = pkgs.catppuccin-grub;
       };
       efi.canTouchEfiVariables = true;
     };

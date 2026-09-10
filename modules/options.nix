@@ -105,9 +105,9 @@ in
     # Environnement Graphique & Navigateur
     desktop = {
       env = lib.mkOption {
-        type = lib.types.enum [ "gnome" "cosmic" "cinnamon" "both" "none" ];
+        type = lib.types.enum [ "gnome" "cosmic" "cinnamon" "kde" "both" "none" ];
         default = "gnome";
-        description = "Environnement de bureau à charger (GNOME, COSMIC Desktop, Cinnamon, les deux, ou aucun).";
+        description = "Environnement de bureau à charger (GNOME, COSMIC Desktop, Cinnamon, KDE Plasma, les deux, ou aucun).";
       };
     };
 

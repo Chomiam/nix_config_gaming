@@ -5,6 +5,7 @@ let
   enableGnome = cfg.desktop.env == "gnome" || cfg.desktop.env == "both";
   enableCosmic = cfg.desktop.env == "cosmic" || cfg.desktop.env == "both";
   enableCinnamon = cfg.desktop.env == "cinnamon" || cfg.desktop.env == "both";
+  enableKde = cfg.desktop.env == "kde" || cfg.desktop.env == "both";
 
   catppuccinTheme = pkgs.catppuccin-gtk.override {
     variant = "mocha";
@@ -312,6 +313,32 @@ let
       fi
       ''}
 
+      ${lib.optionalString enableKde ''
+      # Initialisation KDE Plasma 6 (Catppuccin Mocha)
+      echo "[ChomiamOS] Déploiement des réglages KDE Plasma par défaut (thème Catppuccin Mocha, curseur, fond d'écran)..."
+      if [ -x "${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-lookandfeel" ]; then
+        ${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-lookandfeel --apply Catppuccin-Mocha-Lavender || true
+      fi
+      if [ -x "${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-colorscheme" ]; then
+        ${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-colorscheme CatppuccinMochaLavender || true
+      fi
+      if [ -x "${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-cursortheme" ]; then
+        ${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-cursortheme catppuccin-mocha-lavender-cursors || true
+      fi
+      if [ -x "${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-wallpaperimage" ]; then
+        ${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-wallpaperimage /etc/backgrounds/chomiamos/wallpaper.jpeg || true
+      fi
+
+      # Configuration de secours via KWriteConfig6
+      if [ -x "${pkgs.kdePackages.kconfig}/bin/kwriteconfig6" ]; then
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kdeglobals --group General --key ColorScheme CatppuccinMochaLavender || true
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kdeglobals --group Icons --key Theme Papirus-Dark || true
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ThemeName CatppuccinMocha-Modern || true
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kcminputrc --group Mouse --key cursorTheme catppuccin-mocha-lavender-cursors || true
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file plasmarc --group Theme --key name Catppuccin-Mocha-Lavender || true
+      fi
+      ''}
+
       ${pkgs.coreutils}/bin/touch "$SENTINEL"
       echo "[ChomiamOS] Interface utilisateur initialisée avec succès."
     else
@@ -385,7 +412,7 @@ in
     Type=Application
     Name=ChomiamOS Desktop Setup
     Exec=${setupScript}/bin/chomiamos-desktop-setup
-    OnlyShowIn=GNOME;COSMIC;X-Cinnamon;Cinnamon;
+    OnlyShowIn=GNOME;COSMIC;X-Cinnamon;Cinnamon;KDE;
     NoDisplay=true
     X-GNOME-Autostart-Phase=Initialization
   '';
