@@ -31,13 +31,17 @@ in
     };
     services.displayManager.defaultSession = "plasma";
 
-    # 3. Exclusion des paquets KDE superflus
+    # 3. Activation de KDE Partition Manager (avec intégration Polkit & kpmcore D-Bus)
+    programs.partition-manager.enable = true;
+
+    # 4. Exclusion des paquets KDE superflus (Konsole exclu au profit de Kitty)
     environment.plasma6.excludePackages = with pkgs.kdePackages; [
       elisa
       khelpcenter
+      konsole
     ];
 
-    # 4. Paquets minimaux & thèmes Catppuccin
+    # 5. Paquets minimaux & thèmes Catppuccin
     users.users."${username}".packages = with pkgs; [
       catppuccinKdeMocha
       catppuccinPapirus
@@ -50,6 +54,7 @@ in
       kdePackages.kate
       kdePackages.kconfig
       kdePackages.plasma-workspace
+      kdePackages.partitionmanager
     ];
 
     # Déploiement du fond d'écran officiel par défaut
