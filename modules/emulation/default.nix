@@ -9,8 +9,26 @@ let
     config.allowUnfree = true;
   };
 
-  # Frontend ES-DE
-  es-de = pkgs.callPackage ../../pkgs/es-de { };
+  # Frontend ES-DE brut
+  es-de-base = pkgs.callPackage ../../pkgs/es-de { };
+
+  # Émulateurs devant être accessibles directement dans le PATH d'ES-DE (dont Eden pour la Switch)
+  emulatorsPath = lib.makeBinPath (
+    [ pkgs-unstable.eden ]
+    ++ standalonePackages
+    ++ lib.optional cfg.retroarch.enable retroarchWithCores
+  );
+
+  # Frontend ES-DE enveloppé avec le PATH des émulateurs
+  es-de = pkgs.symlinkJoin {
+    name = "es-de-${es-de-base.version}";
+    paths = [ es-de-base ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/es-de \
+        --prefix PATH : "${emulatorsPath}"
+    '';
+  };
 
   # Outil CLI de vérification et mise à jour d'ES-DE
   update-es-de = pkgs.writers.writePython3Bin "update-es-de" { doCheck = false; } (
@@ -110,6 +128,11 @@ in
         ln -sfn "$romsDir/n3ds" "$romsDir/3ds"
         chown -R ${cfgUser}:users "$homeDir/Jeux"
         chmod -R u+rwX,g+rwX "$homeDir/Jeux"
+
+        # Raccourci local de détection statique pour ES-DE (Nintendo Switch Eden)
+        mkdir -p "$homeDir/.local/bin"
+        ln -sfn "${pkgs-unstable.eden}/bin/eden" "$homeDir/.local/bin/eden"
+        chown ${cfgUser}:users "$homeDir/.local/bin/eden" || true
       fi
     '';
 
