@@ -126,6 +126,7 @@ in
           ];
 
           favorite-apps = [
+            "chomiamos-dashboard.desktop"
             "kitty.desktop"
             "org.gnome.Settings.desktop"
             "org.gnome.Nautilus.desktop"

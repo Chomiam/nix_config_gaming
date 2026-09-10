@@ -37,6 +37,12 @@
       url = "github:Jovian-Experiments/Jovian-NixOS";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    # ChomiamOS Dashboard (Tableau de bord système officiel en Rust/Slint)
+    chomiamos-dashboard = {
+      url = "github:Chomiam/chomiamos-dashboard";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # ===========================================================================

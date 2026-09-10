@@ -132,6 +132,9 @@ in
     pcre2
     libevent
     killall
+
+    # 🎮 Tableau de bord officiel ChomiamOS (Rust / Slint)
+    inputs.chomiamos-dashboard.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   # 🛠️ Outil CLI 'nh' (Nix Helper) avec chemin flake par défaut
