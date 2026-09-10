@@ -1,5 +1,8 @@
-{ ... }:
+{ vars, ... }:
 
+let
+  isKde = vars.desktopEnv == "kde";
+in
 {
   # =========================================================================
   # 🎨 THÈME GLOBALE CATPPUCCIN (MOCHA / LAVENDER)
@@ -12,6 +15,7 @@
     accent = "lavender";
 
     kitty.enable = true;
-    kvantum.enable = true;
+    # Sous KDE, on laisse Plasma gérer librement le style d'application (Breeze, Kvantum, etc.)
+    kvantum.enable = !isKde;
   };
 }

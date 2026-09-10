@@ -26,8 +26,9 @@
       after = [];
       data = ''
         echo "🧹 Nettoyage des anciens fichiers .backup Home Manager..."
-        find "${vars.user.homeDirectory}" -maxdepth 1 -name "*.backup" -type f -delete 2>/dev/null || true
-        find "${vars.user.homeDirectory}/.config" -maxdepth 3 -name "*.backup" -type f -delete 2>/dev/null || true
+        find "${vars.user.homeDirectory}" -maxdepth 2 -name "*.backup" -type f -delete 2>/dev/null || true
+        find "${vars.user.homeDirectory}/.config" -name "*.backup" -type f -delete 2>/dev/null || true
+        find "${vars.user.homeDirectory}/.local" -maxdepth 4 -name "*.backup" -type f -delete 2>/dev/null || true
       '';
     };
   };
