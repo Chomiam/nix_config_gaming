@@ -28,6 +28,7 @@ in
     services.displayManager.sddm = {
       enable = true;
       wayland.enable = true;
+      autoNumlock = true; # Active le pavé numérique dès l'écran de connexion
     };
     services.displayManager.defaultSession = "plasma";
 
@@ -61,6 +62,12 @@ in
 
     # Déploiement du fond d'écran officiel par défaut
     environment.etc."backgrounds/chomiamos/wallpaper.jpeg".source = ../../assets/wallpaper.jpeg;
+
+    # Activation automatique du pavé numérique (NumLock) dans la session KDE Plasma
+    environment.etc."xdg/kcminputrc".text = ''
+      [Keyboard]
+      NumLock=0
+    '';
 
     # 5. Configuration Home Manager
     home-manager.users."${username}" = { config, ... }: {
