@@ -18,10 +18,10 @@
   # ⚙️ CONFIGURATION DES OPTIONS DU SYSTÈME (ALIMENTÉE PAR VARS.NIX)
   # =========================================================================
   chomiamos = {
-    hostName = vars.hostName or "chomiamos";
-    timeZone = vars.timeZone or "Europe/Paris";
-    defaultLocale = vars.defaultLocale or "fr_FR.UTF-8";
-    stateVersion = vars.stateVersion or "26.05";
+    hostName = vars.hostName;
+    timeZone = vars.timeZone;
+    defaultLocale = vars.defaultLocale;
+    stateVersion = vars.stateVersion;
 
     user = {
       username = vars.user.username;
@@ -35,15 +35,15 @@
     firewall.enable = if builtins.isBool (vars.firewall or false) then vars.firewall else (vars.firewall.enable or false);
 
     hardware = {
-      gpu = vars.gpuDriver or "modesetting";
+      gpu = vars.gpuDriver;
       steeringWheels.enable = vars.steeringWheelSupport or true;
     };
 
     desktop = {
-      env = vars.desktopEnv or "gnome";
+      env = vars.desktopEnv;
     };
 
-    browser = vars.browser or "chrome";
+    browser = vars.browser;
     discordClient = vars.discordClient or "discord";
 
     gaming = {
