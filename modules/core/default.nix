@@ -13,6 +13,7 @@ in
     ./firewall.nix
     ./browser.nix
     ./users.nix
+    ./custom-packages.nix
   ];
 
   # -------------------------------------------------------------------------
