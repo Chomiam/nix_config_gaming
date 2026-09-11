@@ -456,6 +456,40 @@ in
         };
       };
 
+      slicers = {
+        orcaslicer = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Installe le slicer d'impression 3D OrcaSlicer (Flatpak).";
+          };
+        };
+
+        prusaslicer = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Installe le slicer d'impression 3D PrusaSlicer (Flatpak).";
+          };
+        };
+
+        cura = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Installe le slicer d'impression 3D UltiMaker Cura (Flatpak).";
+          };
+        };
+
+        bambustudio = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Installe le slicer d'impression 3D Bambu Studio (Flatpak).";
+          };
+        };
+      };
+
       davinciResolve = {
         version = lib.mkOption {
           type = lib.types.enum [ "none" "free" "studio" ];

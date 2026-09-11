@@ -108,6 +108,13 @@
       ardour.enable = vars.ardour or false;
       davinciResolve.version = vars.davinciResolve or "none";
 
+      slicers = {
+        orcaslicer.enable = vars.slicers.orcaslicer or false;
+        prusaslicer.enable = vars.slicers.prusaslicer or false;
+        cura.enable = vars.slicers.cura or false;
+        bambustudio.enable = vars.slicers.bambustudio or false;
+      };
+
       aiSuite = {
         enable = vars.aiSuite.enable or false;
         rocmOverrideGfx = vars.aiSuite.rocmOverrideGfx or "12.0.1";

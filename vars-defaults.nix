@@ -128,6 +128,14 @@
   audacity = false;
   ardour = false;
 
+  # Impression 3D & Slicers
+  slicers = {
+    orcaslicer = false;
+    prusaslicer = false;
+    cura = false;
+    bambustudio = false;
+  };
+
   # Suite IA Locale
   aiSuite = {
     enable = false;

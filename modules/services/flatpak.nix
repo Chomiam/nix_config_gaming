@@ -37,6 +37,10 @@ in
         "it.mijorus.gearlever"
         "org.vinegarhq.Sober"
       ] ++ lib.optional (config.chomiamos.services.flatseal.enable) "com.github.tchx84.Flatseal"
+      ++ lib.optional (config.chomiamos.services.slicers.orcaslicer.enable) "com.orcaslicer.OrcaSlicer"
+      ++ lib.optional (config.chomiamos.services.slicers.prusaslicer.enable) "com.prusa3d.PrusaSlicer"
+      ++ lib.optional (config.chomiamos.services.slicers.cura.enable) "com.ultimaker.cura"
+      ++ lib.optional (config.chomiamos.services.slicers.bambustudio.enable) "com.bambulab.BambuStudio"
       ++ lib.optionals gamingCfg.geforceNow [
         {
           appId = "com.nvidia.geforcenow";
