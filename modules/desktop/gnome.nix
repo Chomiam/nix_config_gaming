@@ -44,9 +44,6 @@ in
       gnomeExtensions.no-overview
     ];
 
-    # Déploiement du fond d'écran officiel par défaut
-    environment.etc."backgrounds/chomiamos/wallpaper.jpeg".source = ../../assets/wallpaper.jpeg;
-
     # Paramètres Home-Manager pour l'utilisateur
     home-manager.users."${username}" = { config, ... }: {
       # 1. Configuration des dossiers XDG standards en français

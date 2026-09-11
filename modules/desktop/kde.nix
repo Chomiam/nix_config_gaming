@@ -60,9 +60,6 @@ in
       kdePackages.bluez-qt
     ];
 
-    # Déploiement du fond d'écran officiel par défaut
-    environment.etc."backgrounds/chomiamos/wallpaper.jpeg".source = ../../assets/wallpaper.jpeg;
-
     # Activation automatique du pavé numérique (NumLock) dans la session KDE Plasma
     environment.etc."xdg/kcminputrc".text = ''
       [Keyboard]

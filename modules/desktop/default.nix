@@ -12,5 +12,6 @@
     ./cinnamon.nix
     ./kde.nix
     ./setup.nix
+    ./wallpapers.nix
   ];
 }

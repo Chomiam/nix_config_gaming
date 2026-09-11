@@ -59,6 +59,12 @@
       url = "github:Chomiam/duckstation-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    # Fonds d'écran officiels ChomiamOS (GNOME, KDE Plasma, COSMIC, Cinnamon)
+    chomiamos-wallpapers = {
+      url = "github:Chomiam/chomiamos-wallpapers";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # ===========================================================================

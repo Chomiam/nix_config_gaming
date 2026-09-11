@@ -39,6 +39,26 @@
         "type": "github"
       }
     },
+    "chomiamos-wallpapers": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789124808,
+        "narHash": "sha256-te+iPHJK4hgmiUKOmEVI4KoIP/09Zvhj+yWnxyklAEA=",
+        "owner": "Chomiam",
+        "repo": "chomiamos-wallpapers",
+        "rev": "4e06c850c5f6a18a8afa44c821a828b33571a34b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Chomiam",
+        "repo": "chomiamos-wallpapers",
+        "type": "github"
+      }
+    },
     "duckstation": {
       "inputs": {
         "flake-utils": "flake-utils_2",
@@ -247,6 +267,7 @@
       "inputs": {
         "catppuccin": "catppuccin",
         "chomiamos-dashboard": "chomiamos-dashboard",
+        "chomiamos-wallpapers": "chomiamos-wallpapers",
         "duckstation": "duckstation",
         "ext-cosmic-applets": "ext-cosmic-applets",
         "home-manager": "home-manager",
