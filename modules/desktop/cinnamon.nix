@@ -22,8 +22,10 @@ in
       background=/etc/backgrounds/chomiamos/wallpaper.jpeg
     '';
 
-    # Exclusion de Xterm au niveau serveur d'affichage
+    # Exclusion de Xterm et de GNOME Terminal au niveau de l'environnement Cinnamon
     services.xserver.excludePackages = [ pkgs.xterm ];
+    environment.cinnamon.excludePackages = [ pkgs.gnome-terminal ];
+    programs.gnome-terminal.enable = lib.mkForce false;
 
     # Paquets complémentaires et personnalisation graphique
     users.users."${username}".packages = with pkgs; [

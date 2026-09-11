@@ -267,6 +267,10 @@ let
 
     [org/cinnamon/theme]
     name='Mint-Y-Dark'
+
+    [org/cinnamon/desktop/default-applications/terminal]
+    exec='kitty'
+    exec-arg='-e'
   '';
 
   # =========================================================================
