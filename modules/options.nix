@@ -33,6 +33,27 @@ in
       description = "Version de l'état système NixOS / Home Manager.";
     };
 
+    # Clavier système & environnements de bureau
+    keyboard = {
+      layout = lib.mkOption {
+        type = lib.types.str;
+        default = "fr";
+        description = "Disposition du clavier X11 / Wayland (ex: fr, us, de).";
+      };
+
+      variant = lib.mkOption {
+        type = lib.types.str;
+        default = "";
+        description = "Variante de disposition du clavier (ex: oss, mac, dvorak).";
+      };
+
+      keyMap = lib.mkOption {
+        type = lib.types.str;
+        default = "fr";
+        description = "Disposition du clavier en console TTY.";
+      };
+    };
+
     firewall = {
       enable = lib.mkOption {
         type = lib.types.bool;
@@ -180,6 +201,18 @@ in
         type = lib.types.bool;
         default = true;
         description = "Activer le montage du disque de jeux secondaire.";
+      };
+
+      sunshine = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Active le serveur de streaming de jeux Sunshine vers Moonlight.";
+      };
+
+      sober = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Installe le client Roblox Sober via Flatpak.";
       };
     };
 

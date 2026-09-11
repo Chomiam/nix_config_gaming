@@ -81,6 +81,9 @@ let
     cursor-theme='catppuccin-mocha-lavender-cursors'
     icon-theme='Papirus-Dark'
 
+    [org/gnome/desktop/input-sources]
+    sources=[('xkb', '${cfg.keyboard.layout}${lib.optionalString (cfg.keyboard.variant != "") "+${cfg.keyboard.variant}"}')]
+
     [org/gnome/desktop/background]
     picture-uri='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
     picture-uri-dark='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
@@ -245,9 +248,18 @@ let
     cursor-theme='catppuccin-mocha-lavender-cursors'
     icon-theme='Papirus-Dark'
 
+    [org/cinnamon/desktop/input-sources]
+    sources=[('xkb', '${cfg.keyboard.layout}${lib.optionalString (cfg.keyboard.variant != "") "+${cfg.keyboard.variant}"}')]
+
+    [org/gnome/desktop/input-sources]
+    sources=[('xkb', '${cfg.keyboard.layout}${lib.optionalString (cfg.keyboard.variant != "") "+${cfg.keyboard.variant}"}')]
+
     [org/cinnamon/desktop/background]
     picture-uri='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
     picture-options='zoom'
+
+    [org/cinnamon/desktop/background/slideshow]
+    image-source='directory:///run/current-system/sw/share/backgrounds/chomiamos'
 
     [org/cinnamon/desktop/screensaver]
     picture-uri='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
@@ -285,6 +297,71 @@ let
       ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
       ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk-dark.css" "$HOME/.config/gtk-3.0/gtk-dark.css"
       ${pkgs.coreutils}/bin/ln -sfn "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/assets" "$HOME/.config/gtk-3.0/assets"
+
+      # Configuration universelle des fonds d'écran pour Cinnamon Desktop
+      CINNAMON_BG_DIR="$HOME/.config/cinnamon/backgrounds"
+      ${pkgs.coreutils}/bin/mkdir -p "$CINNAMON_BG_DIR"
+      if [ ! -f "$CINNAMON_BG_DIR/user-folders.lst" ]; then
+        echo "/run/current-system/sw/share/backgrounds/chomiamos" > "$CINNAMON_BG_DIR/user-folders.lst"
+        echo "/etc/backgrounds/chomiamos" >> "$CINNAMON_BG_DIR/user-folders.lst"
+      else
+        if ! grep -q "/run/current-system/sw/share/backgrounds/chomiamos" "$CINNAMON_BG_DIR/user-folders.lst" 2>/dev/null; then
+          echo "/run/current-system/sw/share/backgrounds/chomiamos" >> "$CINNAMON_BG_DIR/user-folders.lst"
+        fi
+        if ! grep -q "/etc/backgrounds/chomiamos" "$CINNAMON_BG_DIR/user-folders.lst" 2>/dev/null; then
+          echo "/etc/backgrounds/chomiamos" >> "$CINNAMON_BG_DIR/user-folders.lst"
+        fi
+      fi
+
+      # Configuration universelle de la disposition clavier (${cfg.keyboard.layout}) pour chaque DE :
+      # 1. GNOME & Cinnamon via dconf
+      if [ -x "${pkgs.dconf}/bin/dconf" ]; then
+        echo "[ChomiamOS] Application de la disposition clavier (${cfg.keyboard.layout}) pour GNOME et Cinnamon..."
+        ${pkgs.dconf}/bin/dconf write /org/gnome/desktop/input-sources/sources "[('xkb', '${cfg.keyboard.layout}${lib.optionalString (cfg.keyboard.variant != "") "+${cfg.keyboard.variant}"}')]" || true
+        ${pkgs.dconf}/bin/dconf write /org/cinnamon/desktop/input-sources/sources "[('xkb', '${cfg.keyboard.layout}${lib.optionalString (cfg.keyboard.variant != "") "+${cfg.keyboard.variant}"}')]" || true
+      fi
+
+      # 2. KDE Plasma via kxkbrc
+      echo "[ChomiamOS] Application de la disposition clavier (${cfg.keyboard.layout}) pour KDE Plasma..."
+      ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config"
+      ${pkgs.coreutils}/bin/cat <<'EOF_KXKB' > "$HOME/.config/kxkbrc"
+[Layout]
+DisplayNames=
+LayoutList=${cfg.keyboard.layout}
+LayoutLoopCount=-1
+Model=pc105
+Options=
+ResetOldOptions=false
+ShowFlag=false
+ShowLabel=true
+ShowLayoutIndicator=true
+ShowSingle=false
+SwitchMode=Global
+Use=true
+VariantList=${cfg.keyboard.variant}
+EOF_KXKB
+      if [ -x "${pkgs.kdePackages.kconfig}/bin/kwriteconfig6" ]; then
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kxkbrc --group Layout --key LayoutList "${cfg.keyboard.layout}" || true
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kxkbrc --group Layout --key VariantList "${cfg.keyboard.variant}" || true
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kxkbrc --group Layout --key Use true || true
+        ${pkgs.kdePackages.kconfig}/bin/kwriteconfig6 --file kxkbrc --group Layout --key Model pc105 || true
+      fi
+
+      # 3. COSMIC Desktop via com.system76.CosmicComp
+      echo "[ChomiamOS] Application de la disposition clavier (${cfg.keyboard.layout}) pour COSMIC..."
+      COSMIC_COMP_DIR="$HOME/.config/cosmic/com.system76.CosmicComp/v1"
+      ${pkgs.coreutils}/bin/mkdir -p "$COSMIC_COMP_DIR"
+      ${pkgs.coreutils}/bin/cat <<'EOF_COSMIC_XKB' > "$COSMIC_COMP_DIR/xkb_config"
+(
+    rules: "",
+    model: "",
+    layout: "${cfg.keyboard.layout}",
+    variant: "${cfg.keyboard.variant}",
+    options: None,
+    repeat_delay: 600,
+    repeat_rate: 25,
+)
+EOF_COSMIC_XKB
 
       ${lib.optionalString enableGnome ''
       # Initialisation GNOME (dconf)
@@ -416,5 +493,38 @@ in
     OnlyShowIn=GNOME;COSMIC;X-Cinnamon;Cinnamon;KDE;
     NoDisplay=true
     X-GNOME-Autostart-Phase=Initialization
+  '';
+
+  # Squelette utilisateur par défaut (compatibilité nouveaux utilisateurs)
+  environment.etc."skel/.config/cinnamon/backgrounds/user-folders.lst".text = ''
+    /run/current-system/sw/share/backgrounds/chomiamos
+    /etc/backgrounds/chomiamos
+  '';
+  environment.etc."skel/.config/kxkbrc".text = ''
+    [Layout]
+    DisplayNames=
+    LayoutList=${cfg.keyboard.layout}
+    LayoutLoopCount=-1
+    Model=pc105
+    Options=
+    ResetOldOptions=false
+    ShowFlag=false
+    ShowLabel=true
+    ShowLayoutIndicator=true
+    ShowSingle=false
+    SwitchMode=Global
+    Use=true
+    VariantList=${cfg.keyboard.variant}
+  '';
+  environment.etc."skel/.config/cosmic/com.system76.CosmicComp/v1/xkb_config".text = ''
+    (
+        rules: "",
+        model: "",
+        layout: "${cfg.keyboard.layout}",
+        variant: "${cfg.keyboard.variant}",
+        options: None,
+        repeat_delay: 600,
+        repeat_rate: 25,
+    )
   '';
 }

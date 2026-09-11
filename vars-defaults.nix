@@ -22,6 +22,13 @@
   timeZone = "Europe/Paris";
   defaultLocale = "fr_FR.UTF-8";
 
+  # Disposition du clavier
+  keyboard = {
+    layout = "fr";
+    variant = "";
+    keyMap = "fr";
+  };
+
   # Version de l'état système NixOS / Home Manager
   stateVersion = "26.05";
 
@@ -73,6 +80,8 @@
     deckyLoader = false;
     geforceNow = true;
     mountGamesDisk = true;
+    sunshine = false;
+    sober = false;
   };
 
   # Suite d'Émulation & Rétrogaming

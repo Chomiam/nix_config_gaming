@@ -123,7 +123,7 @@ in
 
   services.resolved.enable = true;
   time.timeZone = cfg.timeZone;
-  console.keyMap = "fr";
+  console.keyMap = cfg.keyboard.keyMap;
 
   i18n = {
     defaultLocale = cfg.defaultLocale;
@@ -141,8 +141,8 @@ in
   };
 
   services.xserver.xkb = {
-    layout = "fr";
-    variant = "";
+    layout = cfg.keyboard.layout;
+    variant = cfg.keyboard.variant;
   };
 
   # -------------------------------------------------------------------------

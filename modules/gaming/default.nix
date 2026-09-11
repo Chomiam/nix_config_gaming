@@ -45,7 +45,7 @@ in
     };
 
     # Sunshine (Serveur d'auto-hébergement et streaming de jeux vers Moonlight)
-    services.sunshine = {
+    services.sunshine = lib.mkIf cfg.gaming.sunshine {
       enable = true;
       autoStart = true;
       capSysAdmin = true;

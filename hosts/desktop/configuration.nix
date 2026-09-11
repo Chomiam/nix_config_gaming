@@ -23,6 +23,12 @@
     defaultLocale = vars.defaultLocale;
     stateVersion = vars.stateVersion;
 
+    keyboard = {
+      layout = vars.keyboard.layout or "fr";
+      variant = vars.keyboard.variant or "";
+      keyMap = vars.keyboard.keyMap or "fr";
+    };
+
     user = {
       username = vars.user.username;
       fullName = vars.user.fullName;
@@ -58,6 +64,8 @@
       geforceNow = vars.gaming.geforceNow or true;
       gamescopeSession = vars.gaming.gamescopeSession or (vars.gpuDriver != "nvidia" && vars.gpuDriver != "nvidia-legacy");
       mountGamesDisk = vars.gaming.mountGamesDisk or true;
+      sunshine = vars.gaming.sunshine or false;
+      sober = vars.gaming.sober or false;
     };
 
     emulation = {
