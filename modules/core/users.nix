@@ -160,6 +160,12 @@ in
           driver = "true";
         };
       };
+      gpg = {
+        format = "ssh";
+        ssh = {
+          allowedSignersFile = "/etc/nixos/.git-allowed-signers";
+        };
+      };
     };
   };
 
@@ -168,9 +174,11 @@ in
     if [ -d /etc/nixos ]; then
       chown -R ${cfg.username}:users /etc/nixos
       chmod -R u+rwX,g+rwX /etc/nixos
-      # Garantir que git utilise le merge driver 'ours' localement
+      # Garantir que git utilise le merge driver 'ours' localement et la vérification des signatures
       if [ -d /etc/nixos/.git ]; then
         ${pkgs.git}/bin/git -C /etc/nixos config merge.ours.driver true || true
+        ${pkgs.git}/bin/git -C /etc/nixos config gpg.format ssh || true
+        ${pkgs.git}/bin/git -C /etc/nixos config gpg.ssh.allowedSignersFile /etc/nixos/.git-allowed-signers || true
       fi
     fi
   '';
