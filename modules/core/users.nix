@@ -41,6 +41,9 @@ in
     ++ lib.optional (config.chomiamos.services.antigravity.enable) pkgs-unstable.antigravity-ide
     ++ lib.optional (config.chomiamos.services.pearDesktop.enable) pkgs-unstable.pear-desktop
     ++ lib.optional (config.chomiamos.services.kdenlive.enable) pkgs.kdePackages.kdenlive
+    ++ lib.optional (config.chomiamos.services.goverlay.enable) pkgs.goverlay
+    ++ lib.optional (config.chomiamos.services.audacity.enable) pkgs.audacity
+    ++ lib.optional (config.chomiamos.services.ardour.enable) pkgs.ardour
     ++ lib.optional (config.chomiamos.discordClient == "discord") pkgs.discord
     ++ lib.optional (config.chomiamos.services.stremio.enable) pkgs.stremio-linux-shell
     ++ lib.optional (config.chomiamos.services.vlc.enable) pkgs.vlc

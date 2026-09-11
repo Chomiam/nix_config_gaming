@@ -33,11 +33,11 @@ in
 
       packages = [
         "org.signal.Signal"
-        "com.github.tchx84.Flatseal"
         "rocks.shy.VacuumTube"
         "it.mijorus.gearlever"
         "org.vinegarhq.Sober"
-      ] ++ lib.optionals gamingCfg.geforceNow [
+      ] ++ lib.optional (config.chomiamos.services.flatseal.enable) "com.github.tchx84.Flatseal"
+      ++ lib.optionals gamingCfg.geforceNow [
         {
           appId = "com.nvidia.geforcenow";
           origin = "GeForceNOW";

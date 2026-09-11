@@ -63,6 +63,7 @@
   # Options du mode Gaming
   gaming = {
     enable = true;
+    gamescopeSession = true;
     launchers = {
       steam = true;
       lutris = true;
@@ -122,6 +123,10 @@
   pearDesktop = true;
   kdenlive = false;
   obsStudio = true;
+  goverlay = true;
+  flatseal = true;
+  audacity = false;
+  ardour = false;
 
   # Suite IA Locale
   aiSuite = {

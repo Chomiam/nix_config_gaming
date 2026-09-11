@@ -170,6 +170,12 @@ in
         description = "Active le client cloud-gaming NVIDIA GeForce NOW.";
       };
 
+      gamescopeSession = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Active la session Steam GameScope intégrée (mode console / grand écran, incompatible GPU NVIDIA).";
+      };
+
       mountGamesDisk = lib.mkOption {
         type = lib.types.bool;
         default = true;
@@ -415,6 +421,38 @@ in
           type = lib.types.bool;
           default = true;
           description = "Installe l'éditeur vidéo non-linéaire libre Kdenlive.";
+        };
+      };
+
+      goverlay = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe l'interface graphique GovErlay pour la configuration de MangoHud.";
+        };
+      };
+
+      flatseal = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Installe le gestionnaire graphique de permissions Flatseal pour Flatpak.";
+        };
+      };
+
+      audacity = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Installe l'éditeur et enregistreur audio multipiste libre Audacity.";
+        };
+      };
+
+      ardour = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Installe la station de travail audio numérique (DAW) professionnelle Ardour.";
         };
       };
 

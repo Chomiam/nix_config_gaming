@@ -56,6 +56,7 @@
       };
       deckyLoader = vars.gaming.deckyLoader or false;
       geforceNow = vars.gaming.geforceNow or true;
+      gamescopeSession = vars.gaming.gamescopeSession or (vars.gpuDriver != "nvidia" && vars.gpuDriver != "nvidia-legacy");
       mountGamesDisk = vars.gaming.mountGamesDisk or true;
     };
 
@@ -101,6 +102,10 @@
       antigravity.enable = vars.antigravity or true;
       pearDesktop.enable = vars.pearDesktop or true;
       kdenlive.enable = vars.kdenlive or false;
+      goverlay.enable = vars.goverlay or true;
+      flatseal.enable = vars.flatseal or true;
+      audacity.enable = vars.audacity or false;
+      ardour.enable = vars.ardour or false;
       davinciResolve.version = vars.davinciResolve or "none";
 
       aiSuite = {

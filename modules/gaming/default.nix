@@ -22,7 +22,7 @@ in
       enable = true;
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
-      gamescopeSession.enable = true;
+      gamescopeSession.enable = cfg.gaming.gamescopeSession && (cfg.hardware.gpu != "nvidia" && cfg.hardware.gpu != "nvidia-legacy");
       extraPackages = with pkgs; [
         pkgs-unstable.mangohud
       ];
