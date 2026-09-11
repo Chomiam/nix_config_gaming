@@ -104,10 +104,11 @@ in
 
   # Paquets Système Utilitaires
   environment.systemPackages = with pkgs; [
-    # 🖥️ Interface & Rendu GTK
+    # 🖥️ Interface & Rendu GTK / WebKit
     adw-gtk3
     libadwaita
     libappindicator-gtk3
+    glib-networking
 
     # 📦 Compression & Archives
     cabextract
