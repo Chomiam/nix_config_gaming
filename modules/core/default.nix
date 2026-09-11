@@ -74,9 +74,21 @@ in
     kernelParams = [
       "quiet"
       "splash"
+      "boot.shell_on_fail"
+      "loglevel=3"
+      "rd.systemd.show_status=false"
+      "rd.udev.log_level=3"
+      "udev.log_priority=3"
     ];
 
-    plymouth.enable = true;
+    consoleLogLevel = 0;
+    initrd.verbose = false;
+
+    plymouth = {
+      enable = true;
+      theme = "catppuccin-mocha";
+      themePackages = [ (pkgs.catppuccin-plymouth.override { variant = "mocha"; }) ];
+    };
 
     loader = {
       timeout = 3;
@@ -85,6 +97,7 @@ in
         device = "nodev";
         efiSupport = true;
         theme = pkgs.catppuccin-grub;
+        splashImage = null; # Supprime l'ancien fond d'écran par défaut NixOS après le menu GRUB
       };
       efi.canTouchEfiVariables = true;
     };
