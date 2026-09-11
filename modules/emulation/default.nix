@@ -146,6 +146,67 @@ in
           chown ${cfgUser}:users "$homeDir/.local/bin/duckstation"* || true
         ''}
 
+        ${lib.optionalString cfg.standalone.pcsx2 ''
+          ln -sfn "${pkgs-unstable.pcsx2}/bin/pcsx2-qt" "$homeDir/.local/bin/pcsx2-qt"
+          ln -sfn "${pkgs-unstable.pcsx2}/bin/pcsx2-qt" "$homeDir/.local/bin/pcsx2"
+          chown ${cfgUser}:users "$homeDir/.local/bin/pcsx2"* || true
+        ''}
+
+        # 4. Configuration déclarative d'ES-DE : DuckStation (PSX) et PCSX2 (PS2) par défaut
+        mkdir -p "$homeDir/ES-DE/custom_systems"
+        cat << 'CUSTOM_SYS_EOF' > "$homeDir/ES-DE/custom_systems/es_systems.xml"
+<?xml version="1.0"?>
+<!-- Configuration personnalisée ChomiamOS pour ES-DE -->
+<systemList>
+    <!-- Sony PlayStation 1 : DuckStation (Standalone) par défaut -->
+    <system>
+        <name>psx</name>
+        <fullname>Sony PlayStation</fullname>
+        <path>%ROMPATH%/psx</path>
+        <extension>.bin .BIN .cbn .CBN .ccd .CCD .chd .CHD .cue .CUE .ecm .ECM .exe .EXE .img .IMG .iso .ISO .m3u .M3U .mdf .MDF .mds .MDS .minipsf .MINIPSF .pbp .PBP .psexe .PSEXE .psf .PSF .toc .TOC .z .Z .znx .ZNX .7z .7Z .zip .ZIP</extension>
+        <command label="DuckStation (Standalone)">%EMULATOR_DUCKSTATION% -batch %ROM%</command>
+        <command label="SwanStation">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/swanstation_libretro.so %ROM%</command>
+        <command label="Beetle PSX HW">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mednafen_psx_hw_libretro.so %ROM%</command>
+        <command label="Beetle PSX">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mednafen_psx_libretro.so %ROM%</command>
+        <command label="PCSX ReARMed">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/pcsx_rearmed_libretro.so %ROM%</command>
+        <command label="ares (Standalone)">%EMULATOR_ARES% --fullscreen --system "PlayStation" %ROM%</command>
+        <command label="Mednafen (Standalone)">%EMULATOR_MEDNAFEN% -force_module psx %ROM%</command>
+        <platform>psx</platform>
+        <theme>psx</theme>
+    </system>
+
+    <!-- Sony PlayStation 2 : PCSX2 (Standalone) par défaut -->
+    <system>
+        <name>ps2</name>
+        <fullname>Sony PlayStation 2</fullname>
+        <path>%ROMPATH%/ps2</path>
+        <extension>.bin .BIN .chd .CHD .ciso .CISO .cso .CSO .desktop .dump .DUMP .elf .ELF .gz .GZ .m3u .M3U .mdf .MDF .img .IMG .iso .ISO .isz .ISZ .ngr .NRG .zso .ZSO</extension>
+        <command label="PCSX2 (Standalone)">%EMULATOR_PCSX2% -batch %ROM%</command>
+        <command label="PCSX2 Legacy (Standalone)">%EMULATOR_PCSX2-LEGACY% --nogui %ROM%</command>
+        <command label="LRPS2">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/pcsx2_libretro.so %ROM%</command>
+        <command label="PCSX2">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/pcsx2_libretro.so %ROM%</command>
+        <command label="Play! (Standalone)">%EMULATOR_PLAY!% --fullscreen --disc %ROM%</command>
+        <command label="Shortcut or script">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <platform>ps2</platform>
+        <theme>ps2</theme>
+    </system>
+</systemList>
+CUSTOM_SYS_EOF
+        chown -R ${cfgUser}:users "$homeDir/ES-DE/custom_systems"
+
+        # Initialisation déclarative des alternativeEmulator dans les gamelists ES-DE
+        mkdir -p "$homeDir/ES-DE/gamelists/ps2" "$homeDir/ES-DE/gamelists/psx"
+        if [ ! -f "$homeDir/ES-DE/gamelists/ps2/gamelist.xml" ]; then
+          cat << 'GL_EOF' > "$homeDir/ES-DE/gamelists/ps2/gamelist.xml"
+<?xml version="1.0"?>
+<alternativeEmulator>
+	<label>PCSX2 (Standalone)</label>
+</alternativeEmulator>
+<gameList />
+GL_EOF
+          chown -R ${cfgUser}:users "$homeDir/ES-DE/gamelists/ps2"
+        fi
+
         ${lib.optionalString cfg.retroarch.enable ''
           # Lien direct vers les cœurs RetroArch (SwanStation, Beetle PSX HW, etc.) pour ES-DE
           mkdir -p "$homeDir/.config/retroarch"
