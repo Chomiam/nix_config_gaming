@@ -228,6 +228,18 @@ in
         chmod 0600 /etc/nixos/.hardware-configuration.nix.backup
       fi
     fi
+
+    # 3. Sauvegarde permanente de custom-packages.nix (Logithèque)
+    if [ -f /etc/nixos/custom-packages.nix ]; then
+      cp -f /etc/nixos/custom-packages.nix /etc/nixos/.custom-packages.nix.backup
+      chmod 0644 /etc/nixos/.custom-packages.nix.backup
+    fi
+
+    # 4. Sauvegarde permanente de firewall-user.nix
+    if [ -f /etc/nixos/firewall-user.nix ]; then
+      cp -f /etc/nixos/firewall-user.nix /etc/nixos/.firewall-user.nix.backup
+      chmod 0644 /etc/nixos/.firewall-user.nix.backup
+    fi
   '';
 
   systemd.tmpfiles.rules = [
