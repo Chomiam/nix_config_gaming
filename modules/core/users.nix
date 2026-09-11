@@ -169,7 +169,7 @@ in
     };
   };
 
-  # 🔑 Droits d'accès et modification pour l'utilisateur sur /etc/nixos
+  # 🔑 Droits d'accès et modification pour l'utilisateur sur /etc/nixos et son répertoire personnel
   system.activationScripts.etcNixosPermissions = lib.stringAfter [ "users" "groups" ] ''
     if [ -d /etc/nixos ]; then
       chown -R ${cfg.username}:users /etc/nixos
@@ -180,6 +180,10 @@ in
         ${pkgs.git}/bin/git -C /etc/nixos config gpg.format ssh || true
         ${pkgs.git}/bin/git -C /etc/nixos config gpg.ssh.allowedSignersFile /etc/nixos/.git-allowed-signers || true
       fi
+    fi
+    if [ -d "/home/${cfg.username}" ]; then
+      chown -R ${cfg.username}:users "/home/${cfg.username}"
+      chmod u+rwx "/home/${cfg.username}"
     fi
   '';
 
