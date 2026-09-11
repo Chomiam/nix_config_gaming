@@ -190,7 +190,7 @@ in
       fi
     fi
     if [ -d "/home/${cfg.username}" ]; then
-      chown -R ${cfg.username}:users "/home/${cfg.username}"
+      chown ${cfg.username}:users "/home/${cfg.username}"
       chmod u+rwx "/home/${cfg.username}"
     fi
   '';

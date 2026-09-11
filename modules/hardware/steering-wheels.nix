@@ -12,20 +12,13 @@ in
   config = lib.mkIf cfg {
 
     # 1. 📦 Extra modules noyau pour retour de force (Force Feedback)
+    # Les modules sont chargés automatiquement par Udev à l'insertion du volant
     boot.extraModulePackages = with config.boot.kernelPackages; [
       new-lg4ff       # Logitech (G25, G27, G29, G920, Driving Force GT...)
       hid-fanatecff   # Fanatec (CSL, ClubSport, Podium...)
       hid-tmff2       # Thrustmaster (T150, T300RS, T248, T500RS, TS-PC...)
       hid-t150        # Thrustmaster T150 spécifique
       universal-pidff # Universal PID Force Feedback
-    ];
-
-    # Chargement automatique des modules au démarrage du noyau
-    boot.kernelModules = [
-      "new-lg4ff"
-      "hid-fanatecff"
-      "hid-tmff2"
-      "universal-pidff"
     ];
 
     # 2. 🔌 Règles Udev pour autoriser l'accès aux volants & Oversteer sans root
