@@ -26,11 +26,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1789121626,
-        "narHash": "sha256-DgDvvJMTlkz3lfsMbe2PoLH4RetB47nY/M3PdcqolZk=",
+        "lastModified": 1789121935,
+        "narHash": "sha256-dRMuT4cQnC7Sq3l0/J5kH8JPRhrpvM+9lts+2p0YzdY=",
         "owner": "Chomiam",
         "repo": "chomiamos-dashboard",
-        "rev": "487a12121b335a5b899d9508e1d1de7d76859ca7",
+        "rev": "b8c8ded32ce1796e971912feb3e815e6e1cd9ff9",
         "type": "github"
       },
       "original": {
