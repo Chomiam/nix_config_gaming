@@ -179,6 +179,13 @@ in
         ${pkgs.git}/bin/git -C /etc/nixos config merge.ours.driver true || true
         ${pkgs.git}/bin/git -C /etc/nixos config gpg.format ssh || true
         ${pkgs.git}/bin/git -C /etc/nixos config gpg.ssh.allowedSignersFile /etc/nixos/.git-allowed-signers || true
+
+        # 🧹 Restauration du commit officiel signé si un commit local d'installation non signé est présent
+        LAST_COMMIT_MSG=$(${pkgs.git}/bin/git -C /etc/nixos log -1 --pretty=%s 2>/dev/null || true)
+        if [ "$LAST_COMMIT_MSG" = "chore: configuration initiale ChomiamOS" ]; then
+          echo "🧹 Restauration du commit officiel signé ChomiamOS..."
+          ${pkgs.git}/bin/git -C /etc/nixos reset HEAD~1 || true
+        fi
       fi
     fi
     if [ -d "/home/${cfg.username}" ]; then
