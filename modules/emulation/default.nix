@@ -137,19 +137,19 @@ in
         mkdir -p "$homeDir/.local/bin"
         ${lib.optionalString cfg.standalone.eden ''
           ln -sfn "${pkgs-unstable.eden}/bin/eden" "$homeDir/.local/bin/eden"
-          chown ${cfgUser}:users "$homeDir/.local/bin/eden" || true
+          chown -h ${cfgUser}:users "$homeDir/.local/bin/eden" || true
         ''}
 
         ${lib.optionalString cfg.standalone.duckstation ''
           ln -sfn "${duckstationPkg}/bin/duckstation" "$homeDir/.local/bin/duckstation"
           ln -sfn "${duckstationPkg}/bin/duckstation-qt" "$homeDir/.local/bin/duckstation-qt"
-          chown ${cfgUser}:users "$homeDir/.local/bin/duckstation"* || true
+          chown -h ${cfgUser}:users "$homeDir/.local/bin/duckstation"* || true
         ''}
 
         ${lib.optionalString cfg.standalone.pcsx2 ''
           ln -sfn "${pkgs-unstable.pcsx2}/bin/pcsx2-qt" "$homeDir/.local/bin/pcsx2-qt"
           ln -sfn "${pkgs-unstable.pcsx2}/bin/pcsx2-qt" "$homeDir/.local/bin/pcsx2"
-          chown ${cfgUser}:users "$homeDir/.local/bin/pcsx2"* || true
+          chown -h ${cfgUser}:users "$homeDir/.local/bin/pcsx2"* || true
         ''}
 
         # 4. Configuration déclarative d'ES-DE : DuckStation (PSX) et PCSX2 (PS2) par défaut
