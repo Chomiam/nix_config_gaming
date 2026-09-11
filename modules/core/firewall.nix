@@ -1,32 +1,36 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
+let
+  userFirewallPath = ../../firewall-user.nix;
+in
 {
+  imports = lib.optional (builtins.pathExists userFirewallPath) userFirewallPath;
+
   # =========================================================================
-  # 🛡️ GESTION DU PARE-FEU & RÈGLES DE SÉCURITÉ RÉSEAU
+  # 🛡️ GESTION DU PARE-FEU SYSTÈME & RÈGLES PAR DÉFAUT CHOMIAMOS
   # =========================================================================
 
   networking.firewall = {
     enable = config.chomiamos.firewall.enable;
 
-    # Ports TCP autorisés
+    # Ports TCP autorisés par défaut pour le système
     allowedTCPPorts = [
       53317 # LocalSend (Partage de fichiers local)
+      8080  # OpenWebUI (Interface web IA locale)
+      8888  # SearXNG (Moteur de recherche méta privé)
     ];
 
-    # Ports UDP autorisés
+    # Ports UDP autorisés par défaut pour le système
     allowedUDPPorts = [
       53317 # LocalSend (Découverte d'appareils réseau local)
     ];
 
-    # Plages de ports TCP autorisées
+    # Plages de ports TCP autorisées par défaut
     allowedTCPPortRanges = [
-      { from = 27015; to = 27030; } # Jeux Paradox (Stellaris) & Steam session
     ];
 
-    # Plages de ports UDP autorisées
+    # Plages de ports UDP autorisées par défaut
     allowedUDPPortRanges = [
-      { from = 3000; to = 3010; }   # Moteur Clausewitz (Multi direct Paradox)
-      { from = 27000; to = 27100; } # Jeux Paradox (Stellaris / Matchmaking P2P)
     ];
   };
 }
