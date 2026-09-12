@@ -12,6 +12,7 @@ in
     ./sysctl-gaming.nix
     ./firewall.nix
     ./browser.nix
+    ./mail.nix
     ./users.nix
     ./custom-packages.nix
   ];

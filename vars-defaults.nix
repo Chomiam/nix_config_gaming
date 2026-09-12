@@ -53,7 +53,16 @@
   };
 
   # Navigateur web principal
+  # Options disponibles : "chrome" | "firefox" | "brave" | "zen" | "librewolf"
   browser = "chrome";
+
+  # Mode d'installation du navigateur : "system" (Nix) | "flatpak" (Flathub)
+  # Note : Zen et LibreWolf sont gérés exclusivement via Flatpak.
+  browserPackageType = "system";
+
+  # Client de messagerie e-mail
+  # Options disponibles : "thunderbird" | "mailspring" | "none"
+  mailClient = "thunderbird";
 
   # Client Discord
   discordClient = "discord";

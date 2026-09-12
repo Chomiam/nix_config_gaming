@@ -50,6 +50,8 @@
     };
 
     browser = vars.browser;
+    browserPackageType = vars.browserPackageType or "system";
+    mailClient = vars.mailClient or "thunderbird";
     discordClient = vars.discordClient or "discord";
 
     gaming = {

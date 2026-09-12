@@ -138,6 +138,18 @@ in
       description = "Navigateur web par défaut du système.";
     };
 
+    browserPackageType = lib.mkOption {
+      type = lib.types.enum [ "system" "flatpak" ];
+      default = "system";
+      description = "Mode d'installation du navigateur : paquet système Nix ou conteneur Flatpak Flathub.";
+    };
+
+    mailClient = lib.mkOption {
+      type = lib.types.enum [ "thunderbird" "mailspring" "none" ];
+      default = "thunderbird";
+      description = "Client de messagerie électronique à installer (Thunderbird, Mailspring ou none).";
+    };
+
     discordClient = lib.mkOption {
       type = lib.types.enum [ "discord" "equibop" "vesktop" "none" ];
       default = "discord";

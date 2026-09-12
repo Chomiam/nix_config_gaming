@@ -59,6 +59,17 @@
   # - "zen"       : Zen Browser (Flatpak Flathub : app.zen_browser.zen)
   # =========================================================================
   browser = "chrome";
+  browserPackageType = "system";
+
+  # =========================================================================
+  # 📧 CLIENT DE MESSAGERIE E-MAIL (MAIL CLIENT)
+  # Options disponibles : "thunderbird" | "mailspring" | "none"
+  #
+  # - "thunderbird" : Mozilla Thunderbird (Par défaut, client robuste et complet)
+  # - "mailspring"  : Mailspring (Client moderne et personnalisable)
+  # - "none"        : Aucun client e-mail préinstallé
+  # =========================================================================
+  mailClient = "thunderbird";
 
   # =========================================================================
   # 💬 CLIENT DE COMMUNICATION DISCORD
