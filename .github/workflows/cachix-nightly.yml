@@ -36,6 +36,7 @@ jobs:
   cache-matrix:
     runs-on: ubuntu-latest
     timeout-minutes: 360
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.target != 'full')
     strategy:
       fail-fast: false
       matrix:
@@ -65,12 +66,23 @@ jobs:
             flake_target: ".#packages.x86_64-linux.cache-matrix.allSystemTools"
             id: "tools"
     name: ${{ matrix.target.name }}
-    if: github.event_name == 'schedule' || inputs.target == 'matrix' || inputs.target == matrix.target.id
     steps:
+      - name: 🔍 Vérification d'exécution pour cette cible
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.target }}" = "matrix" ] || [ "${{ inputs.target }}" = "${{ matrix.target.id }}" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "Ignoré pour ce run (cible différente demandée)."
+          fi
+
       - name: 📥 Récupération du dépôt
+        if: steps.check.outputs.should_run == 'true'
         uses: actions/checkout@v4
 
       - name: 🧹 Libération de l'espace disque du runner
+        if: steps.check.outputs.should_run == 'true'
         run: |
           echo "Espace disque avant nettoyage :"
           df -h /
@@ -79,6 +91,7 @@ jobs:
           df -h /
 
       - name: ❄️ Installation de Nix
+        if: steps.check.outputs.should_run == 'true'
         uses: cachix/install-nix-action@v30
         with:
           extra_nix_config: |
@@ -87,12 +100,14 @@ jobs:
             warn-dirty = false
 
       - name: ⚡ Connexion à Cachix
+        if: steps.check.outputs.should_run == 'true'
         uses: cachix/cachix-action@v15
         with:
           name: chomiamos
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: 🔨 Construction & Push Cachix (${{ matrix.target.name }})
+        if: steps.check.outputs.should_run == 'true'
         run: |
           echo "🚀 Construction et envoi vers chomiamos.cachix.org : ${{ matrix.target.flake_target }}"
           nix build "${{ matrix.target.flake_target }}" \
@@ -105,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     name: "🚀 Configuration Système Complète (Full)"
-    if: inputs.target == 'full'
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'full'
     steps:
       - name: 📥 Récupération du dépôt
         uses: actions/checkout@v4
@@ -141,7 +156,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 240
     name: "🎬 DaVinci Resolve (Optionnel)"
-    if: inputs.include_davinci == true
+    if: github.event_name == 'workflow_dispatch' && inputs.include_davinci == true
     steps:
       - name: 📥 Récupération du dépôt
         uses: actions/checkout@v4
