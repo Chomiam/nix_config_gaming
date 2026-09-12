@@ -65,7 +65,7 @@ jobs:
             flake_target: ".#packages.x86_64-linux.cache-matrix.allSystemTools"
             id: "tools"
     name: ${{ matrix.target.name }}
-    if: github.event_name == 'schedule' || github.event.inputs.target == 'matrix' || github.event.inputs.target == matrix.target.id
+    if: github.event_name == 'schedule' || inputs.target == 'matrix' || inputs.target == matrix.target.id
     steps:
       - name: 📥 Récupération du dépôt
         uses: actions/checkout@v4
@@ -105,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     name: "🚀 Configuration Système Complète (Full)"
-    if: github.event.inputs.target == 'full'
+    if: inputs.target == 'full'
     steps:
       - name: 📥 Récupération du dépôt
         uses: actions/checkout@v4
@@ -141,7 +141,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 240
     name: "🎬 DaVinci Resolve (Optionnel)"
-    if: github.event.inputs.include_davinci == true
+    if: inputs.include_davinci == true
     steps:
       - name: 📥 Récupération du dépôt
         uses: actions/checkout@v4
