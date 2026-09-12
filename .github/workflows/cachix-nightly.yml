@@ -1,0 +1,174 @@
+name: ⚡ Cachix Nightly Build & Push
+
+on:
+  schedule:
+    # Déclenchement automatique 1x par jour à 03h00 du matin (heure de Paris / CEST = 01:00 UTC)
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Composant à mettre en cache'
+        required: true
+        default: 'matrix'
+        type: choice
+        options:
+          - 'matrix'
+          - 'kde'
+          - 'cosmic'
+          - 'cinnamon'
+          - 'gnome'
+          - 'emulators'
+          - 'creation'
+          - 'browsers'
+          - 'tools'
+          - 'full'
+      include_davinci:
+        description: 'Inclure DaVinci Resolve (⚠️ Attention : saturation du quota Cachix 5 Go)'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: cachix-nightly-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cache-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - name: "🖥️ Desktop KDE Plasma 6"
+            flake_target: ".#nixosConfigurations.kde.config.system.build.toplevel"
+            id: "kde"
+          - name: "🖥️ Desktop COSMIC 1.5+"
+            flake_target: ".#nixosConfigurations.cosmic.config.system.build.toplevel"
+            id: "cosmic"
+          - name: "🖥️ Desktop Cinnamon"
+            flake_target: ".#nixosConfigurations.cinnamon.config.system.build.toplevel"
+            id: "cinnamon"
+          - name: "🖥️ Desktop GNOME"
+            flake_target: ".#nixosConfigurations.gnome.config.system.build.toplevel"
+            id: "gnome"
+          - name: "🕹️ Pack Émulateurs"
+            flake_target: ".#packages.x86_64-linux.cache-matrix.allEmulators"
+            id: "emulators"
+          - name: "🎨 Pack Création 3D & Vidéo"
+            flake_target: ".#packages.x86_64-linux.cache-matrix.allCreation"
+            id: "creation"
+          - name: "🌐 Pack Navigateurs"
+            flake_target: ".#packages.x86_64-linux.cache-matrix.allBrowsers"
+            id: "browsers"
+          - name: "🛠️ Pack Outils Système & Gaming"
+            flake_target: ".#packages.x86_64-linux.cache-matrix.allSystemTools"
+            id: "tools"
+    name: ${{ matrix.target.name }}
+    if: github.event_name == 'schedule' || github.event.inputs.target == 'matrix' || github.event.inputs.target == matrix.target.id
+    steps:
+      - name: 📥 Récupération du dépôt
+        uses: actions/checkout@v4
+
+      - name: 🧹 Libération de l'espace disque du runner
+        run: |
+          echo "Espace disque avant nettoyage :"
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost 2>/dev/null || true
+          echo "Espace disque après nettoyage :"
+          df -h /
+
+      - name: ❄️ Installation de Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            warn-dirty = false
+
+      - name: ⚡ Connexion à Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: chomiamos
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: 🔨 Construction & Push Cachix (${{ matrix.target.name }})
+        run: |
+          echo "🚀 Construction et envoi vers chomiamos.cachix.org : ${{ matrix.target.flake_target }}"
+          nix build "${{ matrix.target.flake_target }}" \
+            --accept-flake-config \
+            --impure \
+            --fallback \
+            --print-build-logs
+
+  cache-full-system:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    name: "🚀 Configuration Système Complète (Full)"
+    if: github.event.inputs.target == 'full'
+    steps:
+      - name: 📥 Récupération du dépôt
+        uses: actions/checkout@v4
+
+      - name: 🧹 Libération de l'espace disque du runner
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost 2>/dev/null || true
+          df -h /
+
+      - name: ❄️ Installation de Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            warn-dirty = false
+
+      - name: ⚡ Connexion à Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: chomiamos
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: 🔨 Construction & Push Configuration Full
+        run: |
+          nix build .#nixosConfigurations.full.config.system.build.toplevel \
+            --accept-flake-config \
+            --impure \
+            --fallback \
+            --print-build-logs
+
+  cache-davinci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    name: "🎬 DaVinci Resolve (Optionnel)"
+    if: github.event.inputs.include_davinci == true
+    steps:
+      - name: 📥 Récupération du dépôt
+        uses: actions/checkout@v4
+
+      - name: 🧹 Libération de l'espace disque du runner
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost 2>/dev/null || true
+          df -h /
+
+      - name: ❄️ Installation de Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+            warn-dirty = false
+
+      - name: ⚡ Connexion à Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: chomiamos
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: 🔨 Construction & Push DaVinci Resolve Free
+        run: |
+          nix build .#packages.x86_64-linux.cache-matrix.davinci.free \
+            --accept-flake-config \
+            --impure \
+            --fallback \
+            --print-build-logs
