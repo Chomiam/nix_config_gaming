@@ -3,10 +3,12 @@
 
   nixConfig = {
     extra-substituters = [
+      "https://chomiamos.cachix.org"
       "https://duckstation.cachix.org"
       "https://chomiamos-dashboard.cachix.org"
     ];
     extra-trusted-public-keys = [
+      "chomiamos.cachix.org-1:YB3RyqWQZagZxsfBwdVXcJ2219/yAsMFOGoh0pfSbjk="
       "duckstation.cachix.org-1:tNC6UMoM5ZojxBRDdPNHC3xBlk7hnClCtsGsho3YiY4="
       "chomiamos-dashboard.cachix.org-1:DrjJpGp7tzIMJo6s4dQdwWDopszgo1EFkm34PEN+D+w="
     ];
@@ -77,53 +79,61 @@
       # chez tous les utilisateurs, même si leur vars.nix ne les contient pas encore.
       defaults = import ./vars-defaults.nix;
       userVars = import ./vars.nix;
-      vars = let
-        recursiveMerge = base: override:
-          builtins.mapAttrs (name: baseValue:
-            if override ? ${name} then
-              if builtins.isAttrs baseValue && builtins.isAttrs override.${name}
-              then recursiveMerge baseValue override.${name}
-              else override.${name}
-            else baseValue
-          ) base // (builtins.removeAttrs override (builtins.attrNames base));
-      in recursiveMerge defaults userVars;
 
-      desktopSystem = nixpkgs.lib.nixosSystem {
-        # Transmet 'inputs' et 'vars' à tous les modules NixOS
-        specialArgs = { inherit inputs vars; };
+      recursiveMerge = base: override:
+        builtins.mapAttrs (name: baseValue:
+          if override ? ${name} then
+            if builtins.isAttrs baseValue && builtins.isAttrs override.${name}
+            then recursiveMerge baseValue override.${name}
+            else override.${name}
+          else baseValue
+        ) base // (builtins.removeAttrs override (builtins.attrNames base));
 
-        modules = [
-          # 🖥️ Architecture système
-          { nixpkgs.hostPlatform = "x86_64-linux"; }
+      baseVars = recursiveMerge defaults userVars;
 
-          # 🛠️ Configuration de l'hôte principal (Desktop)
-          ./hosts/desktop/configuration.nix
+      # 🚀 Générateur modulaire de système NixOS permettant la surcharge de variables
+      mkSystem = customVars:
+        let
+          vars = recursiveMerge baseVars customVars;
+        in
+        nixpkgs.lib.nixosSystem {
+          # Transmet 'inputs' et 'vars' à tous les modules NixOS
+          specialArgs = { inherit inputs vars; };
 
-          # 📦 Insertion des modules système tiers
-          inputs.nix-flatpak.nixosModules.nix-flatpak
-          inputs.home-manager.nixosModules.home-manager
+          modules = [
+            # 🖥️ Architecture système
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
 
-          # 🏠 Configuration dynamique de Home Manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "backup";
+            # 🛠️ Configuration de l'hôte principal (Desktop)
+            ./hosts/desktop/configuration.nix
 
-              # Transmet 'inputs' et 'vars' à tous les modules Home-Manager
-              extraSpecialArgs = { inherit inputs vars; };
+            # 📦 Insertion des modules système tiers
+            inputs.nix-flatpak.nixosModules.nix-flatpak
+            inputs.home-manager.nixosModules.home-manager
 
-              # 🛠️ Modules partagés Home Manager
-              sharedModules = [
-                inputs.catppuccin.homeModules.catppuccin
-              ];
+            # 🏠 Configuration dynamique de Home Manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                backupFileExtension = "backup";
 
-              # 👤 Chargement dynamique du profil utilisateur principal
-              users.${vars.user.username} = import ./home;
-            };
-          }
-        ];
-      };
+                # Transmet 'inputs' et 'vars' à tous les modules Home-Manager
+                extraSpecialArgs = { inherit inputs vars; };
+
+                # 🛠️ Modules partagés Home Manager
+                sharedModules = [
+                  inputs.catppuccin.homeModules.catppuccin
+                ];
+
+                # 👤 Chargement dynamique du profil utilisateur principal
+                users.${vars.user.username} = import ./home;
+              };
+            }
+          ];
+        };
+
+      desktopSystem = mkSystem {};
     in
     {
       # 📦 Export du module Chomiamos pour réutilisation externe / partage
@@ -132,12 +142,34 @@
         chomiamos = ./modules;
       };
 
+      # 🖥️ Configurations systèmes disponibles
       nixosConfigurations = {
-        ${vars.hostName} = desktopSystem;
+        ${baseVars.hostName} = desktopSystem;
         default = desktopSystem;
         nixos = desktopSystem;
+
+        # Variantes pré-configurées pour chaque environnement de bureau
+        gnome = mkSystem { desktopEnv = "gnome"; };
+        kde = mkSystem { desktopEnv = "kde"; };
+        cosmic = mkSystem { desktopEnv = "cosmic"; };
+        cinnamon = mkSystem { desktopEnv = "cinnamon"; };
+
+        # Configuration maximale / cache intégral (toutes options, émulateurs, outils activés)
+        full = mkSystem (import ./tools/cache-full-vars.nix);
       } // {
         chomiamos = desktopSystem;
+      };
+
+      # 📦 Matrice déclarative de mise en cache
+      packages.x86_64-linux = let
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";
+          config.allowUnfree = true;
+        };
+      in {
+        cache-matrix = import ./tools/cache-matrix.nix {
+          inherit pkgs inputs self;
+        };
       };
     };
 }

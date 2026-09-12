@@ -85,12 +85,12 @@ let
     sources=[('xkb', '${cfg.keyboard.layout}${lib.optionalString (cfg.keyboard.variant != "") "+${cfg.keyboard.variant}"}')]
 
     [org/gnome/desktop/background]
-    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
-    picture-uri-dark='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
+    picture-uri-dark='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
     picture-options='zoom'
 
     [org/gnome/desktop/screensaver]
-    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
     picture-options='zoom'
 
     [org/gnome/shell/extensions/dash-to-dock]
@@ -255,14 +255,14 @@ let
     sources=[('xkb', '${cfg.keyboard.layout}${lib.optionalString (cfg.keyboard.variant != "") "+${cfg.keyboard.variant}"}')]
 
     [org/cinnamon/desktop/background]
-    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
     picture-options='zoom'
 
     [org/cinnamon/desktop/background/slideshow]
     image-source='directory:///run/current-system/sw/share/backgrounds/chomiamos'
 
     [org/cinnamon/desktop/screensaver]
-    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper.jpeg'
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
     picture-options='zoom'
 
     [org/cinnamon/theme]
@@ -407,7 +407,7 @@ EOF_COSMIC_XKB
         ${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-cursortheme catppuccin-mocha-lavender-cursors || true
       fi
       if [ -x "${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-wallpaperimage" ]; then
-        ${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-wallpaperimage /etc/backgrounds/chomiamos/wallpaper.jpeg || true
+        ${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-wallpaperimage /etc/backgrounds/chomiamos/wallpaper_0007.png || true
       fi
 
       # Configuration de secours via KWriteConfig6

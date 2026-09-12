@@ -19,7 +19,7 @@ in
     services.xserver.displayManager.lightdm.enable = true;
     services.xserver.displayManager.lightdm.greeters.slick.enable = true;
     services.xserver.displayManager.lightdm.greeters.slick.extraConfig = ''
-      background=/etc/backgrounds/chomiamos/wallpaper.jpeg
+      background=/etc/backgrounds/chomiamos/wallpaper_0007.png
     '';
 
     # Exclusion de Xterm et de GNOME Terminal au niveau de l'environnement Cinnamon
