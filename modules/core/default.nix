@@ -108,8 +108,6 @@ in
     supportedFilesystems = [
       "btrfs"
       "ext4"
-      "vfat"
-      "ntfs"
     ];
   };
 
