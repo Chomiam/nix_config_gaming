@@ -27,8 +27,8 @@ in
   # =========================================================================
 
   config = lib.mkIf cfg {
-    # Ajout automatique de l'utilisateur aux groupes de virtualisation
-    users.users."${username}".extraGroups = [ "libvirtd" "kvm" ];
+    # Ajout automatique de l'utilisateur aux groupes de virtualisation et d'accélération graphique
+    users.users."${username}".extraGroups = [ "libvirtd" "kvm" "video" "render" ];
 
     # Activation et configuration du daemon libvirtd
     virtualisation.libvirtd = {
@@ -41,6 +41,22 @@ in
 
     # Interface graphique d'administration Virt-Manager
     programs.virt-manager.enable = true;
+
+    # Profils dconf pour Virt-Manager : gestion optimale de la résolution d'écran et du redimensionnement dynamique
+    programs.dconf.profiles.user.databases = [
+      {
+        settings = {
+          "org/virt-manager/virt-manager/console" = {
+            resize-guest = lib.gvariant.mkInt32 1; # Auto-redimensionnement dynamique de la résolution de l'écran invité selon la taille de la fenêtre
+            scaling = lib.gvariant.mkInt32 1;      # Mise à l'échelle uniquement en plein écran (évite le flou d'interpolation en mode fenêtré)
+            auto-redirect = true;                  # Redirection automatique des périphériques USB SPICE
+          };
+          "org/virt-manager/virt-manager/new-vm" = {
+            cpu-default = "host-passthrough";      # Passe l'intégralité des instructions CPU de l'hôte (AVX, SSE) pour un bureau invité ultra-fluide
+          };
+        };
+      }
+    ];
 
     # Support de la redirection des périphériques USB via SPICE
     virtualisation.spiceUSBRedirection.enable = true;
@@ -67,6 +83,10 @@ in
       # Client d'affichage SPICE / VNC (Remote Viewer)
       virt-viewer
       spice-gtk
+      spice-protocol
+
+      # Moteur de rendu graphique 3D OpenGL pour QEMU (VirtIO-GPU VirGL)
+      virglrenderer
 
       # Pilotes VirtIO modernes (Windows 10 / 11)
       virtio-win

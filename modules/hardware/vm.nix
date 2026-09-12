@@ -10,6 +10,17 @@
     # Noyau Linux standard recommandé pour la stabilité des modules invités
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages;
 
+    # Modules noyau VirtIO & QXL précoces dans l'initrd pour un affichage natif immédiat dès le boot
+    boot.initrd.kernelModules = [
+      "virtio_gpu"
+      "virtio_pci"
+      "virtio_balloon"
+      "virtio_net"
+      "virtio_console"
+      "qxl"
+      "bochs"
+    ];
+
     # Accélération graphique générique Mesa (Virtio-GPU, SVGA, VBoxVGA)
     hardware.graphics = {
       enable = true;
