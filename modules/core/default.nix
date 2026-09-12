@@ -104,6 +104,13 @@ in
       };
       efi.canTouchEfiVariables = true;
     };
+
+    supportedFilesystems = [
+      "btrfs"
+      "ext4"
+      "vfat"
+      "ntfs"
+    ];
   };
 
   # -------------------------------------------------------------------------
