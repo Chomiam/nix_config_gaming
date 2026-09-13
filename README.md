@@ -38,7 +38,7 @@ Cette configuration fonctionne à la fois comme un **système autonome personnal
 
 La configuration repose sur une séparation nette entre le **socle technique modulaire** et la **définition de la machine** :
 
-1. **Espace d'Options Déclaratif (`chomiamos.*`)** : Tous les modules sont définis selon le système d'options natif de NixOS (`options.nix`). Chaque fonctionnalité (Samba, Docker, Decky Loader, DaVinci Resolve, profil GPU) est activable ou désactivable de manière indépendante avec typage strict et valeurs par défaut.
+1. **Espace d'Options Déclaratif (`chomiamos.*`)** : Tous les modules sont définis selon le système d'options natif de NixOS (`options.nix`). Chaque fonctionnalité (Samba, Podman, Decky Loader, DaVinci Resolve, profil GPU) est activable ou désactivable de manière indépendante avec typage strict et valeurs par défaut.
 2. **Imports Inconditionnels & `lib.mkIf`** : Élimination des imports conditionnels au profit d'une évaluation modulaire propre, assurant une introspection complète du système et une compatibilité maximale avec les outils NixOS.
 3. **Double Accès (Simplicité vs Flexibilité)** :
    - Pour une utilisation locale directe : réglez vos préférences en 1 minute dans [vars.nix](file:///etc/nixos/vars.nix).
@@ -145,7 +145,7 @@ Un réglage unique bascule l'ensemble du profil GPU et du noyau Linux adapté :
 │       ├── default.nix             # Import unifié de tous les services
 │       ├── samba.nix               # Partage SMB/CIFS & WSDD
 │       ├── virt-manager.nix        # KVM / QEMU / VirtIO ISOs
-│       ├── docker.nix              # Daemon Docker & OCI
+│       ├── podman.nix              # Runtime Podman & OCI
 │       ├── flatpak.nix             # Nix-Flatpak & Flathub
 │       ├── nix-ld.nix              # Compatibilité binaires externes
 │       ├── obs.nix                 # OBS Studio & plugins capture
@@ -153,7 +153,7 @@ Un réglage unique bascule l'ensemble du profil GPU et du noyau Linux adapté :
 │       ├── blender.nix             # Blender 3D (unstable)
 │       ├── godot.nix               # Godot Engine (unstable)
 │       ├── davinci-resolve.nix     # DaVinci Resolve Free / Studio
-│       └── ai-suite.nix            # Ollama, Open-WebUI & SearXNG
+│       └── omniroute.nix           # Passerelle IA universelle OmniRoute (Podman)
 │
 └── home/                           # Profils utilisateur Home-Manager & Thématisation
     ├── default.nix
@@ -203,8 +203,8 @@ blender = true;
 godot = true;
 davinciResolve = "none"; # "none" | "free" | "studio"
 
-# Suite IA Locale (Ollama + WebUI + SearXNG)
-aiSuite.enable = false;
+# Passerelle IA OmniRoute (Conteneur Podman léger, 350+ providers)
+omniroute.enable = true;
 ```
 
 ---

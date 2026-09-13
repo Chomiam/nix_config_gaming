@@ -104,14 +104,7 @@ let
     ardour = pkgs.ardour;
   };
 
-  # 6. 🤖 Suite IA Locale
-  aiSuite = {
-    ollama = pkgs.ollama;
-    openWebui = pkgs.open-webui;
-    searxng = pkgs.searxng;
-  };
-
-  # 7. 🛠️ Outils Système & Gaming
+  # 6. 🛠️ Outils Système & Gaming
   systemTools = {
     dashboard =
       if inputs ? chomiamos-dashboard && inputs.chomiamos-dashboard ? packages.${system}.default
@@ -177,23 +170,17 @@ let
     paths = validPkgs systemTools;
   };
 
-  allAi = pkgs.symlinkJoin {
-    name = "chomiamos-ai-bundle";
-    paths = validPkgs aiSuite;
-  };
-
   # Pack global hors DaVinci (pour préserver le quota 5 Go de Cachix)
   allPackages = pkgs.symlinkJoin {
     name = "chomiamos-all-packages-bundle";
     paths = (validPkgs emulators)
       ++ (validPkgs creation)
       ++ (validPkgs browsers)
-      ++ (validPkgs systemTools)
-      ++ (validPkgs aiSuite);
+      ++ (validPkgs systemTools);
   };
 
 in
 {
-  inherit desktops davinci browsers emulators creation aiSuite systemTools;
-  inherit allEmulators allCreation allBrowsers allSystemTools allAi allPackages;
+  inherit desktops davinci browsers emulators creation systemTools;
+  inherit allEmulators allCreation allBrowsers allSystemTools allPackages;
 }

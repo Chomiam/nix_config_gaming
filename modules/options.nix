@@ -4,6 +4,10 @@ let
   cfg = config.chomiamos;
 in
 {
+  imports = [
+    (lib.mkRenamedOptionModule [ "chomiamos" "services" "docker" ] [ "chomiamos" "services" "podman" ])
+  ];
+
   # =========================================================================
   # ⚙️ ESPACE D'OPTIONS DÉCLARATIF CHOMIAMOS
   # =========================================================================
@@ -339,11 +343,11 @@ in
         };
       };
 
-      docker = {
+      podman = {
         enable = lib.mkOption {
           type = lib.types.bool;
           default = true;
-          description = "Active le daemon Docker et le backend OCI.";
+          description = "Active le moteur de conteneurs Podman et le backend OCI.";
         };
       };
 
@@ -543,41 +547,35 @@ in
         };
       };
 
-      aiSuite = {
+      omniroute = {
         enable = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Active la suite IA locale (Ollama + Open-WebUI + SearXNG).";
+          description = "Active la passerelle d'API IA OmniRoute (conteneur OCI sous Podman).";
         };
 
-        rocmOverrideGfx = lib.mkOption {
-          type = lib.types.str;
-          default = "12.0.1";
-          description = "Architecture ROCm cible pour GPU AMD Radeon.";
-        };
-
-        keepAlive = lib.mkOption {
-          type = lib.types.str;
-          default = "0s";
-          description = "Durée de rétention du modèle Ollama en VRAM.";
-        };
-
-        openWebUiPort = lib.mkOption {
+        port = lib.mkOption {
           type = lib.types.port;
-          default = 8080;
-          description = "Port HTTP de l'interface Open-WebUI.";
-        };
-
-        searxPort = lib.mkOption {
-          type = lib.types.port;
-          default = 8888;
-          description = "Port HTTP du métamoteur SearXNG.";
+          default = 20128;
+          description = "Port HTTP d'OmniRoute (Dashboard Web et API OpenAI-compatible).";
         };
 
         openFirewall = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Ouvre le port HTTP d'Open-WebUI dans le pare-feu réseau.";
+          description = "Ouvre le port HTTP d'OmniRoute dans le pare-feu réseau.";
+        };
+
+        memoryMb = lib.mkOption {
+          type = lib.types.int;
+          default = 2048;
+          description = "Mémoire maximale allouée au runtime V8 d'OmniRoute en Mo.";
+        };
+
+        image = lib.mkOption {
+          type = lib.types.str;
+          default = "diegosouzapw/omniroute:latest";
+          description = "Image conteneur OCI pour OmniRoute.";
         };
       };
     };

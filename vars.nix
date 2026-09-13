@@ -125,13 +125,12 @@
   kdenlive = false;
   obsStudio = true;
 
-  # Suite IA Locale
-  aiSuite = {
-    enable = false;
-    rocmOverrideGfx = "12.0.1";
-    keepAlive = "0s";
-    openWebUiPort = 8080;
-    searxPort = 8888;
+  # Passerelle IA OmniRoute (Conteneur Podman léger, 350+ fournisseurs cloud)
+  # Interface web accessible sur http://localhost:20128
+  omniroute = {
+    enable = true;
+    port = 20128;
     openFirewall = false;
+    memoryMb = 2048;
   };
 }

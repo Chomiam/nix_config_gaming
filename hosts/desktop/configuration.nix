@@ -96,7 +96,7 @@
     services = {
       virtualisation.enable = vars.virtualisation.enable or false;
       samba.enable = true;
-      docker.enable = true;
+      podman.enable = true;
       nix-ld.enable = true;
       flatpak.enable = true;
       obs.enable = vars.obsStudio or true;
@@ -125,13 +125,11 @@
         bambustudio.enable = vars.slicers.bambustudio or false;
       };
 
-      aiSuite = {
-        enable = vars.aiSuite.enable or false;
-        rocmOverrideGfx = vars.aiSuite.rocmOverrideGfx or "12.0.1";
-        keepAlive = vars.aiSuite.keepAlive or "0s";
-        openWebUiPort = vars.aiSuite.openWebUiPort or 8080;
-        searxPort = vars.aiSuite.searxPort or 8888;
-        openFirewall = vars.aiSuite.openFirewall or false;
+      omniroute = {
+        enable = vars.omniroute.enable or false;
+        port = vars.omniroute.port or 20128;
+        openFirewall = vars.omniroute.openFirewall or false;
+        memoryMb = vars.omniroute.memoryMb or 2048;
       };
     };
   };

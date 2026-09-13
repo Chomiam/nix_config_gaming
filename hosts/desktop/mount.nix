@@ -21,6 +21,7 @@ in
       "defaults"
       "nofail"
       "compress=zstd"
+      "x-gvfs-show"
     ];
   };
 

@@ -86,13 +86,11 @@
     bambustudio = true;
   };
 
-  # Suite IA Locale (Ollama + Open-WebUI + SearXNG)
-  aiSuite = {
+  # Passerelle IA OmniRoute
+  omniroute = {
     enable = true;
-    rocmOverrideGfx = "12.0.1";
-    keepAlive = "0s";
-    openWebUiPort = 8080;
-    searxPort = 8888;
+    port = 20128;
     openFirewall = false;
+    memoryMb = 2048;
   };
 }
