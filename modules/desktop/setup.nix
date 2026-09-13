@@ -12,6 +12,32 @@ let
     accents = [ "lavender" ];
   };
 
+  nemoDesktopTransparencyCss = pkgs.writeText "nemo-desktop-transparency.css" ''
+    /* =========================================================================
+     * Correctif de transparence pour Nemo Desktop (Cinnamon)
+     * Empêche l'aplat de couleur opaque Catppuccin d'obstruer le fond d'écran.
+     * ========================================================================= */
+    .nemo-desktop-window,
+    .nemo-desktop-window *,
+    .nemo-desktop-window .view,
+    .nemo-desktop.view,
+    .nemo-desktop-window canvas,
+    .nemo-desktop-window scrolledwindow,
+    .nemo-desktop-window viewport {
+      background-color: transparent;
+    }
+  '';
+
+  gtk3Css = pkgs.concatText "gtk3-catppuccin.css" [
+    "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk.css"
+    nemoDesktopTransparencyCss
+  ];
+
+  gtk3DarkCss = pkgs.concatText "gtk3-dark-catppuccin.css" [
+    "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk-dark.css"
+    nemoDesktopTransparencyCss
+  ];
+
   # =========================================================================
   # 1. CONFIGURATION INITIALE POUR GNOME SHELL (DCONF)
   # =========================================================================
@@ -308,8 +334,8 @@ let
       ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
       ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk-dark.css" "$HOME/.config/gtk-4.0/gtk-dark.css"
       ${pkgs.coreutils}/bin/ln -sfn "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/assets" "$HOME/.config/gtk-4.0/assets"
-      ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
-      ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk-dark.css" "$HOME/.config/gtk-3.0/gtk-dark.css"
+      ${pkgs.coreutils}/bin/ln -sf "${gtk3Css}" "$HOME/.config/gtk-3.0/gtk.css"
+      ${pkgs.coreutils}/bin/ln -sf "${gtk3DarkCss}" "$HOME/.config/gtk-3.0/gtk-dark.css"
       ${pkgs.coreutils}/bin/ln -sfn "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/assets" "$HOME/.config/gtk-3.0/assets"
 
       # Configuration universelle des fonds d'écran pour Cinnamon Desktop
@@ -478,8 +504,8 @@ in
   environment.etc."xdg/gtk-4.0/gtk.css".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk.css";
   environment.etc."xdg/gtk-4.0/gtk-dark.css".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk-dark.css";
   environment.etc."xdg/gtk-4.0/assets".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/assets";
-  environment.etc."xdg/gtk-3.0/gtk.css".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk.css";
-  environment.etc."xdg/gtk-3.0/gtk-dark.css".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/gtk-dark.css";
+  environment.etc."xdg/gtk-3.0/gtk.css".source = gtk3Css;
+  environment.etc."xdg/gtk-3.0/gtk-dark.css".source = gtk3DarkCss;
   environment.etc."xdg/gtk-3.0/assets".source = "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/assets";
 
   # Dconf global activé
