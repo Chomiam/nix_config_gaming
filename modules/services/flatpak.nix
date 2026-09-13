@@ -11,6 +11,10 @@ in
   # =========================================================================
 
   config = lib.mkIf cfg.enable {
+    systemd.tmpfiles.rules = [
+      "d /var/lib/flatpak/exports/share/applications 0755 root root -"
+    ];
+
     services.flatpak = {
       enable = true;
       update.auto.enable = true;

@@ -258,10 +258,19 @@ let
     picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
     picture-options='zoom'
 
+    [org/gnome/desktop/background]
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
+    picture-uri-dark='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
+    picture-options='zoom'
+
     [org/cinnamon/desktop/background/slideshow]
     image-source='directory:///run/current-system/sw/share/backgrounds/chomiamos'
 
     [org/cinnamon/desktop/screensaver]
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
+    picture-options='zoom'
+
+    [org/gnome/desktop/screensaver]
     picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
     picture-options='zoom'
 
@@ -292,6 +301,7 @@ let
     if [ "$FORCE" -eq 1 ] || [ ! -f "$SENTINEL" ]; then
       echo "[ChomiamOS] Initialisation de l'interface utilisateur..."
       ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/chomiamos"
+      trap '${pkgs.coreutils}/bin/touch "$SENTINEL"' EXIT
 
       # Déploiement sécurisé du thème Catppuccin GTK4 et GTK3 dans le profil utilisateur
       ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/gtk-4.0" "$HOME/.config/gtk-3.0"
