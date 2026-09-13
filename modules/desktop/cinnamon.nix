@@ -30,7 +30,6 @@ in
     # Paquets complémentaires et personnalisation graphique
     users.users."${username}".packages = with pkgs; [
       networkmanagerapplet
-      papirus-icon-theme
       adw-gtk3
       dconf-editor
     ];
