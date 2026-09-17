@@ -78,7 +78,7 @@ Un réglage unique bascule l'ensemble du profil GPU et du noyau Linux adapté :
 ### 2.5. Environnements de Bureau (GNOME & COSMIC Desktop)
 - **GNOME Shell** : Thème dark moderne, accent purple, extensions productivité (`Dash to Dock`, `Blur my Shell`, `AppIndicator`, `Vitals`, `Clipboard Indicator`, `ArcMenu`).
 - **Modèles de Documents** : Génération déclarative automatique des modèles de fichiers dans `~/Modèles` (`.docx`, `.xlsx`, `.pptx`, `.sh`, `.txt`) pour créer un document bureautique en un clic droit.
-- **COSMIC Desktop 1.5+** : Bureau Wayland nouvelle génération écrit en Rust, tiré directement de `nixpkgs-unstable` avec correctifs XKB et applets communautaires (`minimon-applet`, `clipboard-manager`).
+- **COSMIC Desktop 1.5+** : Bureau Wayland nouvelle génération écrit en Rust, tiré directement de `nixpkgs-unstable` avec correctifs XKB.
 
 ### 2.6. Compatibilité Binaire (Nix-LD, AppImage, Flatpak)
 - **Nix-LD** : Exécutez n'importe quel binaire Linux compilé dynamiquement sans patcher avec `patchelf`.
@@ -153,7 +153,7 @@ Un réglage unique bascule l'ensemble du profil GPU et du noyau Linux adapté :
 │       ├── blender.nix             # Blender 3D (unstable)
 │       ├── godot.nix               # Godot Engine (unstable)
 │       ├── davinci-resolve.nix     # DaVinci Resolve Free / Studio
-│       └── omniroute.nix           # Passerelle IA universelle OmniRoute (Podman)
+│       └── ia-suite.nix            # Suite IA locale (Open WebUI, Ollama ROCm/CUDA & Agent Hermes)
 │
 └── home/                           # Profils utilisateur Home-Manager & Thématisation
     ├── default.nix
@@ -203,8 +203,8 @@ blender = true;
 godot = true;
 davinciResolve = "none"; # "none" | "free" | "studio"
 
-# Passerelle IA OmniRoute (Conteneur Podman léger, 350+ providers)
-omniroute.enable = true;
+# Suite IA locale (Open WebUI, Ollama avec accélération GPU & Agent IA Hermes)
+iaSuite.enable = true;
 ```
 
 ---

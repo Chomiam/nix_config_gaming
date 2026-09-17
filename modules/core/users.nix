@@ -39,6 +39,8 @@ in
       wireguard-tools
     ]
     ++ lib.optional (config.chomiamos.services.antigravity.enable) pkgs-unstable.antigravity-ide
+    ++ lib.optional (config.chomiamos.services.zed.enable) pkgs-unstable.zed-editor
+    ++ lib.optional (config.chomiamos.services.vscode.enable) pkgs.vscode
     ++ lib.optional (config.chomiamos.services.pearDesktop.enable) pkgs-unstable.pear-desktop
     ++ lib.optional (config.chomiamos.services.kdenlive.enable) pkgs.kdePackages.kdenlive
     ++ lib.optional (config.chomiamos.services.goverlay.enable && !config.chomiamos.gaming.enable) pkgs-unstable.goverlay
@@ -96,14 +98,25 @@ in
     };
   };
 
-  programs.bash = lib.mkIf (cfg.shell == "bash") {
-    interactiveShellInit = ''
+  # Shells disponibles sur le système (/etc/shells)
+  environment.shells = [
+    pkgs.bashInteractive
+  ] ++ lib.optional (cfg.shell != "bash") pkgs.${cfg.shell};
+
+  # Configuration système de Bash (toujours installé avec autocomplétion et couleurs)
+  programs.bash = {
+    completion.enable = true;
+    enableLsColors = true;
+    interactiveShellInit = lib.optionalString (cfg.shell == "bash") ''
       fastfetch
     '';
   };
 
   # Paquets Système Utilitaires
   environment.systemPackages = with pkgs; [
+    # 🐚 Shells & Interpréteurs
+    bashInteractive
+
     # 🖥️ Interface & Rendu GTK / WebKit
     adw-gtk3
     libadwaita
@@ -129,6 +142,7 @@ in
     nh
     fuse3
     python3
+    nodejs_latest
     curl
     wget
     libva-utils
@@ -240,6 +254,22 @@ in
     if [ -f /etc/nixos/firewall-user.nix ]; then
       cp -f /etc/nixos/firewall-user.nix /etc/nixos/.firewall-user.nix.backup
       chmod 0644 /etc/nixos/.firewall-user.nix.backup
+    fi
+
+    # 5. Sauvegarde permanente de dns-user.nix
+    if [ -f /etc/nixos/dns-user.nix ]; then
+      cp -f /etc/nixos/dns-user.nix /etc/nixos/.dns-user.nix.backup
+      chmod 0644 /etc/nixos/.dns-user.nix.backup
+    fi
+
+    # 6. Sauvegarde permanente de sftp-config.json et sftp-sshd.conf
+    if [ -f /etc/nixos/sftp-config.json ]; then
+      cp -f /etc/nixos/sftp-config.json /etc/nixos/.sftp-config.json.backup
+      chmod 0644 /etc/nixos/.sftp-config.json.backup
+    fi
+    if [ -f /etc/nixos/sftp-sshd.conf ]; then
+      cp -f /etc/nixos/sftp-sshd.conf /etc/nixos/.sftp-sshd.conf.backup
+      chmod 0644 /etc/nixos/.sftp-sshd.conf.backup
     fi
   '';
 

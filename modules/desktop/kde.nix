@@ -35,11 +35,11 @@ in
     # 3. Activation de KDE Partition Manager (avec intégration Polkit & kpmcore D-Bus)
     programs.partition-manager.enable = true;
 
-    # 4. Exclusion des paquets KDE superflus (Konsole exclu au profit de Kitty)
+    # 4. Exclusion des paquets KDE superflus (Discover exclu au profit du Dashboard ChomiamOS)
     environment.plasma6.excludePackages = with pkgs.kdePackages; [
       elisa
       khelpcenter
-      konsole
+      discover
     ];
 
     # 5. Paquets minimaux & thèmes Catppuccin
@@ -47,7 +47,6 @@ in
       catppuccinKdeMocha
       catppuccinPapirus
       catppuccin-cursors.mochaLavender
-      papirus-icon-theme
       kdePackages.ark
       kdePackages.spectacle
       kdePackages.kcalc

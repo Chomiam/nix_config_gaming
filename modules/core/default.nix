@@ -2,6 +2,7 @@
 
 let
   cfg = config.chomiamos;
+  userDnsPath = ../../dns-user.nix;
 in
 {
   # =========================================================================
@@ -15,7 +16,7 @@ in
     ./mail.nix
     ./users.nix
     ./custom-packages.nix
-  ];
+  ] ++ lib.optional (builtins.pathExists userDnsPath) userDnsPath;
 
   # -------------------------------------------------------------------------
   # 🛠️ CONFIGURATION NIX & PAQUETS UNFREE
@@ -63,6 +64,7 @@ in
   nix.optimise.automatic = true;
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreePredicate = (_: true);
 
   # -------------------------------------------------------------------------
   # 🏷️ IDENTITÉ DU SYSTÈME & BRANDING DU BOOTLOADER (GRUB)

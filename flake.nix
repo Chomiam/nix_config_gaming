@@ -39,11 +39,6 @@
     # Nixpkgs branche unstable (fournit COSMIC Desktop 1.5+ officiel)
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Dépôt d'applets communautaires pour COSMIC Desktop
-    ext-cosmic-applets = {
-      url = "github:wingej0/ext-cosmic-applets-flake";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
 
     # Jovian-NixOS (Fournit le module et le paquet Decky Loader pour Steam)
     jovian = {

@@ -47,6 +47,7 @@
       mgba = true;
       azahar = true;
       rpcs3 = true;
+      xemu = true;
     };
   };
 
@@ -69,7 +70,14 @@
   mpv = true;
 
   # Productivité, Outils & Création Audio/Vidéo
+  ide = {
+    zed = true;
+    antigravity = true;
+    vscode = true;
+  };
   antigravity = true;
+  zed = true;
+  vscode = true;
   pearDesktop = true;
   kdenlive = true;
   obsStudio = true;
@@ -86,11 +94,26 @@
     bambustudio = true;
   };
 
-  # Passerelle IA OmniRoute
-  omniroute = {
+  # Suite IA locale (Open WebUI, Ollama & Agent IA Hermes)
+  iaSuite = {
     enable = true;
-    port = 20128;
     openFirewall = false;
-    memoryMb = 2048;
+    ollama = {
+      enable = true;
+      port = 11434;
+      acceleration = "auto";
+      rocmOverrideGfx = null;
+      models = [ ];
+    };
+    openWebUI = {
+      enable = true;
+      port = 8080;
+    };
+    hermes = {
+      enable = true;
+      apiPort = 8642;
+      dashboardPort = 9119;
+      defaultModel = "hermes3";
+    };
   };
 }

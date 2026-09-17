@@ -322,6 +322,12 @@ in
           default = false;
           description = "Active l'émulateur PlayStation 3 RPCS3 (standalone unstable).";
         };
+
+        xemu = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Active l'émulateur Microsoft Xbox première génération xemu (standalone).";
+        };
       };
     };
 
@@ -340,6 +346,26 @@ in
           type = lib.types.bool;
           default = true;
           description = "Active le partage réseau Samba (SMB/CIFS) et WSDD.";
+        };
+      };
+
+      openssh = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active le service et serveur sécurisé OpenSSH.";
+        };
+
+        openFirewall = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Ouvre automatiquement les ports SSH dans le pare-feu.";
+        };
+
+        ports = lib.mkOption {
+          type = lib.types.listOf lib.types.port;
+          default = [ 22 ];
+          description = "Ports d'écoute du serveur OpenSSH (par défaut [ 22 ]).";
         };
       };
 
@@ -457,6 +483,22 @@ in
         };
       };
 
+      zed = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Installe l'éditeur et IDE haute performance Zed (écrit en Rust).";
+        };
+      };
+
+      vscode = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Installe l'IDE Visual Studio Code (Microsoft).";
+        };
+      };
+
       pearDesktop = {
         enable = lib.mkOption {
           type = lib.types.bool;
@@ -547,35 +589,121 @@ in
         };
       };
 
-      omniroute = {
+      iaSuite = {
         enable = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Active la passerelle d'API IA OmniRoute (conteneur OCI sous Podman).";
-        };
-
-        port = lib.mkOption {
-          type = lib.types.port;
-          default = 20128;
-          description = "Port HTTP d'OmniRoute (Dashboard Web et API OpenAI-compatible).";
+          description = "Active la Suite IA locale (Open WebUI, Ollama avec accélération GPU, Agent IA Hermes).";
         };
 
         openFirewall = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Ouvre le port HTTP d'OmniRoute dans le pare-feu réseau.";
+          description = "Ouvre les ports réseau de la Suite IA dans le pare-feu.";
         };
 
-        memoryMb = lib.mkOption {
-          type = lib.types.int;
-          default = 2048;
-          description = "Mémoire maximale allouée au runtime V8 d'OmniRoute en Mo.";
+        ollama = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Active le serveur d'inférence LLM local Ollama.";
+          };
+
+          port = lib.mkOption {
+            type = lib.types.port;
+            default = 11434;
+            description = "Port d'écoute du serveur Ollama.";
+          };
+
+          acceleration = lib.mkOption {
+            type = lib.types.enum [ "auto" "rocm" "cuda" "vulkan" "cpu" ];
+            default = "auto";
+            description = "Type d'accélération matérielle pour Ollama (auto détecte selon chomiamos.hardware.gpu).";
+          };
+
+          rocmOverrideGfx = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "12.0.1";
+            description = "Force l'architecture GFX de ROCm (HSA_OVERRIDE_GFX_VERSION) pour cartes AMD si nécessaire.";
+          };
+
+          models = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+            example = [ "hermes3" ];
+            description = "Liste de modèles à pré-charger automatiquement via Ollama.";
+          };
         };
 
-        image = lib.mkOption {
-          type = lib.types.str;
-          default = "diegosouzapw/omniroute:latest";
-          description = "Image conteneur OCI pour OmniRoute.";
+        openWebUI = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Active l'interface Web conversationnelle Open WebUI (conteneur OCI sous Podman).";
+          };
+
+          port = lib.mkOption {
+            type = lib.types.port;
+            default = 8080;
+            description = "Port Web d'Open WebUI.";
+          };
+
+          image = lib.mkOption {
+            type = lib.types.str;
+            default = "ghcr.io/open-webui/open-webui:main";
+            description = "Image conteneur OCI pour Open WebUI.";
+          };
+        };
+
+        hermes = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Active l'agent IA autonome Hermes Nous Research (conteneur OCI sous Podman).";
+          };
+
+          apiPort = lib.mkOption {
+            type = lib.types.port;
+            default = 8642;
+            description = "Port de l'API passerelle compatible OpenAI d'Hermes Agent.";
+          };
+
+          dashboardPort = lib.mkOption {
+            type = lib.types.port;
+            default = 9119;
+            description = "Port du tableau de bord Web d'Hermes Agent.";
+          };
+
+          dashboardUsername = lib.mkOption {
+            type = lib.types.str;
+            default = "admin";
+            description = "Nom d'utilisateur administrateur pour le Dashboard Web Hermes.";
+          };
+
+          dashboardPassword = lib.mkOption {
+            type = lib.types.str;
+            default = "admin";
+            description = "Mot de passe pour le Dashboard Web Hermes.";
+          };
+
+          apiKey = lib.mkOption {
+            type = lib.types.str;
+            default = "hermes-agent-key";
+            description = "Clé secrète d'accès à l'API passerelle d'Hermes Agent.";
+          };
+
+          image = lib.mkOption {
+            type = lib.types.str;
+            default = "nousresearch/hermes-agent:latest";
+            description = "Image conteneur OCI pour Hermes Agent.";
+          };
+
+          defaultModel = lib.mkOption {
+            type = lib.types.str;
+            default = "hermes3";
+            description = "Modèle par défaut utilisé par l'agent Hermes.";
+          };
         };
       };
     };

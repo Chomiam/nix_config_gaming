@@ -32,6 +32,7 @@
       "networkmanager"
       "wheel"
       "docker"
+      "podman"
       "video"
     ];
   };
@@ -45,13 +46,13 @@
   browser = "chrome";
 
   # Client Discord
-  discordClient = "discord";
+  discordClient = "vesktop";
 
   # Pare-feu réseau
   firewall = false;
 
   # Environnement de bureau
-  desktopEnv = "gnome";
+  desktopEnv = "cosmic";
 
   # Matériel GPU (Préservé automatiquement)
   gpuDriver = "amd";
@@ -93,6 +94,7 @@
       mgba = true;
       azahar = true;
       rpcs3 = false;
+      xemu = true;
     };
   };
 
@@ -128,18 +130,22 @@
   vlc = true;
   mpv = true;
 
-  # Productivité & Outils
+  # Environnements de Développement & IDEs (Choix multiple)
+  ide = {
+    zed = true;
+    antigravity = true;
+    vscode = false;
+  };
   antigravity = true;
+  zed = true;
+  vscode = false;
   pearDesktop = true;
   kdenlive = false;
   obsStudio = true;
 
-  # Passerelle IA OmniRoute (Conteneur Podman léger, 350+ fournisseurs cloud)
-  # Interface web accessible sur http://localhost:20128
-  omniroute = {
+  # Suite IA locale complète (Open WebUI, Ollama accéléré par GPU, Agent IA Hermes)
+  # Interfaces : Open WebUI sur http://localhost:8080, Hermes Dashboard sur http://localhost:9119
+  iaSuite = {
     enable = true;
-    port = 20128;
-    openFirewall = false;
-    memoryMb = 2048;
   };
 }

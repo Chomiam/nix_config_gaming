@@ -102,7 +102,8 @@ let
     ++ lib.optional (cfg.standalone.melonds) pkgs-unstable.melonds
     ++ lib.optional (cfg.standalone.mgba) pkgs-unstable.mgba
     ++ lib.optional (cfg.standalone.azahar) pkgs-unstable.azahar
-    ++ lib.optional (cfg.standalone.rpcs3) pkgs-unstable.rpcs3;
+    ++ lib.optional (cfg.standalone.rpcs3) pkgs-unstable.rpcs3
+    ++ lib.optional (cfg.standalone.xemu) pkgs.xemu;
 
 in
 {
@@ -128,7 +129,7 @@ in
       if [ -d "$homeDir" ]; then
         romsDir="$homeDir/Jeux/ROMs"
         biosDir="$homeDir/Jeux/BIOS"
-        mkdir -p "$romsDir"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,n3ds,gamecube,wii,switch,psx,ps2,psp,arcade} "$biosDir"
+        mkdir -p "$romsDir"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,n3ds,gamecube,wii,switch,psx,ps2,psp,arcade,xbox} "$biosDir"
         ln -sfn "$romsDir/n3ds" "$romsDir/3ds"
         chown -R ${cfgUser}:users "$homeDir/Jeux"
         chmod -R u+rwX,g+rwX "$homeDir/Jeux"
@@ -152,7 +153,13 @@ in
           chown -h ${cfgUser}:users "$homeDir/.local/bin/pcsx2"* || true
         ''}
 
-        # 4. Configuration déclarative d'ES-DE : DuckStation (PSX) et PCSX2 (PS2) par défaut
+        ${lib.optionalString cfg.standalone.xemu ''
+          ln -sfn "${pkgs.xemu}/bin/xemu" "$homeDir/.local/bin/xemu"
+          ln -sfn "${pkgs.xemu}/bin/xemu" "$homeDir/.local/bin/xemu.AppImage"
+          chown -h ${cfgUser}:users "$homeDir/.local/bin/xemu"* || true
+        ''}
+
+        # 4. Configuration déclarative d'ES-DE : DuckStation (PSX), PCSX2 (PS2) et xemu (Xbox) par défaut
         mkdir -p "$homeDir/ES-DE/custom_systems"
         cat << 'CUSTOM_SYS_EOF' > "$homeDir/ES-DE/custom_systems/es_systems.xml"
 <?xml version="1.0"?>
@@ -190,12 +197,92 @@ in
         <platform>ps2</platform>
         <theme>ps2</theme>
     </system>
+
+    <!-- Microsoft Xbox : xemu (Standalone) par défaut -->
+    <system>
+        <name>xbox</name>
+        <fullname>Microsoft Xbox</fullname>
+        <path>%ROMPATH%/xbox</path>
+        <extension>.iso .ISO .xiso .XISO</extension>
+        <command label="xemu (Standalone)">%INJECT%=%BASENAME%.esprefix %EMULATOR_XEMU% -dvd_path %ROM%</command>
+        <command label="xemu Standalone (Direct)">/run/current-system/sw/bin/xemu -dvd_path %ROM%</command>
+        <command label="Shortcut or script">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <platform>xbox</platform>
+        <theme>xbox</theme>
+    </system>
 </systemList>
 CUSTOM_SYS_EOF
+
+        # Définition déclarative des règles de détection (find rules) pour ES-DE
+        cat << 'FIND_RULES_EOF' > "$homeDir/ES-DE/custom_systems/es_find_rules.xml"
+<?xml version="1.0"?>
+<!-- Règles personnalisées ChomiamOS pour la détection des émulateurs dans ES-DE -->
+<ruleList>
+    <emulator name="XEMU">
+        <!-- Émulateur Microsoft Xbox xemu (Standalone NixOS) -->
+        <rule type="systempath">
+            <entry>xemu</entry>
+            <entry>app.xemu.xemu</entry>
+        </rule>
+        <rule type="staticpath">
+            <entry>/run/current-system/sw/bin/xemu</entry>
+            <entry>~/.local/bin/xemu</entry>
+            <entry>~/.local/bin/xemu.AppImage</entry>
+            <entry>/etc/profiles/per-user/${cfgUser}/bin/xemu</entry>
+            <entry>${pkgs.xemu}/bin/xemu</entry>
+            <entry>~/Applications/xemu*.AppImage</entry>
+            <entry>~/.local/share/applications/xemu*.AppImage</entry>
+            <entry>~/bin/xemu*.AppImage</entry>
+            <entry>/var/lib/flatpak/exports/bin/app.xemu.xemu</entry>
+            <entry>~/.local/share/flatpak/exports/bin/app.xemu.xemu</entry>
+        </rule>
+    </emulator>
+    <emulator name="DUCKSTATION">
+        <!-- Émulateur PlayStation 1 DuckStation (Standalone NixOS) -->
+        <rule type="systempath">
+            <entry>duckstation-nogui</entry>
+            <entry>duckstation-qt</entry>
+            <entry>duckstation</entry>
+            <entry>org.duckstation.DuckStation</entry>
+        </rule>
+        <rule type="staticpath">
+            <entry>/run/current-system/sw/bin/duckstation</entry>
+            <entry>/run/current-system/sw/bin/duckstation-qt</entry>
+            <entry>~/.local/bin/duckstation</entry>
+            <entry>~/.local/bin/duckstation-qt</entry>
+        </rule>
+    </emulator>
+    <emulator name="PCSX2">
+        <!-- Émulateur PlayStation 2 PCSX2 (Standalone NixOS) -->
+        <rule type="systempath">
+            <entry>pcsx2-qt</entry>
+            <entry>pcsx2</entry>
+            <entry>net.pcsx2.PCSX2</entry>
+        </rule>
+        <rule type="staticpath">
+            <entry>/run/current-system/sw/bin/pcsx2</entry>
+            <entry>/run/current-system/sw/bin/pcsx2-qt</entry>
+            <entry>~/.local/bin/pcsx2</entry>
+            <entry>~/.local/bin/pcsx2-qt</entry>
+        </rule>
+    </emulator>
+</ruleList>
+FIND_RULES_EOF
         chown -R ${cfgUser}:users "$homeDir/ES-DE/custom_systems"
 
         # Initialisation déclarative des alternativeEmulator dans les gamelists ES-DE
-        mkdir -p "$homeDir/ES-DE/gamelists/ps2" "$homeDir/ES-DE/gamelists/psx"
+        mkdir -p "$homeDir/ES-DE/gamelists/ps2" "$homeDir/ES-DE/gamelists/psx" "$homeDir/ES-DE/gamelists/xbox"
+        if [ ! -f "$homeDir/ES-DE/gamelists/psx/gamelist.xml" ]; then
+          cat << 'GL_EOF' > "$homeDir/ES-DE/gamelists/psx/gamelist.xml"
+<?xml version="1.0"?>
+<alternativeEmulator>
+	<label>DuckStation (Standalone)</label>
+</alternativeEmulator>
+<gameList />
+GL_EOF
+          chown -R ${cfgUser}:users "$homeDir/ES-DE/gamelists/psx"
+        fi
+
         if [ ! -f "$homeDir/ES-DE/gamelists/ps2/gamelist.xml" ]; then
           cat << 'GL_EOF' > "$homeDir/ES-DE/gamelists/ps2/gamelist.xml"
 <?xml version="1.0"?>
@@ -205,6 +292,17 @@ CUSTOM_SYS_EOF
 <gameList />
 GL_EOF
           chown -R ${cfgUser}:users "$homeDir/ES-DE/gamelists/ps2"
+        fi
+
+        if [ ! -f "$homeDir/ES-DE/gamelists/xbox/gamelist.xml" ]; then
+          cat << 'GL_EOF' > "$homeDir/ES-DE/gamelists/xbox/gamelist.xml"
+<?xml version="1.0"?>
+<alternativeEmulator>
+	<label>xemu (Standalone)</label>
+</alternativeEmulator>
+<gameList />
+GL_EOF
+          chown -R ${cfgUser}:users "$homeDir/ES-DE/gamelists/xbox"
         fi
 
         ${lib.optionalString cfg.retroarch.enable ''

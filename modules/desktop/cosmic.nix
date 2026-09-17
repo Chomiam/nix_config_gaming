@@ -60,13 +60,9 @@ in
       cosmic-edit
     ];
 
-    # Paquets spécifiques COSMIC et applets communautaires installés pour l'utilisateur principal
+    # Paquets spécifiques COSMIC installés pour l'utilisateur principal
     users.users."${username}".packages = with pkgs; [
       cosmic-icons
-
-      # 🧩 Applets de la communauté COSMIC (ext-cosmic-applets-flake)
-      inputs.ext-cosmic-applets.packages.${pkgs.stdenv.hostPlatform.system}.cosmic-ext-applet-clipboard-manager
-      inputs.ext-cosmic-applets.packages.${pkgs.stdenv.hostPlatform.system}.minimon-applet
     ];
 
     # =========================================================================

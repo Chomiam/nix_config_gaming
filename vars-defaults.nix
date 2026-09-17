@@ -43,6 +43,7 @@
       "networkmanager"
       "wheel"
       "docker"
+      "podman"
       "video"
     ];
   };
@@ -113,6 +114,7 @@
       mgba = true;
       azahar = true;
       rpcs3 = false;
+      xemu = false;
     };
   };
 
@@ -128,6 +130,7 @@
 
   # Applications Réseau & Partage
   tailscale = true;
+  openssh = true;
   localsend = true;
   motrix = true;
 
@@ -136,8 +139,15 @@
   vlc = true;
   mpv = true;
 
-  # Productivité & Outils
+  # Environnements de Développement & IDEs (Choix multiple)
+  ide = {
+    zed = true;
+    antigravity = true;
+    vscode = false;
+  };
   antigravity = true;
+  zed = true;
+  vscode = false;
   pearDesktop = true;
   kdenlive = false;
   obsStudio = true;
@@ -154,11 +164,29 @@
     bambustudio = false;
   };
 
-  # Passerelle IA OmniRoute
-  omniroute = {
+  # Suite IA locale (Open WebUI, Ollama & Agent IA Hermes)
+  iaSuite = {
     enable = false;
-    port = 20128;
     openFirewall = false;
-    memoryMb = 2048;
+    ollama = {
+      enable = true;
+      port = 11434;
+      acceleration = "auto";
+      rocmOverrideGfx = null;
+      models = [ ];
+    };
+    openWebUI = {
+      enable = true;
+      port = 8080;
+    };
+    hermes = {
+      enable = true;
+      apiPort = 8642;
+      dashboardPort = 9119;
+      dashboardUsername = "admin";
+      dashboardPassword = "admin";
+      apiKey = "hermes-agent-key";
+      defaultModel = "hermes3";
+    };
   };
 }

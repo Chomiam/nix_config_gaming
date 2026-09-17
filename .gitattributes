@@ -8,3 +8,4 @@ mount.nix merge=ours
 custom-packages.nix merge=ours
 firewall-user.nix merge=ours
 modules/core/firewall-user.nix merge=ours
+dns-user.nix merge=ours

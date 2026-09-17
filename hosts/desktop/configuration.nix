@@ -13,7 +13,7 @@
     # Architecture modulaire chomiamos
     ../../modules
   ];
-
+nixpkgs.config.allowUnfree = true;
   # =========================================================================
   # ⚙️ CONFIGURATION DES OPTIONS DU SYSTÈME (ALIMENTÉE PAR VARS.NIX)
   # =========================================================================
@@ -90,6 +90,7 @@
         mgba = vars.emulation.standalone.mgba or true;
         azahar = vars.emulation.standalone.azahar or true;
         rpcs3 = vars.emulation.standalone.rpcs3 or false;
+        xemu = vars.emulation.standalone.xemu or false;
       };
     };
 
@@ -104,12 +105,15 @@
       blender.enable = vars.blender or false;
       godot.enable = vars.godot or false;
       tailscale.enable = vars.tailscale or true;
+      openssh.enable = vars.openssh or vars.ssh or true;
       localsend.enable = vars.localsend or true;
       motrix.enable = vars.motrix or true;
       stremio.enable = vars.stremio or true;
       vlc.enable = vars.vlc or true;
       mpv.enable = vars.mpv or true;
-      antigravity.enable = vars.antigravity or true;
+      antigravity.enable = vars.ide.antigravity or vars.antigravity or true;
+      zed.enable = vars.ide.zed or vars.zed or false;
+      vscode.enable = vars.ide.vscode or vars.vscode or false;
       pearDesktop.enable = vars.pearDesktop or true;
       kdenlive.enable = vars.kdenlive or false;
       goverlay.enable = vars.goverlay or true;
@@ -125,11 +129,34 @@
         bambustudio.enable = vars.slicers.bambustudio or false;
       };
 
-      omniroute = {
-        enable = vars.omniroute.enable or false;
-        port = vars.omniroute.port or 20128;
-        openFirewall = vars.omniroute.openFirewall or false;
-        memoryMb = vars.omniroute.memoryMb or 2048;
+      iaSuite = let
+        iaVars = vars.iaSuite or vars."ia-suite" or vars.aiSuite or vars."ai-suite" or {};
+        ollamaVars = iaVars.ollama or {};
+        webUiVars = iaVars.openWebUI or iaVars.openWebUi or {};
+        hermesVars = iaVars.hermes or {};
+      in {
+        enable = iaVars.enable or false;
+        openFirewall = iaVars.openFirewall or false;
+        ollama = {
+          enable = ollamaVars.enable or true;
+          port = ollamaVars.port or 11434;
+          acceleration = ollamaVars.acceleration or "auto";
+          rocmOverrideGfx = ollamaVars.rocmOverrideGfx or iaVars.rocmOverrideGfx or null;
+          models = ollamaVars.models or [ ];
+        };
+        openWebUI = {
+          enable = webUiVars.enable or true;
+          port = webUiVars.port or iaVars.openWebUiPort or 8080;
+        };
+        hermes = {
+          enable = hermesVars.enable or true;
+          apiPort = hermesVars.apiPort or 8642;
+          dashboardPort = hermesVars.dashboardPort or 9119;
+          dashboardUsername = hermesVars.dashboardUsername or "admin";
+          dashboardPassword = hermesVars.dashboardPassword or "admin";
+          apiKey = hermesVars.apiKey or "hermes-agent-key";
+          defaultModel = hermesVars.defaultModel or "hermes3";
+        };
       };
     };
   };

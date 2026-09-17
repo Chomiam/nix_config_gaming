@@ -1,7 +1,11 @@
 { config, lib, pkgs, inputs, ... }:
 
 let
-  pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+  pkgs-unstable = import inputs.nixpkgs-unstable {
+    inherit (pkgs.stdenv.hostPlatform) system;
+    config.allowUnfree = true;
+    config.allowUnfreePredicate = (_: true);
+  };
   customPackagesPath = ../../custom-packages.nix;
   userCustom = if builtins.pathExists customPackagesPath
                then import customPackagesPath
@@ -16,6 +20,9 @@ in
   # =========================================================================
   # 📦 MODULE CHOMIAMOS : PAQUETS NIX PERSONNALISÉS (STABLE & UNSTABLE)
   # =========================================================================
+
+  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreePredicate = (_: true);
 
   environment.systemPackages =
     (map (name: pkgs.${name}) validStable) ++

@@ -14,7 +14,8 @@
     ./neovim.nix
     ./nix-ld.nix
     ./obs.nix
-    ./omniroute.nix
+    ./openssh.nix
+    ./ia-suite.nix
     ./podman.nix
     ./samba.nix
     ./virt-manager.nix

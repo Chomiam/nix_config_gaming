@@ -322,14 +322,15 @@ let
       fi
     done
 
-    SENTINEL="$HOME/.config/chomiamos/.desktop-initialized"
+    SENTINEL="$HOME/.config/chomiamos/.desktop-initialized-${cfg.desktop.env}"
 
     if [ "$FORCE" -eq 1 ] || [ ! -f "$SENTINEL" ]; then
-      echo "[ChomiamOS] Initialisation de l'interface utilisateur..."
+      echo "[ChomiamOS] Initialisation de l'interface utilisateur (${cfg.desktop.env})..."
       ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/chomiamos"
       trap '${pkgs.coreutils}/bin/touch "$SENTINEL"' EXIT
 
-      # Déploiement sécurisé du thème Catppuccin GTK4 et GTK3 dans le profil utilisateur
+      ${lib.optionalString (!enableKde) ''
+      # Déploiement sécurisé du thème Catppuccin GTK4 et GTK3 dans le profil utilisateur (GNOME / Cinnamon / COSMIC)
       ${pkgs.coreutils}/bin/mkdir -p "$HOME/.config/gtk-4.0" "$HOME/.config/gtk-3.0"
       ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
       ${pkgs.coreutils}/bin/ln -sf "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-4.0/gtk-dark.css" "$HOME/.config/gtk-4.0/gtk-dark.css"
@@ -337,6 +338,17 @@ let
       ${pkgs.coreutils}/bin/ln -sf "${gtk3Css}" "$HOME/.config/gtk-3.0/gtk.css"
       ${pkgs.coreutils}/bin/ln -sf "${gtk3DarkCss}" "$HOME/.config/gtk-3.0/gtk-dark.css"
       ${pkgs.coreutils}/bin/ln -sfn "${catppuccinTheme}/share/themes/catppuccin-mocha-lavender-standard/gtk-3.0/assets" "$HOME/.config/gtk-3.0/assets"
+      ''}
+
+      ${lib.optionalString enableKde ''
+      # Nettoyage des éventuels liens statiques GTK de GNOME pour laisser kde-gtk-config gérer les thèmes GTK sous Plasma
+      if [ -L "$HOME/.config/gtk-4.0/gtk.css" ]; then
+        ${pkgs.coreutils}/bin/rm -f "$HOME/.config/gtk-4.0/gtk.css" "$HOME/.config/gtk-4.0/gtk-dark.css" "$HOME/.config/gtk-4.0/assets"
+      fi
+      if [ -L "$HOME/.config/gtk-3.0/gtk.css" ]; then
+        ${pkgs.coreutils}/bin/rm -f "$HOME/.config/gtk-3.0/gtk.css" "$HOME/.config/gtk-3.0/gtk-dark.css" "$HOME/.config/gtk-3.0/assets"
+      fi
+      ''}
 
       # Configuration universelle des fonds d'écran pour Cinnamon Desktop
       CINNAMON_BG_DIR="$HOME/.config/cinnamon/backgrounds"
@@ -464,6 +476,15 @@ EOF_COSMIC_XKB
       echo "Vos personnalisations sont préservées."
       echo "Pour forcer la restauration des valeurs d'usine : chomiamos-desktop-setup --force"
     fi
+
+    ${lib.optionalString enableKde ''
+    # Assainissement automatique des raccourcis de la barre des tâches KDE Plasma
+    # Convertit les chemins /nix/store volatils en identifiants standard applications:xxx.desktop
+    APPLETSRC="$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+    if [ -f "$APPLETSRC" ]; then
+      ${pkgs.gnused}/bin/sed -i -E 's#file:///nix/store/[^/]+-(user-environment|system-path)/share/applications/([^,]+)#applications:\2#g' "$APPLETSRC" || true
+    fi
+    ''}
   '';
 
   resetScript = pkgs.writeShellScriptBin "chomiamos-reset-desktop" ''
