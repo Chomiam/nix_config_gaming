@@ -52,7 +52,7 @@
   firewall = false;
 
   # Environnement de bureau
-  desktopEnv = "cosmic";
+  desktopEnv = "gnome";
 
   # Matériel GPU (Préservé automatiquement)
   gpuDriver = "amd";

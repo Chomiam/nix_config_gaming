@@ -50,8 +50,9 @@ in
     cores = 0; # Nix ajustera dynamiquement les cœurs sans sature la RAM
   };
 
-  # Inclusion sécurisée du token GitHub s'il existe (évite le rate-limiting nix)
-  nix.extraOptions = lib.optionalString (builtins.pathExists ../../secrets/github-token.conf) ''
+  # Inclusion sécurisée du token GitHub s'il existe (la directive !include ignore l'absence de fichier)
+  # Évite le rate-limiting GitHub lors de l'évaluation des Flakes
+  nix.extraOptions = ''
     !include /etc/nixos/secrets/github-token.conf
   '';
 
