@@ -328,6 +328,18 @@ in
           default = false;
           description = "Active l'émulateur Microsoft Xbox première génération xemu (standalone).";
         };
+
+        cemu = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Active l'émulateur Nintendo Wii U Cemu (standalone unstable).";
+        };
+
+        xenia-canary = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Active l'émulateur Microsoft Xbox 360 Xenia Canary (standalone unstable).";
+        };
       };
     };
 

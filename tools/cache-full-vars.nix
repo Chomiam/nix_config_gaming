@@ -48,6 +48,8 @@
       azahar = true;
       rpcs3 = true;
       xemu = true;
+      cemu = true;
+      xenia-canary = true;
     };
   };
 

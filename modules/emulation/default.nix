@@ -103,7 +103,9 @@ let
     ++ lib.optional (cfg.standalone.mgba) pkgs-unstable.mgba
     ++ lib.optional (cfg.standalone.azahar) pkgs-unstable.azahar
     ++ lib.optional (cfg.standalone.rpcs3) pkgs-unstable.rpcs3
-    ++ lib.optional (cfg.standalone.xemu) pkgs.xemu;
+    ++ lib.optional (cfg.standalone.xemu) pkgs.xemu
+    ++ lib.optional (cfg.standalone.cemu) pkgs-unstable.cemu
+    ++ lib.optional (cfg.standalone.xenia-canary) pkgs-unstable."xenia-canary";
 
 in
 {
@@ -129,7 +131,7 @@ in
       if [ -d "$homeDir" ]; then
         romsDir="$homeDir/Jeux/ROMs"
         biosDir="$homeDir/Jeux/BIOS"
-        mkdir -p "$romsDir"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,n3ds,gamecube,wii,switch,psx,ps2,psp,arcade,xbox} "$biosDir"
+        mkdir -p "$romsDir"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,n3ds,gamecube,wii,wiiu,switch,psx,ps2,psp,arcade,xbox,xbox360} "$biosDir"
         ln -sfn "$romsDir/n3ds" "$romsDir/3ds"
         chown -R ${cfgUser}:users "$homeDir/Jeux"
         chmod -R u+rwX,g+rwX "$homeDir/Jeux"
@@ -157,6 +159,19 @@ in
           ln -sfn "${pkgs.xemu}/bin/xemu" "$homeDir/.local/bin/xemu"
           ln -sfn "${pkgs.xemu}/bin/xemu" "$homeDir/.local/bin/xemu.AppImage"
           chown -h ${cfgUser}:users "$homeDir/.local/bin/xemu"* || true
+        ''}
+
+        ${lib.optionalString cfg.standalone.cemu ''
+          ln -sfn "${pkgs-unstable.cemu}/bin/cemu" "$homeDir/.local/bin/cemu"
+          ln -sfn "${pkgs-unstable.cemu}/bin/Cemu" "$homeDir/.local/bin/Cemu"
+          chown -h ${cfgUser}:users "$homeDir/.local/bin/cemu"* "$homeDir/.local/bin/Cemu"* || true
+        ''}
+
+        ${lib.optionalString cfg.standalone.xenia-canary ''
+          ln -sfn "${pkgs-unstable."xenia-canary"}/bin/xenia_canary" "$homeDir/.local/bin/xenia_canary"
+          ln -sfn "${pkgs-unstable."xenia-canary"}/bin/xenia_canary" "$homeDir/.local/bin/xenia-canary"
+          ln -sfn "${pkgs-unstable."xenia-canary"}/bin/xenia_canary" "$homeDir/.local/bin/xenia"
+          chown -h ${cfgUser}:users "$homeDir/.local/bin/xenia"* || true
         ''}
 
         # 4. Configuration déclarative d'ES-DE : DuckStation (PSX), PCSX2 (PS2) et xemu (Xbox) par défaut
@@ -264,6 +279,35 @@ CUSTOM_SYS_EOF
             <entry>/run/current-system/sw/bin/pcsx2-qt</entry>
             <entry>~/.local/bin/pcsx2</entry>
             <entry>~/.local/bin/pcsx2-qt</entry>
+        </rule>
+    </emulator>
+    <emulator name="CEMU">
+        <!-- Émulateur Nintendo Wii U Cemu (Standalone NixOS) -->
+        <rule type="systempath">
+            <entry>cemu</entry>
+            <entry>Cemu</entry>
+        </rule>
+        <rule type="staticpath">
+            <entry>/run/current-system/sw/bin/cemu</entry>
+            <entry>/run/current-system/sw/bin/Cemu</entry>
+            <entry>~/.local/bin/cemu</entry>
+            <entry>~/.local/bin/Cemu</entry>
+        </rule>
+    </emulator>
+    <emulator name="XENIA">
+        <!-- Émulateur Microsoft Xbox 360 Xenia Canary (Standalone NixOS) -->
+        <rule type="systempath">
+            <entry>xenia_canary</entry>
+            <entry>xenia-canary</entry>
+            <entry>xenia</entry>
+        </rule>
+        <rule type="staticpath">
+            <entry>/run/current-system/sw/bin/xenia_canary</entry>
+            <entry>/run/current-system/sw/bin/xenia-canary</entry>
+            <entry>/run/current-system/sw/bin/xenia</entry>
+            <entry>~/.local/bin/xenia_canary</entry>
+            <entry>~/.local/bin/xenia-canary</entry>
+            <entry>~/.local/bin/xenia</entry>
         </rule>
     </emulator>
 </ruleList>

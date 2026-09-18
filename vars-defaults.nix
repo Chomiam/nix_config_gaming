@@ -115,6 +115,8 @@
       azahar = true;
       rpcs3 = false;
       xemu = false;
+      cemu = false;
+      xenia-canary = false;
     };
   };
 

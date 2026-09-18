@@ -91,6 +91,8 @@ nixpkgs.config.allowUnfree = true;
         azahar = vars.emulation.standalone.azahar or true;
         rpcs3 = vars.emulation.standalone.rpcs3 or false;
         xemu = vars.emulation.standalone.xemu or false;
+        cemu = vars.emulation.standalone.cemu or false;
+        xenia-canary = vars.emulation.standalone.xenia-canary or vars.emulation.standalone.xeniaCanary or vars.emulation.standalone.xenia or false;
       };
     };
 

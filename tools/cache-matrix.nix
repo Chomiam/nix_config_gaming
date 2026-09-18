@@ -84,6 +84,16 @@ let
 
     rpcs3 = pkgs.rpcs3;
     retroarch = pkgs.retroarch-full;
+
+    cemu =
+      if pkgs-unstable ? cemu
+      then pkgs-unstable.cemu
+      else null;
+
+    xenia-canary =
+      if pkgs-unstable ? "xenia-canary"
+      then pkgs-unstable."xenia-canary"
+      else null;
   };
 
   # 5. 🎨 Création 3D, Moteur de jeu & Multimédia

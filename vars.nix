@@ -71,7 +71,7 @@
     geforceNow = false;
     mountGamesDisk = true;
     sunshine = false;
-    sober = false;
+    sober = true;
   };
 
   # Suite d'Émulation & Rétrogaming
@@ -95,6 +95,8 @@
       azahar = true;
       rpcs3 = false;
       xemu = true;
+      cemu = false;
+      xenia-canary = false;
     };
   };
 
