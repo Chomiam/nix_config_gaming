@@ -104,7 +104,7 @@ let
     ++ lib.optional (cfg.standalone.azahar) pkgs-unstable.azahar
     ++ lib.optional (cfg.standalone.rpcs3) pkgs-unstable.rpcs3
     ++ lib.optional (cfg.standalone.xemu) pkgs.xemu
-    ++ lib.optional (cfg.standalone.cemu) pkgs-unstable.cemu
+    ++ lib.optional (cfg.standalone.cemu) pkgs.cemu
     ++ lib.optional (cfg.standalone.xenia-canary) pkgs-unstable."xenia-canary";
 
 in
@@ -162,8 +162,8 @@ in
         ''}
 
         ${lib.optionalString cfg.standalone.cemu ''
-          ln -sfn "${pkgs-unstable.cemu}/bin/cemu" "$homeDir/.local/bin/cemu"
-          ln -sfn "${pkgs-unstable.cemu}/bin/Cemu" "$homeDir/.local/bin/Cemu"
+          ln -sfn "${pkgs.cemu}/bin/cemu" "$homeDir/.local/bin/cemu"
+          ln -sfn "${pkgs.cemu}/bin/Cemu" "$homeDir/.local/bin/Cemu"
           chown -h ${cfgUser}:users "$homeDir/.local/bin/cemu"* "$homeDir/.local/bin/Cemu"* || true
         ''}
 

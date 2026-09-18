@@ -85,10 +85,7 @@ let
     rpcs3 = pkgs.rpcs3;
     retroarch = pkgs.retroarch-full;
 
-    cemu =
-      if pkgs-unstable ? cemu
-      then pkgs-unstable.cemu
-      else null;
+    cemu = pkgs.cemu;
 
     xenia-canary =
       if pkgs-unstable ? "xenia-canary"

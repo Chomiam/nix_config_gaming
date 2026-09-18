@@ -332,7 +332,7 @@ in
         cemu = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Active l'émulateur Nintendo Wii U Cemu (standalone unstable).";
+          description = "Active l'émulateur Nintendo Wii U Cemu (standalone).";
         };
 
         xenia-canary = lib.mkOption {
