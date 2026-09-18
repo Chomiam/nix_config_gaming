@@ -142,7 +142,7 @@ in
     nh
     fuse3
     python3
-    nodejs_latest
+    nodejs
     curl
     wget
     libva-utils
