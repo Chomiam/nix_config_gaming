@@ -21,7 +21,6 @@ on:
           - 'creation'
           - 'browsers'
           - 'tools'
-          - 'ai'
           - 'full'
       include_davinci:
         description: 'Inclure DaVinci Resolve (⚠️ Attention : saturation du quota Cachix 5 Go)'
@@ -66,9 +65,6 @@ jobs:
           - name: "🛠️ Pack Outils Système & Gaming"
             flake_target: ".#packages.x86_64-linux.cache-matrix.allSystemTools"
             id: "tools"
-          - name: "🤖 Suite IA Locale (Ollama + Open-WebUI)"
-            flake_target: ".#packages.x86_64-linux.cache-matrix.allAi"
-            id: "ai"
     name: ${{ matrix.target.name }}
     steps:
       - name: 🔍 Vérification d'exécution pour cette cible
@@ -105,7 +101,7 @@ jobs:
 
       - name: ⚡ Connexion à Cachix
         if: steps.check.outputs.should_run == 'true'
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v17
         with:
           name: chomiamos
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -143,7 +139,7 @@ jobs:
             warn-dirty = false
 
       - name: ⚡ Connexion à Cachix
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v17
         with:
           name: chomiamos
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -179,7 +175,7 @@ jobs:
             warn-dirty = false
 
       - name: ⚡ Connexion à Cachix
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v17
         with:
           name: chomiamos
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'

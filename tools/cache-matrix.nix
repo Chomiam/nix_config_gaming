@@ -151,6 +151,7 @@ let
     vlc = pkgs.vlc;
     mpv = pkgs.mpv;
     goverlay = pkgs.goverlay;
+    nodejs = pkgs.nodejs_latest;
   };
 
   # Helpers de filtrage des paquets non nuls
