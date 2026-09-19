@@ -17,7 +17,7 @@ let
 
   # Émulateurs devant être accessibles directement dans le PATH d'ES-DE (dont Eden et DuckStation)
   emulatorsPath = lib.makeBinPath (
-    [ pkgs-unstable.eden ]
+    [ pkgs-unstable.eden pkgs.flatpak ]
     ++ standalonePackages
     ++ lib.optional cfg.retroarch.enable retroarchWithCores
   );
@@ -102,14 +102,45 @@ let
     ++ lib.optional (cfg.standalone.melonds) pkgs-unstable.melonds
     ++ lib.optional (cfg.standalone.mgba) pkgs-unstable.mgba
     ++ lib.optional (cfg.standalone.azahar) pkgs-unstable.azahar
-    ++ lib.optional (cfg.standalone.rpcs3) pkgs.rpcs3
-    ++ lib.optional (cfg.standalone.xemu) pkgs.xemu
     ++ lib.optional (cfg.standalone.cemu) pkgs.cemu
     ++ lib.optional (cfg.standalone.xenia-canary) pkgs-unstable."xenia-canary";
 
 in
 {
   config = lib.mkIf cfg.enable {
+    # Déclaration des paquets Flatpak Flathub pour l'émulation
+    services.flatpak.packages = [ ]
+      ++ lib.optional cfg.standalone.rpcs3 "net.rpcs3.RPCS3"
+      ++ lib.optional cfg.standalone.xemu "app.xemu.xemu";
+
+    # Permissions Flatpak : garantit l'accès aux dossiers de ROMs (~/Jeux, /mnt, /media)
+    services.flatpak.overrides = lib.mkMerge [
+      (lib.mkIf cfg.standalone.rpcs3 {
+        "net.rpcs3.RPCS3" = {
+          Context = {
+            filesystems = [
+              "home"
+              "/mnt"
+              "/media"
+              "/run/media"
+            ];
+          };
+        };
+      })
+      (lib.mkIf cfg.standalone.xemu {
+        "app.xemu.xemu" = {
+          Context = {
+            filesystems = [
+              "home"
+              "/mnt"
+              "/media"
+              "/run/media"
+            ];
+          };
+        };
+      })
+    ];
+
     # 1. Mise à disposition des binaires dans le système
     environment.systemPackages = [
       update-es-de
@@ -156,9 +187,27 @@ in
         ''}
 
         ${lib.optionalString cfg.standalone.xemu ''
-          ln -sfn "${pkgs.xemu}/bin/xemu" "$homeDir/.local/bin/xemu"
-          ln -sfn "${pkgs.xemu}/bin/xemu" "$homeDir/.local/bin/xemu.AppImage"
+          rm -f "$homeDir/.local/bin/xemu"
+          cat << 'XEMU_BIN_EOF' > "$homeDir/.local/bin/xemu"
+#!/bin/sh
+if [ -x /var/lib/flatpak/exports/bin/app.xemu.xemu ]; then
+  exec /var/lib/flatpak/exports/bin/app.xemu.xemu "$@"
+elif [ -x "$HOME/.local/share/flatpak/exports/bin/app.xemu.xemu" ]; then
+  exec "$HOME/.local/share/flatpak/exports/bin/app.xemu.xemu" "$@"
+else
+  exec flatpak run app.xemu.xemu "$@"
+fi
+XEMU_BIN_EOF
+          chmod +x "$homeDir/.local/bin/xemu"
+          ln -sfn "$homeDir/.local/bin/xemu" "$homeDir/.local/bin/xemu.AppImage"
           chown -h ${cfgUser}:users "$homeDir/.local/bin/xemu"* || true
+
+          # Continuité des données et de l'EEPROM xemu Flatpak
+          mkdir -p "$homeDir/.var/app/app.xemu.xemu/data/xemu"
+          if [ -d "$homeDir/.local/share/xemu/xemu" ] && [ ! -e "$homeDir/.var/app/app.xemu.xemu/data/xemu/xemu.toml" ]; then
+            cp -rn "$homeDir/.local/share/xemu/xemu/"* "$homeDir/.var/app/app.xemu.xemu/data/xemu/" 2>/dev/null || true
+          fi
+          chown -R ${cfgUser}:users "$homeDir/.var/app/app.xemu.xemu" || true
         ''}
 
         ${lib.optionalString cfg.standalone.cemu ''
@@ -175,9 +224,27 @@ in
         ''}
 
         ${lib.optionalString cfg.standalone.rpcs3 ''
-          ln -sfn "${pkgs.rpcs3}/bin/rpcs3" "$homeDir/.local/bin/rpcs3"
-          ln -sfn "${pkgs.rpcs3}/bin/rpcs3" "$homeDir/.local/bin/rpcs3.AppImage"
+          rm -f "$homeDir/.local/bin/rpcs3"
+          cat << 'RPCS3_BIN_EOF' > "$homeDir/.local/bin/rpcs3"
+#!/bin/sh
+if [ -x /var/lib/flatpak/exports/bin/net.rpcs3.RPCS3 ]; then
+  exec /var/lib/flatpak/exports/bin/net.rpcs3.RPCS3 "$@"
+elif [ -x "$HOME/.local/share/flatpak/exports/bin/net.rpcs3.RPCS3" ]; then
+  exec "$HOME/.local/share/flatpak/exports/bin/net.rpcs3.RPCS3" "$@"
+else
+  exec flatpak run net.rpcs3.RPCS3 "$@"
+fi
+RPCS3_BIN_EOF
+          chmod +x "$homeDir/.local/bin/rpcs3"
+          ln -sfn "$homeDir/.local/bin/rpcs3" "$homeDir/.local/bin/rpcs3.AppImage"
           chown -h ${cfgUser}:users "$homeDir/.local/bin/rpcs3"* || true
+
+          # Continuité des données/sauvegardes RPCS3 Flatpak
+          mkdir -p "$homeDir/.var/app/net.rpcs3.RPCS3/config"
+          if [ -d "$homeDir/.config/rpcs3" ] && [ ! -e "$homeDir/.var/app/net.rpcs3.RPCS3/config/rpcs3" ]; then
+            cp -rn "$homeDir/.config/rpcs3" "$homeDir/.var/app/net.rpcs3.RPCS3/config/" || true
+          fi
+          chown -R ${cfgUser}:users "$homeDir/.var/app/net.rpcs3.RPCS3" || true
         ''}
 
         # 4. Configuration déclarative d'ES-DE : DuckStation (PSX), PCSX2 (PS2), RPCS3 (PS3) et xemu (Xbox) par défaut
@@ -226,7 +293,8 @@ in
         <path>%ROMPATH%/xbox</path>
         <extension>.iso .ISO .xiso .XISO</extension>
         <command label="xemu (Standalone)">%INJECT%=%BASENAME%.esprefix %EMULATOR_XEMU% -dvd_path %ROM%</command>
-        <command label="xemu Standalone (Direct)">/run/current-system/sw/bin/xemu -dvd_path %ROM%</command>
+        <command label="xemu Standalone (Direct)">~/.local/bin/xemu -dvd_path %ROM%</command>
+        <command label="xemu Flatpak (Direct)">/var/lib/flatpak/exports/bin/app.xemu.xemu -dvd_path %ROM%</command>
         <command label="Shortcut or script">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
         <platform>xbox</platform>
         <theme>xbox</theme>
@@ -239,7 +307,8 @@ in
         <path>%ROMPATH%/ps3</path>
         <extension>.desktop .iso .ISO .ps3 .PS3 .ps3dir .PS3DIR</extension>
         <command label="RPCS3 (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
-        <command label="RPCS3 Standalone (Direct)">/run/current-system/sw/bin/rpcs3 --no-gui %ROM%</command>
+        <command label="RPCS3 Standalone (Direct)">~/.local/bin/rpcs3 --no-gui %ROM%</command>
+        <command label="RPCS3 Flatpak (Direct)">/var/lib/flatpak/exports/bin/net.rpcs3.RPCS3 --no-gui %ROM%</command>
         <command label="RPCS3 ISO (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
         <command label="RPCS3 Directory (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
         <command label="RPCS3 Game Serial (Standalone)">%EMULATOR_RPCS3% --no-gui %RPCS3_GAMEID%:%INJECT%=%BASENAME%.ps3</command>
@@ -256,22 +325,21 @@ CUSTOM_SYS_EOF
 <!-- Règles personnalisées ChomiamOS pour la détection des émulateurs dans ES-DE -->
 <ruleList>
     <emulator name="XEMU">
-        <!-- Émulateur Microsoft Xbox xemu (Standalone NixOS) -->
+        <!-- Émulateur Microsoft Xbox xemu (Flatpak / Standalone) -->
         <rule type="systempath">
             <entry>xemu</entry>
             <entry>app.xemu.xemu</entry>
         </rule>
         <rule type="staticpath">
-            <entry>/run/current-system/sw/bin/xemu</entry>
+            <entry>/var/lib/flatpak/exports/bin/app.xemu.xemu</entry>
+            <entry>~/.local/share/flatpak/exports/bin/app.xemu.xemu</entry>
             <entry>~/.local/bin/xemu</entry>
+            <entry>/run/current-system/sw/bin/xemu</entry>
             <entry>~/.local/bin/xemu.AppImage</entry>
             <entry>/etc/profiles/per-user/${cfgUser}/bin/xemu</entry>
-            <entry>${pkgs.xemu}/bin/xemu</entry>
             <entry>~/Applications/xemu*.AppImage</entry>
             <entry>~/.local/share/applications/xemu*.AppImage</entry>
             <entry>~/bin/xemu*.AppImage</entry>
-            <entry>/var/lib/flatpak/exports/bin/app.xemu.xemu</entry>
-            <entry>~/.local/share/flatpak/exports/bin/app.xemu.xemu</entry>
         </rule>
     </emulator>
     <emulator name="DUCKSTATION">
@@ -333,22 +401,21 @@ CUSTOM_SYS_EOF
         </rule>
     </emulator>
     <emulator name="RPCS3">
-        <!-- Émulateur Sony PlayStation 3 RPCS3 (Standalone NixOS) -->
+        <!-- Émulateur Sony PlayStation 3 RPCS3 (Flatpak / Standalone) -->
         <rule type="systempath">
             <entry>rpcs3</entry>
             <entry>net.rpcs3.RPCS3</entry>
         </rule>
         <rule type="staticpath">
-            <entry>/run/current-system/sw/bin/rpcs3</entry>
+            <entry>/var/lib/flatpak/exports/bin/net.rpcs3.RPCS3</entry>
+            <entry>~/.local/share/flatpak/exports/bin/net.rpcs3.RPCS3</entry>
             <entry>~/.local/bin/rpcs3</entry>
+            <entry>/run/current-system/sw/bin/rpcs3</entry>
             <entry>~/.local/bin/rpcs3.AppImage</entry>
             <entry>/etc/profiles/per-user/${cfgUser}/bin/rpcs3</entry>
-            <entry>${pkgs.rpcs3}/bin/rpcs3</entry>
             <entry>~/Applications/rpcs3*.AppImage</entry>
             <entry>~/.local/share/applications/rpcs3*.AppImage</entry>
             <entry>~/bin/rpcs3*.AppImage</entry>
-            <entry>/var/lib/flatpak/exports/bin/net.rpcs3.RPCS3</entry>
-            <entry>~/.local/share/flatpak/exports/bin/net.rpcs3.RPCS3</entry>
         </rule>
     </emulator>
 </ruleList>

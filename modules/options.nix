@@ -320,13 +320,13 @@ in
         rpcs3 = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Active l'émulateur PlayStation 3 RPCS3 (standalone).";
+          description = "Active l'émulateur PlayStation 3 RPCS3 (Flatpak Flathub).";
         };
 
         xemu = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Active l'émulateur Microsoft Xbox première génération xemu (standalone).";
+          description = "Active l'émulateur Microsoft Xbox première génération xemu (Flatpak Flathub).";
         };
 
         cemu = lib.mkOption {

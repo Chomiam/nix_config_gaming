@@ -82,7 +82,7 @@ let
       then pkgs-unstable.azahar
       else null;
 
-    rpcs3 = pkgs.rpcs3;
+    rpcs3 = null;
     retroarch = pkgs.retroarch-full;
 
     cemu = pkgs.cemu;
