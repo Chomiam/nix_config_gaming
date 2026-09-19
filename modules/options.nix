@@ -320,7 +320,7 @@ in
         rpcs3 = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Active l'émulateur PlayStation 3 RPCS3 (standalone unstable).";
+          description = "Active l'émulateur PlayStation 3 RPCS3 (standalone).";
         };
 
         xemu = lib.mkOption {

@@ -102,7 +102,7 @@ let
     ++ lib.optional (cfg.standalone.melonds) pkgs-unstable.melonds
     ++ lib.optional (cfg.standalone.mgba) pkgs-unstable.mgba
     ++ lib.optional (cfg.standalone.azahar) pkgs-unstable.azahar
-    ++ lib.optional (cfg.standalone.rpcs3) pkgs-unstable.rpcs3
+    ++ lib.optional (cfg.standalone.rpcs3) pkgs.rpcs3
     ++ lib.optional (cfg.standalone.xemu) pkgs.xemu
     ++ lib.optional (cfg.standalone.cemu) pkgs.cemu
     ++ lib.optional (cfg.standalone.xenia-canary) pkgs-unstable."xenia-canary";
@@ -131,7 +131,7 @@ in
       if [ -d "$homeDir" ]; then
         romsDir="$homeDir/Jeux/ROMs"
         biosDir="$homeDir/Jeux/BIOS"
-        mkdir -p "$romsDir"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,n3ds,gamecube,wii,wiiu,switch,psx,ps2,psp,arcade,xbox,xbox360} "$biosDir"
+        mkdir -p "$romsDir"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,n3ds,gamecube,wii,wiiu,switch,psx,ps2,ps3,psp,arcade,xbox,xbox360} "$biosDir"
         ln -sfn "$romsDir/n3ds" "$romsDir/3ds"
         chown -R ${cfgUser}:users "$homeDir/Jeux"
         chmod -R u+rwX,g+rwX "$homeDir/Jeux"
@@ -174,7 +174,13 @@ in
           chown -h ${cfgUser}:users "$homeDir/.local/bin/xenia"* || true
         ''}
 
-        # 4. Configuration déclarative d'ES-DE : DuckStation (PSX), PCSX2 (PS2) et xemu (Xbox) par défaut
+        ${lib.optionalString cfg.standalone.rpcs3 ''
+          ln -sfn "${pkgs.rpcs3}/bin/rpcs3" "$homeDir/.local/bin/rpcs3"
+          ln -sfn "${pkgs.rpcs3}/bin/rpcs3" "$homeDir/.local/bin/rpcs3.AppImage"
+          chown -h ${cfgUser}:users "$homeDir/.local/bin/rpcs3"* || true
+        ''}
+
+        # 4. Configuration déclarative d'ES-DE : DuckStation (PSX), PCSX2 (PS2), RPCS3 (PS3) et xemu (Xbox) par défaut
         mkdir -p "$homeDir/ES-DE/custom_systems"
         cat << 'CUSTOM_SYS_EOF' > "$homeDir/ES-DE/custom_systems/es_systems.xml"
 <?xml version="1.0"?>
@@ -224,6 +230,22 @@ in
         <command label="Shortcut or script">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
         <platform>xbox</platform>
         <theme>xbox</theme>
+    </system>
+
+    <!-- Sony PlayStation 3 : RPCS3 (Standalone) par défaut -->
+    <system>
+        <name>ps3</name>
+        <fullname>Sony PlayStation 3</fullname>
+        <path>%ROMPATH%/ps3</path>
+        <extension>.desktop .iso .ISO .ps3 .PS3 .ps3dir .PS3DIR</extension>
+        <command label="RPCS3 (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
+        <command label="RPCS3 Standalone (Direct)">/run/current-system/sw/bin/rpcs3 --no-gui %ROM%</command>
+        <command label="RPCS3 ISO (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
+        <command label="RPCS3 Directory (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
+        <command label="RPCS3 Game Serial (Standalone)">%EMULATOR_RPCS3% --no-gui %RPCS3_GAMEID%:%INJECT%=%BASENAME%.ps3</command>
+        <command label="RPCS3 Shortcut (Standalone)">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <platform>ps3</platform>
+        <theme>ps3</theme>
     </system>
 </systemList>
 CUSTOM_SYS_EOF
@@ -310,12 +332,42 @@ CUSTOM_SYS_EOF
             <entry>~/.local/bin/xenia</entry>
         </rule>
     </emulator>
+    <emulator name="RPCS3">
+        <!-- Émulateur Sony PlayStation 3 RPCS3 (Standalone NixOS) -->
+        <rule type="systempath">
+            <entry>rpcs3</entry>
+            <entry>net.rpcs3.RPCS3</entry>
+        </rule>
+        <rule type="staticpath">
+            <entry>/run/current-system/sw/bin/rpcs3</entry>
+            <entry>~/.local/bin/rpcs3</entry>
+            <entry>~/.local/bin/rpcs3.AppImage</entry>
+            <entry>/etc/profiles/per-user/${cfgUser}/bin/rpcs3</entry>
+            <entry>${pkgs.rpcs3}/bin/rpcs3</entry>
+            <entry>~/Applications/rpcs3*.AppImage</entry>
+            <entry>~/.local/share/applications/rpcs3*.AppImage</entry>
+            <entry>~/bin/rpcs3*.AppImage</entry>
+            <entry>/var/lib/flatpak/exports/bin/net.rpcs3.RPCS3</entry>
+            <entry>~/.local/share/flatpak/exports/bin/net.rpcs3.RPCS3</entry>
+        </rule>
+    </emulator>
 </ruleList>
 FIND_RULES_EOF
         chown -R ${cfgUser}:users "$homeDir/ES-DE/custom_systems"
 
         # Initialisation déclarative des alternativeEmulator dans les gamelists ES-DE
-        mkdir -p "$homeDir/ES-DE/gamelists/ps2" "$homeDir/ES-DE/gamelists/psx" "$homeDir/ES-DE/gamelists/xbox"
+        mkdir -p "$homeDir/ES-DE/gamelists/ps2" "$homeDir/ES-DE/gamelists/psx" "$homeDir/ES-DE/gamelists/ps3" "$homeDir/ES-DE/gamelists/xbox"
+        if [ ! -f "$homeDir/ES-DE/gamelists/ps3/gamelist.xml" ]; then
+          cat << 'GL_EOF' > "$homeDir/ES-DE/gamelists/ps3/gamelist.xml"
+<?xml version="1.0"?>
+<alternativeEmulator>
+	<label>RPCS3 (Standalone)</label>
+</alternativeEmulator>
+<gameList />
+GL_EOF
+          chown -R ${cfgUser}:users "$homeDir/ES-DE/gamelists/ps3"
+        fi
+
         if [ ! -f "$homeDir/ES-DE/gamelists/psx/gamelist.xml" ]; then
           cat << 'GL_EOF' > "$homeDir/ES-DE/gamelists/psx/gamelist.xml"
 <?xml version="1.0"?>
