@@ -102,6 +102,8 @@
   emulation = {
     enable = false;
     frontend = "es-de";
+    romsDir = "/mnt/Emudeck/Emulation/roms";
+    biosDir = "/mnt/Emudeck/Emulation/bios";
     autoCheckUpdates = true;
 
     retroarch = {

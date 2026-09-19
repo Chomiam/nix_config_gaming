@@ -22,14 +22,63 @@ let
     ++ lib.optional cfg.retroarch.enable retroarchWithCores
   );
 
-  # Frontend ES-DE enveloppé avec le PATH des émulateurs
+  # Frontend ES-DE enveloppé avec le PATH des émulateurs et protection contre les plantages
   es-de = pkgs.symlinkJoin {
     name = "es-de-${es-de-base.version}";
     paths = [ es-de-base ];
-    nativeBuildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
-      wrapProgram $out/bin/es-de \
-        --prefix PATH : "${emulatorsPath}"
+      rm -f $out/bin/es-de
+      cat << 'LAUNCHER_EOF' > $out/bin/es-de
+#!${pkgs.bash}/bin/bash
+set -euo pipefail
+
+# 1. Éviter le plantage bubblewrap si lancé depuis un répertoire non accessible (ex: /etc)
+if [[ "''${PWD:-}" == /etc* ]] || [ ! -d "''${PWD:-}" ]; then
+  cd "$HOME"
+fi
+
+export PATH="${emulatorsPath}:$PATH"
+
+# 2. Sécurisation déclarative du dossier des ROMs
+settingsDir="$HOME/ES-DE/settings"
+settingsFile="$settingsDir/es_settings.xml"
+mkdir -p "$settingsDir"
+
+targetRoms="${cfg.romsDir}"
+fallbackRoms="$HOME/Jeux/ROMs"
+
+if [ ! -f "$settingsFile" ]; then
+  cat << INIT_SETTINGS_EOF > "$settingsFile"
+<?xml version="1.0"?>
+<string name="ROMDirectory" value="$targetRoms/" />
+INIT_SETTINGS_EOF
+else
+  # Remplacer tout ancien chemin obsolète /mnt/Games
+  sed -i "s|/mnt/Games/Emulation/roms/*|$targetRoms/|g" "$settingsFile" 2>/dev/null || true
+
+  # Lire le dossier de ROMs actuellement configuré
+  configuredRoms=$(grep 'name="ROMDirectory"' "$settingsFile" | sed -n 's/.*value="\([^"]*\)".*/\1/p' || true)
+
+  if [ -z "$configuredRoms" ]; then
+    echo "<string name=\"ROMDirectory\" value=\"$targetRoms/\" />" >> "$settingsFile"
+    configuredRoms="$targetRoms"
+  fi
+
+  # Vérifier l'accessibilité du dossier configuré (disque externe ou point de montage)
+  if ! mkdir -p "$configuredRoms" 2>/dev/null; then
+    if command -v notify-send >/dev/null 2>&1; then
+      notify-send -i org.es_de.frontend \
+        "ES-DE : Dossier de ROMs inaccessible" \
+        "Le dossier '$configuredRoms' n'est pas accessible. Utilisation temporaire du dossier local '$fallbackRoms'."
+    fi
+    mkdir -p "$fallbackRoms"
+    sed -i "s|<string name=\"ROMDirectory\" value=\"[^\"]*\" />|<string name=\"ROMDirectory\" value=\"$fallbackRoms/\" />|" "$settingsFile"
+  fi
+fi
+
+exec "${es-de-base}/bin/es-de" "$@"
+LAUNCHER_EOF
+      chmod +x $out/bin/es-de
     '';
   };
 
@@ -160,12 +209,85 @@ in
     system.activationScripts.emulationDirs = lib.stringAfter [ "users" ] ''
       homeDir="/home/${cfgUser}"
       if [ -d "$homeDir" ]; then
-        romsDir="$homeDir/Jeux/ROMs"
-        biosDir="$homeDir/Jeux/BIOS"
-        mkdir -p "$romsDir"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,n3ds,gamecube,wii,wiiu,switch,psx,ps2,ps3,psp,arcade,xbox,xbox360} "$biosDir"
-        ln -sfn "$romsDir/n3ds" "$romsDir/3ds"
-        chown -R ${cfgUser}:users "$homeDir/Jeux"
-        chmod -R u+rwX,g+rwX "$homeDir/Jeux"
+        # 1. Rétrocompatibilité /mnt/Games -> /mnt/Emudeck
+        if [ -d "/mnt/Games" ] && [ ! -L "/mnt/Games" ]; then
+          rmdir "/mnt/Games" 2>/dev/null || true
+        fi
+        if [ ! -e "/mnt/Games" ] && [ -d "/mnt/Emudeck" ]; then
+          ln -sfn /mnt/Emudeck /mnt/Games
+        fi
+
+        # 2. Gestion déclarative des ROMs et BIOS
+        targetRoms="${cfg.romsDir}"
+        targetBios="${cfg.biosDir}"
+        localRoms="$homeDir/Jeux/ROMs"
+        localBios="$homeDir/Jeux/BIOS"
+
+        mkdir -p "$homeDir/Jeux"
+
+        # Lier ou initialiser le dossier des ROMs
+        if [ -d "$targetRoms" ]; then
+          # Si localRoms est un dossier vide (ou seulement des sous-dossiers vides), le remplacer par le lien symbolique
+          if [ -d "$localRoms" ] && [ ! -L "$localRoms" ]; then
+            if [ -z "$(find "$localRoms" -mindepth 2 -type f 2>/dev/null)" ]; then
+              rm -rf "$localRoms"
+              ln -sfn "$targetRoms" "$localRoms"
+            fi
+          elif [ ! -e "$localRoms" ]; then
+            ln -sfn "$targetRoms" "$localRoms"
+          fi
+        else
+          # Fallback local si le stockage externe est débranché
+          if [ ! -L "$localRoms" ]; then
+            mkdir -p "$localRoms"/{snes,megadrive,nes,gba,gbc,gb,n64,nds,n3ds,gamecube,wii,wiiu,switch,psx,ps2,ps3,psp,arcade,xbox,xbox360}
+            ln -sfn "$localRoms/n3ds" "$localRoms/3ds"
+          fi
+        fi
+
+        # Lier ou initialiser le dossier des BIOS
+        if [ -d "$targetBios" ]; then
+          if [ -d "$localBios" ] && [ ! -L "$localBios" ]; then
+            if [ -z "$(ls -A "$localBios" 2>/dev/null)" ]; then
+              rm -rf "$localBios"
+              ln -sfn "$targetBios" "$localBios"
+            fi
+          elif [ ! -e "$localBios" ]; then
+            ln -sfn "$targetBios" "$localBios"
+          fi
+
+          # Raccordement direct pour RetroArch system (2.8 Go de BIOS)
+          mkdir -p "$homeDir/.config/retroarch"
+          if [ -d "$homeDir/.config/retroarch/system" ] && [ ! -L "$homeDir/.config/retroarch/system" ]; then
+            if [ -z "$(ls -A "$homeDir/.config/retroarch/system" 2>/dev/null)" ]; then
+              rm -rf "$homeDir/.config/retroarch/system"
+              ln -sfn "$targetBios" "$homeDir/.config/retroarch/system"
+            fi
+          elif [ ! -e "$homeDir/.config/retroarch/system" ]; then
+            ln -sfn "$targetBios" "$homeDir/.config/retroarch/system"
+          fi
+        else
+          if [ ! -L "$localBios" ]; then
+            mkdir -p "$localBios"
+          fi
+        fi
+
+        chown -R ${cfgUser}:users "$homeDir/Jeux" 2>/dev/null || true
+        chmod -R u+rwX,g+rwX "$homeDir/Jeux" 2>/dev/null || true
+
+        # 3. Initialisation et nettoyage de la configuration ES-DE
+        settingsDir="$homeDir/ES-DE/settings"
+        settingsFile="$settingsDir/es_settings.xml"
+        mkdir -p "$settingsDir"
+        if [ ! -f "$settingsFile" ]; then
+          cat << 'ES_INIT_SETTINGS_EOF' > "$settingsFile"
+<?xml version="1.0"?>
+<string name="ROMDirectory" value="${cfg.romsDir}/" />
+ES_INIT_SETTINGS_EOF
+          chown -R ${cfgUser}:users "$homeDir/ES-DE"
+        else
+          # Corriger tout chemin obsolète /mnt/Games
+          sed -i "s|/mnt/Games/Emulation/roms/*|${cfg.romsDir}/|g" "$settingsFile" 2>/dev/null || true
+        fi
 
         # Raccourcis locaux de détection statique pour ES-DE
         mkdir -p "$homeDir/.local/bin"

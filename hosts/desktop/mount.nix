@@ -10,6 +10,10 @@ in
   # =========================================================================
 
   systemd.tmpfiles.rules = [
+    "d /mnt 0775 root users -"
+    "z /mnt 0775 root users -"
+    "d /media 0775 root users -"
+    "z /media 0775 root users -"
     "d /mnt/Emudeck 0775 ${username} users -"
     "z /mnt/Emudeck 0775 ${username} users -"
   ];

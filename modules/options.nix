@@ -246,6 +246,18 @@ in
         description = "Frontend graphique d'émulation (ex: es-de pour EmulationStation Desktop Edition).";
       };
 
+      romsDir = lib.mkOption {
+        type = lib.types.str;
+        default = "/mnt/Emudeck/Emulation/roms";
+        description = "Chemin vers le dossier racine contenant les ROMs de jeux (ex: /mnt/Emudeck/Emulation/roms, disque externe ou dossier local).";
+      };
+
+      biosDir = lib.mkOption {
+        type = lib.types.str;
+        default = "/mnt/Emudeck/Emulation/bios";
+        description = "Chemin vers le dossier contenant les BIOS pour les émulateurs (ex: /mnt/Emudeck/Emulation/bios ou dossier local).";
+      };
+
       es-de = {
         enable = lib.mkOption {
           type = lib.types.bool;
