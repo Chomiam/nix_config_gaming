@@ -15,6 +15,7 @@ in
     accent = "lavender";
 
     kitty.enable = true;
+    alacritty.enable = true;
     # Sous KDE, on laisse Plasma gérer librement le style d'application (Breeze, Kvantum, etc.)
     kvantum.enable = !isKde;
   };

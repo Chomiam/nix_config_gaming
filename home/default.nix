@@ -6,7 +6,7 @@
   # =========================================================================
 
   imports = [
-    ./kitty.nix
+    ./terminals.nix
     ./catppuccin.nix
     ./gtk-theme.nix
     ./fastfetch.nix
