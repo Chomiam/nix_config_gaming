@@ -32,7 +32,22 @@ let
 #!${pkgs.bash}/bin/bash
 set -euo pipefail
 
-# 1. Éviter le plantage bubblewrap si lancé depuis un répertoire non accessible (ex: /etc)
+# 1. Nettoyage de l'environnement Steam / Gamescope
+# Empêche l'injection du GameOverlayRenderer de Steam (LD_PRELOAD) qui fait geler/écran noir les émulateurs sous Gamescope
+unset LD_PRELOAD
+
+# 2. Détection de la session Gamescope / Steam Deck
+if [ -n "''${GAMESCOPE_WAYLAND_DISPLAY:-}" ] || [ "''${XDG_CURRENT_DESKTOP:-}" = "gamescope" ] || [ -n "''${STEAM_GAME:-}" ] || [ -n "''${SteamAppId:-}" ] || pgrep -x gamescope >/dev/null 2>&1; then
+  # Dans une session Gamescope, forcer le backend X11/XCB et désactiver Gamescope WSI pour que le compositeur
+  # gère et affiche directement les fenêtres des émulateurs enfants (PCSX2, DuckStation, RetroArch, Eden, etc.)
+  export SDL_VIDEODRIVER=x11
+  export QT_QPA_PLATFORM=xcb
+  export GDK_BACKEND=x11
+  export ENABLE_GAMESCOPE_WSI=0
+  unset WAYLAND_DISPLAY
+fi
+
+# 3. Éviter le plantage bubblewrap si lancé depuis un répertoire non accessible (ex: /etc)
 if [[ "''${PWD:-}" == /etc* ]] || [ ! -d "''${PWD:-}" ]; then
   cd "$HOME"
 fi
@@ -327,10 +342,16 @@ ES_INIT_SETTINGS_EOF
           chown -h ${cfgUser}:users "$homeDir/.local/bin/pcsx2"* || true
         ''}
 
+        ${lib.optionalString (cfg.frontend == "es-de" || cfg.es-de.enable) ''
+          ln -sfn "${es-de}/bin/es-de" "$homeDir/.local/bin/es-de"
+          chown -h ${cfgUser}:users "$homeDir/.local/bin/es-de" || true
+        ''}
+
         ${lib.optionalString cfg.standalone.xemu ''
           rm -f "$homeDir/.local/bin/xemu"
           cat << 'XEMU_BIN_EOF' > "$homeDir/.local/bin/xemu"
 #!/bin/sh
+unset LD_PRELOAD
 if [ -x /var/lib/flatpak/exports/bin/app.xemu.xemu ]; then
   exec /var/lib/flatpak/exports/bin/app.xemu.xemu "$@"
 elif [ -x "$HOME/.local/share/flatpak/exports/bin/app.xemu.xemu" ]; then
@@ -368,6 +389,7 @@ XEMU_BIN_EOF
           rm -f "$homeDir/.local/bin/rpcs3"
           cat << 'RPCS3_BIN_EOF' > "$homeDir/.local/bin/rpcs3"
 #!/bin/sh
+unset LD_PRELOAD
 if [ -x /var/lib/flatpak/exports/bin/net.rpcs3.RPCS3 ]; then
   exec /var/lib/flatpak/exports/bin/net.rpcs3.RPCS3 "$@"
 elif [ -x "$HOME/.local/share/flatpak/exports/bin/net.rpcs3.RPCS3" ]; then

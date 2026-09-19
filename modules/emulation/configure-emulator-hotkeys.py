@@ -5,7 +5,9 @@ S'exécute lors de l'activation système pour garantir que chaque émulateur dis
 valides, sans erreurs de syntaxe, et multi-manettes (SDL-0 à SDL-3).
 """
 
+import glob
 import os
+import struct
 import sys
 
 def update_retroarch(retroarch_cfg):
@@ -311,6 +313,93 @@ def main():
     # 6. Eden (Switch)
     eden_cfg = os.path.join(home_dir, ".config/eden/qt-config.ini")
     update_simple_ini_keys(eden_cfg, "UI", {"fullscreen": "true", "confirm_stop": "false"})
+
+    # 7. Raccourcis Steam (Empêcher l'injection de l'overlay et LD_PRELOAD sur ES-DE sous Gamescope)
+    update_steam_shortcuts(home_dir)
+
+
+def parse_vdf(b, pos=0):
+    res = []
+    while pos < len(b):
+        t = b[pos]
+        pos += 1
+        if t == 8:
+            break
+        k_end = b.find(b"\x00", pos)
+        key = b[pos:k_end].decode("utf-8", "ignore")
+        pos = k_end + 1
+        if t == 0:
+            val, pos = parse_vdf(b, pos)
+            res.append([t, key, val])
+        elif t == 1:
+            v_end = b.find(b"\x00", pos)
+            val = b[pos:v_end].decode("utf-8", "ignore")
+            pos = v_end + 1
+            res.append([t, key, val])
+        elif t == 2:
+            val = struct.unpack("<i", b[pos:pos+4])[0]
+            pos += 4
+            res.append([t, key, val])
+        else:
+            raise ValueError(f"Unknown type {t} at {pos}")
+    return res, pos
+
+
+def serialize_vdf(items):
+    out = bytearray()
+    for t, key, val in items:
+        out.append(t)
+        out.extend(key.encode("utf-8") + b"\x00")
+        if t == 0:
+            out.extend(serialize_vdf(val))
+            out.append(8)
+        elif t == 1:
+            out.extend(val.encode("utf-8") + b"\x00")
+        elif t == 2:
+            out.extend(struct.pack("<i", val))
+    return bytes(out)
+
+
+def update_steam_shortcuts(home_dir):
+    pattern = os.path.join(home_dir, ".local/share/Steam/userdata/*/config/shortcuts.vdf")
+    paths = glob.glob(pattern)
+    for vdf_path in paths:
+        try:
+            with open(vdf_path, "rb") as f:
+                orig = f.read()
+            tree, _ = parse_vdf(orig)
+            modified = False
+            for top in tree:
+                if top[1] == "shortcuts":
+                    for entry in top[2]:
+                        subitems = entry[2]
+                        app_name = None
+                        for item in subitems:
+                            if item[1] == "AppName":
+                                app_name = item[2]
+                        if app_name == "ES-DE":
+                            for item in subitems:
+                                if item[1] == "Exe":
+                                    local_es_de = f'"{home_dir}/.local/bin/es-de"'
+                                    if item[2] != local_es_de:
+                                        item[2] = local_es_de
+                                        modified = True
+                                elif item[1] == "LaunchOptions":
+                                    if item[2] != 'LD_PRELOAD="" %command%':
+                                        item[2] = 'LD_PRELOAD="" %command%'
+                                        modified = True
+                                elif item[1] == "AllowOverlay":
+                                    if item[2] != 0:
+                                        item[2] = 0
+                                        modified = True
+            if modified:
+                new_data = serialize_vdf(tree) + b"\x08"
+                with open(vdf_path, "wb") as f:
+                    f.write(new_data)
+                print(f"✅ Raccourci Steam ES-DE optimisé dans {vdf_path}")
+        except Exception as e:
+            print(f"⚠️ Impossible de mettre à jour {vdf_path} : {e}")
+
 
 if __name__ == "__main__":
     main()
