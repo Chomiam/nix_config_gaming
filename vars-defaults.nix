@@ -57,6 +57,10 @@
   # Options disponibles : "chrome" | "firefox" | "brave" | "zen" | "librewolf"
   browser = "chrome";
 
+  # Émulateur de terminal principal
+  # Options disponibles : "kitty" | "gnome-terminal" | "konsole" | "alacritty" | "cosmic-term"
+  terminal = "kitty";
+
   # Mode d'installation du navigateur : "system" (Nix) | "flatpak" (Flathub)
   # Note : Zen et LibreWolf sont gérés exclusivement via Flatpak.
   browserPackageType = "system";

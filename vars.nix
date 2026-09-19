@@ -45,6 +45,9 @@
   # Navigateur web principal
   browser = "chrome";
 
+  # Émulateur de terminal principal
+  terminal = "kitty";
+
   # Client Discord
   discordClient = "vesktop";
 

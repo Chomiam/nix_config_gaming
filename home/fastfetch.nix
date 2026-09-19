@@ -131,6 +131,33 @@ let
       }
     ];
   };
+
+  # Wrapper intelligent Fastfetch garantissant le rendu d'images dans tous les terminaux
+  fastfetchWrapped = pkgs.symlinkJoin {
+    name = "fastfetch-wrapped-${pkgs.fastfetch.version}";
+    paths = [ pkgs.fastfetch ];
+    postBuild = ''
+      rm $out/bin/fastfetch
+      cat << 'EOF' > $out/bin/fastfetch
+#!/usr/bin/env bash
+REAL="${pkgs.fastfetch}/bin/fastfetch"
+for arg in "$@"; do
+  if [[ "$arg" == --logo-type* ]]; then
+    exec "$REAL" "$@"
+  fi
+done
+
+if [ -n "$KITTY_PID" ] || [ "$TERM" = "xterm-kitty" ]; then
+  exec "$REAL" "$@"
+elif [ -n "$KONSOLE_VERSION" ] || [ -n "$KONSOLE_DBUS_SERVICE" ]; then
+  exec "$REAL" --logo-type chafa "$@"
+else
+  exec "$REAL" --logo-type chafa "$@"
+fi
+EOF
+      chmod +x $out/bin/fastfetch
+    '';
+  };
 in
 {
   # =========================================================================
@@ -153,9 +180,10 @@ in
   # 1. Profil officiel par défaut ChomiamOS Catppuccin Macchiato
   xdg.configFile."fastfetch/profiles/default.jsonc".source = (pkgs.formats.json { }).generate "default.jsonc" defaultSettings;
 
-  # 2. Binaire Fastfetch installé (settings = { } pour ne pas verrouiller config.jsonc dans le store)
+  # 2. Binaire Fastfetch installé avec wrapper d'images adaptatif
   programs.fastfetch = {
     enable = true;
+    package = fastfetchWrapped;
     settings = { };
   };
 

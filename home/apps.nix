@@ -1,13 +1,23 @@
-{ pkgs, ... }:
+{ pkgs, vars, ... }:
 
+let
+  configuredTerminal = vars.terminal or "kitty";
+in
 {
   # =========================================================================
   # 📦 PAQUETS UTILISATEUR & PARAMÈTRES D'ENVIRONNEMENT HOME-MANAGER
   # =========================================================================
 
-  # Polices d'écriture utilisateur
+  # Polices d'écriture utilisateur & Émulateurs de terminaux
   home.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
+
+    # Émulateurs de terminaux supportés
+    kitty
+    gnome-terminal
+    kdePackages.konsole
+    alacritty
+    cosmic-term
   ];
 
   # Traitement Audio (EasyEffects)
@@ -26,7 +36,6 @@
 
   # Variables d'environnement de session
   home.sessionVariables = {
-    TERMINAL = "kitty";
+    TERMINAL = configuredTerminal;
   };
-
 }
