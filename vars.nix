@@ -146,7 +146,7 @@
   obsStudio = true;
 
   # Suite IA locale complète (Open WebUI, Ollama accéléré par GPU, Agent IA Hermes)
-  # Interfaces : Open WebUI sur http://localhost:8080, Hermes Dashboard sur http://localhost:9119
+  # Interfaces : Open WebUI sur http://localhost:8085, Hermes Dashboard sur http://localhost:9119
   iaSuite = {
     enable = true;
   };

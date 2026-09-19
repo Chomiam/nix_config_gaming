@@ -657,8 +657,8 @@ in
 
           port = lib.mkOption {
             type = lib.types.port;
-            default = 8080;
-            description = "Port Web d'Open WebUI.";
+            default = 8085;
+            description = "Port Web d'Open WebUI (défaut 8085 pour préserver le port 8080 pour le débogage CEF Steam / Decky Loader).";
           };
 
           image = lib.mkOption {

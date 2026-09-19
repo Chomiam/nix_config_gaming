@@ -148,7 +148,7 @@ nixpkgs.config.allowUnfree = true;
         };
         openWebUI = {
           enable = webUiVars.enable or true;
-          port = webUiVars.port or iaVars.openWebUiPort or 8080;
+          port = webUiVars.port or iaVars.openWebUiPort or 8085;
         };
         hermes = {
           enable = hermesVars.enable or true;

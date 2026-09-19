@@ -179,7 +179,7 @@
     };
     openWebUI = {
       enable = true;
-      port = 8080;
+      port = 8085;
     };
     hermes = {
       enable = true;
