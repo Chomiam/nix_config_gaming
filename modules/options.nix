@@ -437,7 +437,7 @@ in
         enable = lib.mkOption {
           type = lib.types.bool;
           default = true;
-          description = "Active Neovim configuré avec plugins de base.";
+          description = "Active Neovim configuré comme un IDE complet (LSP, autocomplétion nvim-cmp, Luau/Roblox, Nix, Treesitter).";
         };
       };
 

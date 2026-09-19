@@ -149,7 +149,7 @@ Un réglage unique bascule l'ensemble du profil GPU et du noyau Linux adapté :
 │       ├── flatpak.nix             # Nix-Flatpak & Flathub
 │       ├── nix-ld.nix              # Compatibilité binaires externes
 │       ├── obs.nix                 # OBS Studio & plugins capture
-│       ├── neovim.nix              # Neovim & Snacks/Grug-Far
+│       ├── neovim.nix              # Neovim (IDE, LSP, Autocomplétion, Luau/Roblox, Nix, Snacks)
 │       ├── blender.nix             # Blender 3D (unstable)
 │       ├── godot.nix               # Godot Engine (unstable)
 │       ├── davinci-resolve.nix     # DaVinci Resolve Free / Studio
