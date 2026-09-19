@@ -280,6 +280,14 @@ in
         };
       };
 
+      retroachievements = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = cfg.emulation.es-de.enable || (cfg.emulation.enable && cfg.emulation.frontend == "es-de");
+          description = "Active le support de RetroAchievements par défaut sur tous les émulateurs compatibles (RetroArch, DuckStation, PCSX2, PPSSPP, Dolphin) lorsque ES-DE est activé. L'utilisateur n'a plus qu'à renseigner ses identifiants dans l'émulateur.";
+        };
+      };
+
       standalone = {
         duckstation = lib.mkOption {
           type = lib.types.bool;

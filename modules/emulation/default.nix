@@ -643,6 +643,137 @@ GL_EOF
         if [ -f "$edenCfg" ]; then
           sed -i 's/^fullscreen=false/fullscreen=true/' "$edenCfg"
         fi
+
+        # 7. Activation déclarative de RetroAchievements sur tous les émulateurs compatibles
+        ${let
+          esDeActive = cfg.frontend == "es-de" || cfg.es-de.enable;
+          raActive = cfg.retroachievements.enable && esDeActive;
+        in if raActive then ''
+          # 🕹️ RetroArch (2D, Arcade, PS1, N64, Saturn, Dreamcast, DS, GBA, etc.)
+          if [ -f "$retroarchCfg" ]; then
+            if ! grep -q '^cheevos_enable' "$retroarchCfg"; then
+              echo 'cheevos_enable = "true"' >> "$retroarchCfg"
+            else
+              sed -i 's/^cheevos_enable = .*/cheevos_enable = "true"/' "$retroarchCfg"
+            fi
+            if ! grep -q '^cheevos_badges_enable' "$retroarchCfg"; then
+              echo 'cheevos_badges_enable = "true"' >> "$retroarchCfg"
+            else
+              sed -i 's/^cheevos_badges_enable = .*/cheevos_badges_enable = "true"/' "$retroarchCfg"
+            fi
+            if ! grep -q '^cheevos_unlock_sound_enable' "$retroarchCfg"; then
+              echo 'cheevos_unlock_sound_enable = "true"' >> "$retroarchCfg"
+            else
+              sed -i 's/^cheevos_unlock_sound_enable = .*/cheevos_unlock_sound_enable = "true"/' "$retroarchCfg"
+            fi
+          fi
+
+          # 🎮 DuckStation (Sony PlayStation 1 standalone)
+          if [ -f "$duckCfg" ]; then
+            if grep -q '^\[Cheevos\]' "$duckCfg"; then
+              sed -i '/^\[Cheevos\]/,/^\[/{s/^Enabled = [Ff]alse/Enabled = true/}' "$duckCfg"
+              if ! sed -n '/^\[Cheevos\]/,/^\[/p' "$duckCfg" | grep -q '^Enabled ='; then
+                sed -i '/^\[Cheevos\]/a Enabled = true' "$duckCfg"
+              fi
+            else
+              cat << 'DUCK_CHEEVOS_EOF' >> "$duckCfg"
+
+[Cheevos]
+Enabled = true
+Notifications = true
+SoundEffects = true
+DUCK_CHEEVOS_EOF
+            fi
+          fi
+
+          # 🎮 PCSX2 (Sony PlayStation 2 standalone)
+          if [ -f "$pcsx2Cfg" ]; then
+            if grep -q '^\[Achievements\]' "$pcsx2Cfg"; then
+              sed -i '/^\[Achievements\]/,/^\[/{s/^Enabled = [Ff]alse/Enabled = true/}' "$pcsx2Cfg"
+              if ! sed -n '/^\[Achievements\]/,/^\[/p' "$pcsx2Cfg" | grep -q '^Enabled ='; then
+                sed -i '/^\[Achievements\]/a Enabled = true' "$pcsx2Cfg"
+              fi
+            else
+              cat << 'PCSX2_CHEEVOS_EOF' >> "$pcsx2Cfg"
+
+[Achievements]
+Enabled = true
+Notifications = true
+SoundEffects = true
+UnlockSound = true
+PCSX2_CHEEVOS_EOF
+            fi
+          fi
+
+          # 🎮 PPSSPP (Sony PlayStation Portable standalone)
+          ppssppDir="$homeDir/.config/ppsspp/PSP/SYSTEM"
+          ppssppCfg="$ppssppDir/ppsspp.ini"
+          mkdir -p "$ppssppDir"
+          if [ -f "$ppssppCfg" ]; then
+            if grep -q '^\[Achievements\]' "$ppssppCfg"; then
+              sed -i '/^\[Achievements\]/,/^\[/{s/^AchievementsEnable = [Ff]alse/AchievementsEnable = True/}' "$ppssppCfg"
+              if ! sed -n '/^\[Achievements\]/,/^\[/p' "$ppssppCfg" | grep -q '^AchievementsEnable ='; then
+                sed -i '/^\[Achievements\]/a AchievementsEnable = True' "$ppssppCfg"
+              fi
+            else
+              cat << 'PPSSPP_CHEEVOS_EOF' >> "$ppssppCfg"
+
+[Achievements]
+AchievementsEnable = True
+PPSSPP_CHEEVOS_EOF
+            fi
+          else
+            cat << 'PPSSPP_CHEEVOS_EOF' > "$ppssppCfg"
+[Achievements]
+AchievementsEnable = True
+PPSSPP_CHEEVOS_EOF
+            chown -R ${cfgUser}:users "$homeDir/.config/ppsspp" 2>/dev/null || true
+          fi
+
+          # 🎮 Dolphin (Nintendo GameCube & Wii standalone)
+          dolphinDir="$homeDir/.config/dolphin-emu"
+          dolphinRaCfg="$dolphinDir/RetroAchievements.ini"
+          mkdir -p "$dolphinDir"
+          if [ -f "$dolphinRaCfg" ]; then
+            if grep -q '^\[Achievements\]' "$dolphinRaCfg"; then
+              sed -i '/^\[Achievements\]/,/^\[/{s/^Enabled = [Ff]alse/Enabled = True/}' "$dolphinRaCfg"
+              if ! sed -n '/^\[Achievements\]/,/^\[/p' "$dolphinRaCfg" | grep -q '^Enabled ='; then
+                sed -i '/^\[Achievements\]/a Enabled = True' "$dolphinRaCfg"
+              fi
+            else
+              cat << 'DOLPHIN_CHEEVOS_EOF' >> "$dolphinRaCfg"
+
+[Achievements]
+Enabled = True
+DOLPHIN_CHEEVOS_EOF
+            fi
+          else
+            cat << 'DOLPHIN_CHEEVOS_EOF' > "$dolphinRaCfg"
+[Achievements]
+Enabled = True
+DOLPHIN_CHEEVOS_EOF
+            chown -R ${cfgUser}:users "$dolphinDir" 2>/dev/null || true
+          fi
+        '' else ''
+          # Désactivation globale de RetroAchievements si désactivé
+          if [ -f "$retroarchCfg" ]; then
+            sed -i 's/^cheevos_enable = .*/cheevos_enable = "false"/' "$retroarchCfg"
+          fi
+          if [ -f "$pcsx2Cfg" ] && grep -q '^\[Achievements\]' "$pcsx2Cfg"; then
+            sed -i '/^\[Achievements\]/,/^\[/{s/^Enabled = [Tt]rue/Enabled = false/}' "$pcsx2Cfg"
+          fi
+          if [ -f "$duckCfg" ] && grep -q '^\[Cheevos\]' "$duckCfg"; then
+            sed -i '/^\[Cheevos\]/,/^\[/{s/^Enabled = [Tt]rue/Enabled = false/}' "$duckCfg"
+          fi
+          ppssppCfg="$homeDir/.config/ppsspp/PSP/SYSTEM/ppsspp.ini"
+          if [ -f "$ppssppCfg" ] && grep -q '^\[Achievements\]' "$ppssppCfg"; then
+            sed -i '/^\[Achievements\]/,/^\[/{s/^AchievementsEnable = [Tt]rue/AchievementsEnable = False/}' "$ppssppCfg"
+          fi
+          dolphinRaCfg="$homeDir/.config/dolphin-emu/RetroAchievements.ini"
+          if [ -f "$dolphinRaCfg" ] && grep -q '^\[Achievements\]' "$dolphinRaCfg"; then
+            sed -i '/^\[Achievements\]/,/^\[/{s/^Enabled = [Tt]rue/Enabled = False/}' "$dolphinRaCfg"
+          fi
+        ''}
       fi
     '';
 

@@ -89,6 +89,10 @@
       enable = true;
     };
 
+    retroachievements = {
+      enable = true;
+    };
+
     standalone = {
       duckstation = true;
       eden = true;

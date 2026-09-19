@@ -82,6 +82,9 @@ nixpkgs.config.allowUnfree = true;
       retroarch = {
         enable = vars.emulation.retroarch.enable or (vars.emulation.enable or false);
       };
+      retroachievements = {
+        enable = vars.emulation.retroachievements.enable or (vars.emulation.esDe or vars.emulation.es-de or (vars.emulation.enable or false));
+      };
       standalone = {
         duckstation = vars.emulation.standalone.duckstation or true;
         eden = vars.emulation.standalone.eden or true;
