@@ -381,7 +381,7 @@ RPCS3_BIN_EOF
         <fullname>Sony PlayStation</fullname>
         <path>%ROMPATH%/psx</path>
         <extension>.bin .BIN .cbn .CBN .ccd .CCD .chd .CHD .cue .CUE .ecm .ECM .exe .EXE .img .IMG .iso .ISO .m3u .M3U .mdf .MDF .mds .MDS .minipsf .MINIPSF .pbp .PBP .psexe .PSEXE .psf .PSF .toc .TOC .z .Z .znx .ZNX .7z .7Z .zip .ZIP</extension>
-        <command label="DuckStation (Standalone)">%EMULATOR_DUCKSTATION% -batch %ROM%</command>
+        <command label="DuckStation (Standalone)">%EMULATOR_DUCKSTATION% -fullscreen -batch %ROM%</command>
         <command label="SwanStation">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/swanstation_libretro.so %ROM%</command>
         <command label="Beetle PSX HW">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mednafen_psx_hw_libretro.so %ROM%</command>
         <command label="Beetle PSX">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/mednafen_psx_libretro.so %ROM%</command>
@@ -398,7 +398,7 @@ RPCS3_BIN_EOF
         <fullname>Sony PlayStation 2</fullname>
         <path>%ROMPATH%/ps2</path>
         <extension>.bin .BIN .chd .CHD .ciso .CISO .cso .CSO .desktop .dump .DUMP .elf .ELF .gz .GZ .m3u .M3U .mdf .MDF .img .IMG .iso .ISO .isz .ISZ .ngr .NRG .zso .ZSO</extension>
-        <command label="PCSX2 (Standalone)">%EMULATOR_PCSX2% -batch %ROM%</command>
+        <command label="PCSX2 (Standalone)">%EMULATOR_PCSX2% -fullscreen -batch %ROM%</command>
         <command label="PCSX2 Legacy (Standalone)">%EMULATOR_PCSX2-LEGACY% --nogui %ROM%</command>
         <command label="LRPS2">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/pcsx2_libretro.so %ROM%</command>
         <command label="PCSX2">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/pcsx2_libretro.so %ROM%</command>
@@ -414,9 +414,9 @@ RPCS3_BIN_EOF
         <fullname>Microsoft Xbox</fullname>
         <path>%ROMPATH%/xbox</path>
         <extension>.iso .ISO .xiso .XISO</extension>
-        <command label="xemu (Standalone)">%INJECT%=%BASENAME%.esprefix %EMULATOR_XEMU% -dvd_path %ROM%</command>
-        <command label="xemu Standalone (Direct)">~/.local/bin/xemu -dvd_path %ROM%</command>
-        <command label="xemu Flatpak (Direct)">/var/lib/flatpak/exports/bin/app.xemu.xemu -dvd_path %ROM%</command>
+        <command label="xemu (Standalone)">%INJECT%=%BASENAME%.esprefix %EMULATOR_XEMU% -full-screen -dvd_path %ROM%</command>
+        <command label="xemu Standalone (Direct)">~/.local/bin/xemu -full-screen -dvd_path %ROM%</command>
+        <command label="xemu Flatpak (Direct)">/var/lib/flatpak/exports/bin/app.xemu.xemu -full-screen -dvd_path %ROM%</command>
         <command label="Shortcut or script">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
         <platform>xbox</platform>
         <theme>xbox</theme>
@@ -428,12 +428,12 @@ RPCS3_BIN_EOF
         <fullname>Sony PlayStation 3</fullname>
         <path>%ROMPATH%/ps3</path>
         <extension>.desktop .iso .ISO .ps3 .PS3 .ps3dir .PS3DIR</extension>
-        <command label="RPCS3 (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
-        <command label="RPCS3 Standalone (Direct)">~/.local/bin/rpcs3 --no-gui %ROM%</command>
-        <command label="RPCS3 Flatpak (Direct)">/var/lib/flatpak/exports/bin/net.rpcs3.RPCS3 --no-gui %ROM%</command>
-        <command label="RPCS3 ISO (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
-        <command label="RPCS3 Directory (Standalone)">%EMULATOR_RPCS3% --no-gui %ROM%</command>
-        <command label="RPCS3 Game Serial (Standalone)">%EMULATOR_RPCS3% --no-gui %RPCS3_GAMEID%:%INJECT%=%BASENAME%.ps3</command>
+        <command label="RPCS3 (Standalone)">%EMULATOR_RPCS3% --fullscreen --no-gui %ROM%</command>
+        <command label="RPCS3 Standalone (Direct)">~/.local/bin/rpcs3 --fullscreen --no-gui %ROM%</command>
+        <command label="RPCS3 Flatpak (Direct)">/var/lib/flatpak/exports/bin/net.rpcs3.RPCS3 --fullscreen --no-gui %ROM%</command>
+        <command label="RPCS3 ISO (Standalone)">%EMULATOR_RPCS3% --fullscreen --no-gui %ROM%</command>
+        <command label="RPCS3 Directory (Standalone)">%EMULATOR_RPCS3% --fullscreen --no-gui %ROM%</command>
+        <command label="RPCS3 Game Serial (Standalone)">%EMULATOR_RPCS3% --fullscreen --no-gui %RPCS3_GAMEID%:%INJECT%=%BASENAME%.ps3</command>
         <command label="RPCS3 Shortcut (Standalone)">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
         <platform>ps3</platform>
         <theme>ps3</theme>
@@ -596,6 +596,52 @@ GL_EOF
           ln -sfn "${retroarchWithCores}/lib/retroarch/cores" "$homeDir/.config/retroarch/cores"
           chown -R ${cfgUser}:users "$homeDir/.config/retroarch" || true
         ''}
+
+        # 6. Harmonisation déclarative des raccourcis manette et du mode plein écran pour les émulateurs
+        # RetroArch : Plein écran, Select+Start pour quitter, Select+X / L3+R3 pour Quick Menu, R1/L1 pour Save/Load
+        retroarchCfg="$homeDir/.config/retroarch/retroarch.cfg"
+        if [ -f "$retroarchCfg" ]; then
+          sed -i 's/^video_fullscreen = .*/video_fullscreen = "true"/' "$retroarchCfg"
+          sed -i 's/^input_enable_hotkey_btn = .*/input_enable_hotkey_btn = "4"/' "$retroarchCfg"
+          sed -i 's/^input_exit_emulator_btn = .*/input_exit_emulator_btn = "6"/' "$retroarchCfg"
+          sed -i 's/^input_menu_toggle_btn = .*/input_menu_toggle_btn = "2"/' "$retroarchCfg"
+          sed -i 's/^input_menu_toggle_gamepad_combo = .*/input_menu_toggle_gamepad_combo = "2"/' "$retroarchCfg"
+          sed -i 's/^input_save_state_btn = .*/input_save_state_btn = "10"/' "$retroarchCfg"
+          sed -i 's/^input_load_state_btn = .*/input_load_state_btn = "9"/' "$retroarchCfg"
+          sed -i 's/^input_hold_fast_forward_btn = .*/input_hold_fast_forward_btn = "14"/' "$retroarchCfg"
+        fi
+
+        # DuckStation (PS1) : Plein écran, arrêt sans confirmation, raccourcis manette
+        duckCfg="$homeDir/.local/share/duckstation/settings.ini"
+        if [ -f "$duckCfg" ]; then
+          sed -i 's/^StartFullscreen = .*/StartFullscreen = true/' "$duckCfg"
+          sed -i 's/^ConfirmPowerOff = .*/ConfirmPowerOff = false/' "$duckCfg"
+          if grep -q '\[Hotkeys\]' "$duckCfg"; then
+            if ! grep -q 'PowerOff =.*SDL' "$duckCfg"; then
+              sed -i '/^\[Hotkeys\]/a PowerOff = Keyboard/Escape, SDL-0/Guide \& SDL-0/Start, SDL-0/Back \& SDL-0/Start' "$duckCfg"
+            fi
+            sed -i 's|^OpenPauseMenu = .*|OpenPauseMenu = Keyboard/Escape, SDL-0/Guide, SDL-0/LeftStick \& SDL-0/RightStick, SDL-0/Guide \& SDL-0/X, SDL-0/Back \& SDL-0/X|' "$duckCfg"
+          fi
+        fi
+
+        # PCSX2 (PS2) : Plein écran, arrêt sans confirmation, raccourcis manette
+        pcsx2Cfg="$homeDir/.config/PCSX2/inis/PCSX2.ini"
+        if [ -f "$pcsx2Cfg" ]; then
+          sed -i 's/^StartFullscreen = .*/StartFullscreen = true/' "$pcsx2Cfg"
+          sed -i 's/^ConfirmShutdown = .*/ConfirmShutdown = false/' "$pcsx2Cfg"
+          if grep -q '\[Hotkeys\]' "$pcsx2Cfg"; then
+            if ! grep -q 'ShutdownVM =.*SDL' "$pcsx2Cfg"; then
+              sed -i '/^\[Hotkeys\]/a ShutdownVM = Keyboard/Escape, SDL-0/Guide \& SDL-0/Start, SDL-0/Back \& SDL-0/Start' "$pcsx2Cfg"
+            fi
+            sed -i 's|^OpenPauseMenu = .*|OpenPauseMenu = Keyboard/Escape, SDL-0/Guide, SDL-0/LeftStick \& SDL-0/RightStick, SDL-0/Guide \& SDL-0/FaceNorth, SDL-0/Back \& SDL-0/FaceNorth|' "$pcsx2Cfg"
+          fi
+        fi
+
+        # Eden (Switch) : Plein écran par défaut
+        edenCfg="$homeDir/.config/eden/qt-config.ini"
+        if [ -f "$edenCfg" ]; then
+          sed -i 's/^fullscreen=false/fullscreen=true/' "$edenCfg"
+        fi
       fi
     '';
 

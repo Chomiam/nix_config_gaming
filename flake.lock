@@ -26,11 +26,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1789774969,
-        "narHash": "sha256-/Kc+l1t+GdSK/9/sX6saaP42O/iqqqmA52EO6VgIj7E=",
+        "lastModified": 1789807797,
+        "narHash": "sha256-uxUDrNW/QUfcuJb9+eQbHckxCUoXNWpQ2TJmBIpqdmg=",
         "owner": "Chomiam",
         "repo": "chomiamos-dashboard",
-        "rev": "392f601e4d10cf0a4a07510ee49c0f641f557790",
+        "rev": "1883567287a455c631e90cad6443a280bf2b42ac",
         "type": "github"
       },
       "original": {
@@ -145,11 +145,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789715167,
-        "narHash": "sha256-P6lddEHTA0vIDFKb1PtLuG7UoCQ3GKTx4i/50L2cRy8=",
+        "lastModified": 1789806421,
+        "narHash": "sha256-9/ORn4iT7lLRo49y3uuSpHS3WL0oEy7mhatdiDyElTA=",
         "owner": "Jovian-Experiments",
         "repo": "Jovian-NixOS",
-        "rev": "790551334fe2cb4f9d293d3f70df34017fb32733",
+        "rev": "b9e984b27d6d40c42c344cbd3eadc17c2dabbef0",
         "type": "github"
       },
       "original": {
