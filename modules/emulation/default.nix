@@ -87,6 +87,17 @@ LAUNCHER_EOF
     builtins.readFile ../../pkgs/es-de/update-es-de.py
   );
 
+  # Démon universel de raccourcis manette ChomiamOS
+  chomiamos-gamepad-hotkeys = pkgs.writers.writePython3Bin "chomiamos-gamepad-hotkeys" {
+    libraries = [ pkgs.python3Packages.evdev ];
+    doCheck = false;
+  } (builtins.readFile ./hotkeys-daemon.py);
+
+  # Script déclaratif d'harmonisation des raccourcis et configurations émulateurs
+  configure-emulator-hotkeys = pkgs.writers.writePython3Bin "configure-emulator-hotkeys" {
+    doCheck = false;
+  } (builtins.readFile ./configure-emulator-hotkeys.py);
+
   # Commande unifiée de mise à jour système + ES-DE
   chomiamos-update = pkgs.writeShellScriptBin "chomiamos-update" ''
     set -euo pipefail
@@ -194,16 +205,23 @@ in
     environment.systemPackages = [
       update-es-de
       chomiamos-update
+      chomiamos-gamepad-hotkeys
+      configure-emulator-hotkeys
     ]
     ++ lib.optional (cfg.frontend == "es-de" || cfg.es-de.enable) es-de
     ++ lib.optional cfg.retroarch.enable retroarchWithCores
     ++ standalonePackages;
 
-    # 2. Ajout des raccourcis au profil utilisateur
-    users.users."${cfgUser}".packages = [ ]
+    # 2. Ajout des raccourcis au profil utilisateur et groupes manette
+    users.users."${cfgUser}" = {
+      extraGroups = [ "input" "uinput" ];
+      packages = [
+        chomiamos-gamepad-hotkeys
+      ]
       ++ lib.optional (cfg.frontend == "es-de" || cfg.es-de.enable) es-de
       ++ lib.optional cfg.retroarch.enable retroarchWithCores
       ++ standalonePackages;
+    };
 
     # 3. Création déclarative de l'arborescence des ROMs et BIOS
     system.activationScripts.emulationDirs = lib.stringAfter [ "users" ] ''
@@ -598,51 +616,8 @@ GL_EOF
           chown -R ${cfgUser}:users "$homeDir/.config/retroarch" || true
         ''}
 
-        # 6. Harmonisation déclarative des raccourcis manette et du mode plein écran pour les émulateurs
-        # RetroArch : Plein écran, Select+Start pour quitter, Select+X / L3+R3 pour Quick Menu, R1/L1 pour Save/Load
-        retroarchCfg="$homeDir/.config/retroarch/retroarch.cfg"
-        if [ -f "$retroarchCfg" ]; then
-          sed -i 's/^video_fullscreen = .*/video_fullscreen = "true"/' "$retroarchCfg"
-          sed -i 's/^input_enable_hotkey_btn = .*/input_enable_hotkey_btn = "4"/' "$retroarchCfg"
-          sed -i 's/^input_exit_emulator_btn = .*/input_exit_emulator_btn = "6"/' "$retroarchCfg"
-          sed -i 's/^input_menu_toggle_btn = .*/input_menu_toggle_btn = "2"/' "$retroarchCfg"
-          sed -i 's/^input_menu_toggle_gamepad_combo = .*/input_menu_toggle_gamepad_combo = "2"/' "$retroarchCfg"
-          sed -i 's/^input_save_state_btn = .*/input_save_state_btn = "10"/' "$retroarchCfg"
-          sed -i 's/^input_load_state_btn = .*/input_load_state_btn = "9"/' "$retroarchCfg"
-          sed -i 's/^input_hold_fast_forward_btn = .*/input_hold_fast_forward_btn = "14"/' "$retroarchCfg"
-        fi
-
-        # DuckStation (PS1) : Plein écran, arrêt sans confirmation, raccourcis manette
-        duckCfg="$homeDir/.local/share/duckstation/settings.ini"
-        if [ -f "$duckCfg" ]; then
-          sed -i 's/^StartFullscreen = .*/StartFullscreen = true/' "$duckCfg"
-          sed -i 's/^ConfirmPowerOff = .*/ConfirmPowerOff = false/' "$duckCfg"
-          if grep -q '\[Hotkeys\]' "$duckCfg"; then
-            if ! grep -q 'PowerOff =.*SDL' "$duckCfg"; then
-              sed -i '/^\[Hotkeys\]/a PowerOff = Keyboard/Escape, SDL-0/Guide \& SDL-0/Start, SDL-0/Back \& SDL-0/Start' "$duckCfg"
-            fi
-            sed -i 's|^OpenPauseMenu = .*|OpenPauseMenu = Keyboard/Escape, SDL-0/Guide, SDL-0/LeftStick \& SDL-0/RightStick, SDL-0/Guide \& SDL-0/X, SDL-0/Back \& SDL-0/X|' "$duckCfg"
-          fi
-        fi
-
-        # PCSX2 (PS2) : Plein écran, arrêt sans confirmation, raccourcis manette
-        pcsx2Cfg="$homeDir/.config/PCSX2/inis/PCSX2.ini"
-        if [ -f "$pcsx2Cfg" ]; then
-          sed -i 's/^StartFullscreen = .*/StartFullscreen = true/' "$pcsx2Cfg"
-          sed -i 's/^ConfirmShutdown = .*/ConfirmShutdown = false/' "$pcsx2Cfg"
-          if grep -q '\[Hotkeys\]' "$pcsx2Cfg"; then
-            if ! grep -q 'ShutdownVM =.*SDL' "$pcsx2Cfg"; then
-              sed -i '/^\[Hotkeys\]/a ShutdownVM = Keyboard/Escape, SDL-0/Guide \& SDL-0/Start, SDL-0/Back \& SDL-0/Start' "$pcsx2Cfg"
-            fi
-            sed -i 's|^OpenPauseMenu = .*|OpenPauseMenu = Keyboard/Escape, SDL-0/Guide, SDL-0/LeftStick \& SDL-0/RightStick, SDL-0/Guide \& SDL-0/FaceNorth, SDL-0/Back \& SDL-0/FaceNorth|' "$pcsx2Cfg"
-          fi
-        fi
-
-        # Eden (Switch) : Plein écran par défaut
-        edenCfg="$homeDir/.config/eden/qt-config.ini"
-        if [ -f "$edenCfg" ]; then
-          sed -i 's/^fullscreen=false/fullscreen=true/' "$edenCfg"
-        fi
+        # 6. Harmonisation déclarative des raccourcis manette et du mode plein écran pour tous les émulateurs
+        ${configure-emulator-hotkeys}/bin/configure-emulator-hotkeys "$homeDir" || true
 
         # 7. Activation déclarative de RetroAchievements sur tous les émulateurs compatibles
         ${let
@@ -777,7 +752,23 @@ DOLPHIN_CHEEVOS_EOF
       fi
     '';
 
-    # 5. Service systemd de notification des màj d'ES-DE au démarrage
+    # 5. Support matériel uinput pour les raccourcis virtuels
+    hardware.uinput.enable = true;
+
+    # 6. Service systemd utilisateur du démon de raccourcis manette universels
+    systemd.user.services.chomiamos-gamepad-hotkeys = {
+      description = "ChomiamOS Universal Gamepad Hotkeys Daemon pour l'émulation";
+      wantedBy = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
+      serviceConfig = {
+        ExecStart = "${chomiamos-gamepad-hotkeys}/bin/chomiamos-gamepad-hotkeys";
+        Restart = "on-failure";
+        RestartSec = 3;
+      };
+    };
+
+    # 7. Service systemd de notification des màj d'ES-DE au démarrage
     systemd.user.services.es-de-update-check = lib.mkIf (cfg.es-de.enable && cfg.es-de.autoCheckUpdates) {
       description = "Vérification des mises à jour pour ES-DE (EmulationStation Desktop Edition)";
       wantedBy = [ "default.target" ];
