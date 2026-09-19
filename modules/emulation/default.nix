@@ -207,6 +207,7 @@ in
 
     # 3. Création déclarative de l'arborescence des ROMs et BIOS
     system.activationScripts.emulationDirs = lib.stringAfter [ "users" ] ''
+      PATH="${lib.makeBinPath [ pkgs.gnused pkgs.coreutils pkgs.findutils pkgs.gnugrep ]}:$PATH"
       homeDir="/home/${cfgUser}"
       if [ -d "$homeDir" ]; then
         # 1. Rétrocompatibilité /mnt/Games -> /mnt/Emudeck
