@@ -47,7 +47,6 @@ build_and_push() {
   cachix watch-exec "$CACHE_NAME" -- nix build \
     "$target" \
     --accept-flake-config \
-    --impure \
     --fallback \
     --print-build-logs
 
