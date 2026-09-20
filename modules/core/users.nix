@@ -138,10 +138,13 @@ in
     font-awesome
     noto-fonts
 
-    # 🛠️ Outils Système
+    # 🛠️ Outils Système & Développement
     nh
     fuse3
-    python3
+    python3        # Interpréteur de base
+    uv             # Remplace avantageusement pip/venv sous NixOS (ultra rapide et gère les venvs sans accroc)
+    gcc            # Utile si une dépendance Python doit compiler des modules C
+    gnumake
     nodejs
     curl
     wget
