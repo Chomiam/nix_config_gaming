@@ -45,9 +45,6 @@
   # Navigateur web principal
   browser = "chrome";
 
-  # Émulateur de terminal principal
-  terminal = "kitty";
-
   # Client Discord
   discordClient = "vesktop";
 
@@ -81,15 +78,9 @@
   emulation = {
     enable = true;
     frontend = "es-de";
-    romsDir = "/mnt/Emudeck/Emulation/roms";
-    biosDir = "/mnt/Emudeck/Emulation/bios";
     autoCheckUpdates = true;
 
     retroarch = {
-      enable = true;
-    };
-
-    retroachievements = {
       enable = true;
     };
 
@@ -145,17 +136,17 @@
   ide = {
     zed = true;
     antigravity = true;
-    vscode = false;
+    vscode = true;
   };
   antigravity = true;
   zed = true;
-  vscode = false;
+  vscode = true;
   pearDesktop = true;
   kdenlive = false;
   obsStudio = true;
 
   # Suite IA locale complète (Open WebUI, Ollama accéléré par GPU, Agent IA Hermes)
-  # Interfaces : Open WebUI sur http://localhost:8085, Hermes Dashboard sur http://localhost:9119
+  # Interfaces : Open WebUI sur http://localhost:8080, Hermes Dashboard sur http://localhost:9119
   iaSuite = {
     enable = true;
   };

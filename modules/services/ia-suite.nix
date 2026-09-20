@@ -138,5 +138,23 @@ in
         categories = [ "Development" "Utility" ];
       }))
     ];
+
+    # 7. 🔌 Autorisation sudo sans mot de passe pour l'agent Hermes via protocole ACP (VS Code, etc.)
+    security.sudo.extraRules = lib.mkIf cfg.hermes.enable [
+      {
+        users = [ config.chomiamos.user.username ];
+        commands = [
+          {
+            command = "/run/current-system/sw/bin/podman exec -i hermes-agent hermes acp";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.podman}/bin/podman exec -i hermes-agent hermes acp";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
   };
 }
+
