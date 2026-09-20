@@ -115,8 +115,11 @@ in
       ++ lib.optionals cfg.hermes.enable [ cfg.hermes.apiPort cfg.hermes.dashboardPort ]
     );
 
-    # 6. 🖥️ Raccourcis dans le menu d'applications GNOME / Bureau
+    # 6. 🖥️ Outils et raccourcis dans le menu d'applications GNOME / Bureau
     environment.systemPackages = [
+      # Outil CLI Hugging Face Hub (expose huggingface-cli et hf dans le PATH sans collision avec Python système)
+      (pkgs.python313Packages.toPythonApplication pkgs.python313Packages.huggingface-hub)
+
       (lib.mkIf cfg.openWebUI.enable (pkgs.makeDesktopItem {
         name = "open-webui";
         desktopName = "Open WebUI";
