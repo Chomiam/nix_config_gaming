@@ -625,7 +625,7 @@ in
         enable = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Active la Suite IA locale (Open WebUI, Ollama avec accélération GPU, Agent IA Hermes).";
+          description = "Active la Suite IA locale (Open WebUI, llama.cpp avec accélération GPU, Agent IA Hermes).";
         };
 
         openFirewall = lib.mkOption {
@@ -634,23 +634,23 @@ in
           description = "Ouvre les ports réseau de la Suite IA dans le pare-feu.";
         };
 
-        ollama = {
+        llamaCpp = {
           enable = lib.mkOption {
             type = lib.types.bool;
             default = true;
-            description = "Active le serveur d'inférence LLM local Ollama.";
+            description = "Active le serveur d'inférence LLM local llama.cpp (llama-server).";
           };
 
           port = lib.mkOption {
             type = lib.types.port;
             default = 11434;
-            description = "Port d'écoute du serveur Ollama.";
+            description = "Port d'écoute du serveur llama.cpp (défaut 11434, compatible avec les clients Ollama/Hermes).";
           };
 
           acceleration = lib.mkOption {
             type = lib.types.enum [ "auto" "rocm" "cuda" "vulkan" "cpu" ];
             default = "auto";
-            description = "Type d'accélération matérielle pour Ollama (auto détecte selon chomiamos.hardware.gpu).";
+            description = "Type d'accélération matérielle pour llama.cpp (auto détecte selon chomiamos.hardware.gpu).";
           };
 
           rocmOverrideGfx = lib.mkOption {
@@ -660,11 +660,69 @@ in
             description = "Force l'architecture GFX de ROCm (HSA_OVERRIDE_GFX_VERSION) pour cartes AMD si nécessaire.";
           };
 
-          models = lib.mkOption {
+          model = lib.mkOption {
+            type = lib.types.nullOr lib.types.path;
+            default = null;
+            example = "/models/hermes-3-8b.gguf";
+            description = "Chemin vers un fichier de modèle .gguf spécifique à charger.";
+          };
+
+          modelsDir = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            description = "Répertoire contenant les modèles GGUF locaux pour le mode routeur (défaut : ~/models).";
+          };
+
+          modelsPreset = lib.mkOption {
+            type = lib.types.nullOr (lib.types.attrsOf lib.types.attrs);
+            default = null;
+            description = "Configuration de presets de modèles passée à llama-server.";
+          };
+
+          hfRepo = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "unsloth/Hermes-3-Llama-3.1-8B-GGUF";
+            description = "Dépôt Hugging Face pour téléchargement et mise en cache automatique du modèle.";
+          };
+
+          hfFile = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "Hermes-3-Llama-3.1-8B-Q4_K_M.gguf";
+            description = "Fichier GGUF spécifique sur le dépôt Hugging Face (optionnel si hfRepo inclut la quantification).";
+          };
+
+          contextLength = lib.mkOption {
+            type = lib.types.int;
+            default = 131072;
+            description = "Taille de la fenêtre de contexte en tokens (-c / --ctx-size, défaut 128k pour Hermes Agent).";
+          };
+
+          gpuLayers = lib.mkOption {
+            type = lib.types.int;
+            default = 99;
+            description = "Nombre maximal de couches déchargées sur le GPU (-ngl / --gpu-layers).";
+          };
+
+          apiKey = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            description = "Clé API secrète optionnelle pour sécuriser les requêtes vers llama-server.";
+          };
+
+          alias = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "hermes3,hf.co/unsloth/Qwen3.8-27B-GGUF:UD-IQ2_S";
+            description = "Alias de nom de modèle (séparés par des virgules) pour que l'API réponde aux requêtes clientes sous ce nom (--alias).";
+          };
+
+          extraFlags = lib.mkOption {
             type = lib.types.listOf lib.types.str;
             default = [ ];
-            example = [ "hermes3" ];
-            description = "Liste de modèles à pré-charger automatiquement via Ollama.";
+            example = [ "--jinja" "--threads" "8" ];
+            description = "Drapeaux de ligne de commande supplémentaires passés à llama-server.";
           };
         };
 
@@ -726,9 +784,9 @@ in
           };
 
           defaultModel = lib.mkOption {
-            type = lib.types.str;
-            default = "hermes3";
-            description = "Modèle par défaut utilisé par l'agent Hermes.";
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            description = "Modèle par défaut utilisé par l'agent Hermes (laisser null pour gérer manuellement via 'hermes model').";
           };
         };
       };

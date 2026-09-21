@@ -138,18 +138,27 @@ nixpkgs.config.allowUnfree = true;
 
       iaSuite = let
         iaVars = vars.iaSuite or vars."ia-suite" or vars.aiSuite or vars."ai-suite" or {};
-        ollamaVars = iaVars.ollama or {};
+        llamaVars = iaVars.llamaCpp or iaVars.llama-cpp or iaVars.ollama or {};
         webUiVars = iaVars.openWebUI or iaVars.openWebUi or {};
         hermesVars = iaVars.hermes or {};
       in {
         enable = iaVars.enable or false;
         openFirewall = iaVars.openFirewall or false;
-        ollama = {
-          enable = ollamaVars.enable or true;
-          port = ollamaVars.port or 11434;
-          acceleration = ollamaVars.acceleration or "auto";
-          rocmOverrideGfx = ollamaVars.rocmOverrideGfx or iaVars.rocmOverrideGfx or null;
-          models = ollamaVars.models or [ ];
+        llamaCpp = {
+          enable = llamaVars.enable or true;
+          port = llamaVars.port or 11434;
+          acceleration = llamaVars.acceleration or "auto";
+          rocmOverrideGfx = llamaVars.rocmOverrideGfx or iaVars.rocmOverrideGfx or null;
+          model = llamaVars.model or null;
+          modelsDir = llamaVars.modelsDir or null;
+          modelsPreset = llamaVars.modelsPreset or null;
+          hfRepo = llamaVars.hfRepo or null;
+          hfFile = llamaVars.hfFile or null;
+          contextLength = llamaVars.contextLength or 131072;
+          gpuLayers = llamaVars.gpuLayers or 99;
+          apiKey = llamaVars.apiKey or null;
+          alias = llamaVars.alias or null;
+          extraFlags = llamaVars.extraFlags or [ ];
         };
         openWebUI = {
           enable = webUiVars.enable or true;
@@ -162,7 +171,7 @@ nixpkgs.config.allowUnfree = true;
           dashboardUsername = hermesVars.dashboardUsername or "admin";
           dashboardPassword = hermesVars.dashboardPassword or "admin";
           apiKey = hermesVars.apiKey or "hermes-agent-key";
-          defaultModel = hermesVars.defaultModel or "hermes3";
+          defaultModel = hermesVars.defaultModel or null;
         };
       };
     };

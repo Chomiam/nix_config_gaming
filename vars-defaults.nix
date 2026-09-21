@@ -172,16 +172,25 @@
     bambustudio = false;
   };
 
-  # Suite IA locale (Open WebUI, Ollama & Agent IA Hermes)
+  # Suite IA locale (Open WebUI, llama.cpp & Agent IA Hermes)
   iaSuite = {
     enable = false;
     openFirewall = false;
-    ollama = {
+    llamaCpp = {
       enable = true;
       port = 11434;
       acceleration = "auto";
       rocmOverrideGfx = null;
-      models = [ ];
+      model = null;
+      modelsDir = null;
+      modelsPreset = null;
+      hfRepo = null;
+      hfFile = null;
+      contextLength = 131072;
+      gpuLayers = 99;
+      apiKey = null;
+      alias = null;
+      extraFlags = [ ];
     };
     openWebUI = {
       enable = true;
@@ -194,7 +203,7 @@
       dashboardUsername = "admin";
       dashboardPassword = "admin";
       apiKey = "hermes-agent-key";
-      defaultModel = "hermes3";
+      defaultModel = null;
     };
   };
 }

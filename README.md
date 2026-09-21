@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/Gaming-Optimized-red?style=for-the-badge&logo=steam&logoColor=white" alt="Gaming Optimized" />
 </p>
 
-Une distribution et configuration **NixOS hyper-modulaire, déclarative et clé en main**, optimisée pour le **Gaming compétitif haute performance**, la création de contenu (DaVinci Resolve, Godot, Blender), la virtualisation Windows (Virt-Manager / VirtIO) et les services IA locaux accélérés par GPU (Ollama + Open-WebUI).
+Une distribution et configuration **NixOS hyper-modulaire, déclarative et clé en main**, optimisée pour le **Gaming compétitif haute performance**, la création de contenu (DaVinci Resolve, Godot, Blender), la virtualisation Windows (Virt-Manager / VirtIO) et les services IA locaux accélérés par GPU (llama.cpp + Open-WebUI).
 
 Cette configuration fonctionne à la fois comme un **système autonome personnalisable** via un unique fichier [vars.nix](file:///etc/nixos/vars.nix), et comme un **module Flake réutilisable** (`nixosModules.default`) pouvant être importé par d'autres utilisateurs dans leur propre environnement NixOS.
 
@@ -25,7 +25,7 @@ Cette configuration fonctionne à la fois comme un **système autonome personnal
   - [2.4. Partage Réseau Windows (Samba & WSDD)](#24-partage-réseau-windows-samba--wsdd)
   - [2.5. Environnements de Bureau (GNOME & COSMIC Desktop)](#25-environnements-de-bureau-gnome--cosmic-desktop)
   - [2.6. Compatibilité Binaire (Nix-LD, AppImage, Flatpak)](#26-compatibilité-binaire-nix-ld-appimage-flatpak)
-  - [2.7. Suite IA Locale Privée & RAG (Ollama, WebUI, SearXNG)](#27-suite-ia-locale-privée--rag-ollama-webui-searxng)
+  - [2.7. Suite IA Locale Privée & RAG (llama.cpp, WebUI, SearXNG)](#27-suite-ia-locale-privée--rag-llamacpp-webui-searxng)
   - [2.8. Support SimRacing (Pilotes Volants Linux)](#28-support-simracing-pilotes-volants-linux)
 - [3. 📂 Structure du Répertoire](#3--structure-du-répertoire)
 - [4. ⚙️ Guide de Configuration Rapide (`vars.nix`)](#4-️-guide-de-configuration-rapide-varsnix)
@@ -85,9 +85,9 @@ Un réglage unique bascule l'ensemble du profil GPU et du noyau Linux adapté :
 - **AppImage** : Support transparent d'`appimage-run` avec binfmt.
 - **Flatpak Déclaratif** : Gestion déclarative via `nix-flatpak` connecté au dépôt Flathub officiel.
 
-### 2.7. Suite IA Locale Privée & RAG (Ollama, WebUI, SearXNG)
-- **Ollama** : Accélération GPU automatique (ROCm sur AMD, CUDA sur Nvidia), support des microarchitectures GPU récentes (`rocmOverrideGfx`), gestion dynamique du déchargement VRAM (`keepAlive`).
-- **Open-WebUI** : Interface de chat moderne connectée à Ollama et SearXNG pour la recherche Web locale (RAG).
+### 2.7. Suite IA Locale Privée & RAG (llama.cpp, WebUI, SearXNG)
+- **llama.cpp** : Serveur d'inférence LLM haute performance avec accélération GPU automatique (ROCm sur AMD, CUDA sur Nvidia, Vulkan sur Intel), déchargement VRAM (`-ngl 99`), support Hugging Face direct et mode routeur local.
+- **Open-WebUI** : Interface de chat moderne connectée à llama.cpp et SearXNG pour la recherche Web locale (RAG).
 - **SearXNG** : Métamoteur de recherche local respectueux de la vie privée.
 
 ### 2.8. Support SimRacing (Pilotes Volants Linux)
@@ -153,7 +153,7 @@ Un réglage unique bascule l'ensemble du profil GPU et du noyau Linux adapté :
 │       ├── blender.nix             # Blender 3D (unstable)
 │       ├── godot.nix               # Godot Engine (unstable)
 │       ├── davinci-resolve.nix     # DaVinci Resolve Free / Studio
-│       └── ia-suite.nix            # Suite IA locale (Open WebUI, Ollama ROCm/CUDA & Agent Hermes)
+│       └── ia-suite.nix            # Suite IA locale (Open WebUI, llama.cpp ROCm/CUDA/Vulkan & Agent Hermes)
 │
 └── home/                           # Profils utilisateur Home-Manager & Thématisation
     ├── default.nix
@@ -203,7 +203,7 @@ blender = true;
 godot = true;
 davinciResolve = "none"; # "none" | "free" | "studio"
 
-# Suite IA locale (Open WebUI, Ollama avec accélération GPU & Agent IA Hermes)
+# Suite IA locale (Open WebUI, llama.cpp avec accélération GPU & Agent IA Hermes)
 iaSuite.enable = true;
 ```
 
