@@ -153,6 +153,8 @@ in
     pcre2
     libevent
     killall
+    ripgrep        # Recherche récursive ultra rapide dans les fichiers (requis par Hermes Agent)
+    ffmpeg         # Encodage/décodage multimédia (requis par Hermes Agent pour TTS)
 
     # 🎮 Tableau de bord officiel ChomiamOS (Rust / Slint)
     inputs.chomiamos-dashboard.packages.${pkgs.stdenv.hostPlatform.system}.default

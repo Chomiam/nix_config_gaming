@@ -692,7 +692,7 @@ in
           enable = lib.mkOption {
             type = lib.types.bool;
             default = true;
-            description = "Active l'agent IA autonome Hermes Nous Research (conteneur OCI sous Podman).";
+            description = "Active l'agent IA autonome Hermes Nous Research (service systemd natif, nécessite une installation préalable via install.sh).";
           };
 
           apiPort = lib.mkOption {
@@ -723,12 +723,6 @@ in
             type = lib.types.str;
             default = "hermes-agent-key";
             description = "Clé secrète d'accès à l'API passerelle d'Hermes Agent.";
-          };
-
-          image = lib.mkOption {
-            type = lib.types.str;
-            default = "nousresearch/hermes-agent:latest";
-            description = "Image conteneur OCI pour Hermes Agent.";
           };
 
           defaultModel = lib.mkOption {
