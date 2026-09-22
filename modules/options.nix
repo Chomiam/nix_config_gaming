@@ -699,6 +699,12 @@ in
             description = "Taille de la fenêtre de contexte en tokens (-c / --ctx-size, défaut 128k pour Hermes Agent).";
           };
 
+          contextShift = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Active le glissement dynamique de contexte (--context-shift / --ctx-shift) pour l'inférence continue sans blocage sur dépassement de contexte.";
+          };
+
           gpuLayers = lib.mkOption {
             type = lib.types.int;
             default = 99;

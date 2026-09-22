@@ -155,6 +155,7 @@ nixpkgs.config.allowUnfree = true;
           hfRepo = llamaVars.hfRepo or null;
           hfFile = llamaVars.hfFile or null;
           contextLength = llamaVars.contextLength or 131072;
+          contextShift = llamaVars.contextShift or false;
           gpuLayers = llamaVars.gpuLayers or 99;
           apiKey = llamaVars.apiKey or null;
           alias = llamaVars.alias or null;

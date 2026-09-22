@@ -187,6 +187,7 @@
       hfRepo = null;
       hfFile = null;
       contextLength = 131072;
+      contextShift = false;
       gpuLayers = 99;
       apiKey = null;
       alias = null;

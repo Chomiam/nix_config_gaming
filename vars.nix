@@ -150,7 +150,8 @@
   iaSuite = {
     enable = true;
     llamaCpp = {
-      contextLength = 131072;
+      contextLength = 65536; # 64k tokens (au lieu de 128k)
+      contextShift = true;   # Active le glissement de contexte (--context-shift)
     };
   };
 }

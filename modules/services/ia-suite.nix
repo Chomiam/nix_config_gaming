@@ -79,6 +79,7 @@ in
           (toString cfg.llamaCpp.contextLength)
           "--jinja" # Active le moteur de template Jinja pour le Function/Tool-Calling natif (Hermes, etc.)
         ]
+        ++ lib.optional cfg.llamaCpp.contextShift "--context-shift"
         ++ lib.optionals (cfg.llamaCpp.gpuLayers > 0 && effectiveAcceleration != "cpu") [
           "-ngl"
           (toString cfg.llamaCpp.gpuLayers)
@@ -99,7 +100,7 @@ in
           "--api-key"
           cfg.llamaCpp.apiKey
         ]
-        ++ cfg.llamaCpp.extraFlags;
+        ++ (map (flag: if flag == "--ctx-shift" then "--context-shift" else flag) cfg.llamaCpp.extraFlags);
     };
 
     # Compléments pour le service systemd llama-cpp : exécution sous le compte utilisateur,
