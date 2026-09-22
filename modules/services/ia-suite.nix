@@ -78,6 +78,24 @@ in
           "-c"
           (toString cfg.llamaCpp.contextLength)
           "--jinja" # Active le moteur de template Jinja pour le Function/Tool-Calling natif (Hermes, etc.)
+          "--parallel"
+          "1" # Slot unique dédié (évite d'allouer 4 slots concurrents et de multiplier la mémoire par 4)
+          "--cache-ram"
+          "0" # Désactive le prompt cache RAM superflu de 8 Go qui provoque l'OOM killer du noyau Linux
+          "--ctx-checkpoints"
+          "4" # Réduit drastiquement l'empreinte mémoire des checkpoints de contexte en RAM
+        ]
+        ++ lib.optionals (cfg.llamaCpp.cacheTypeK != null) [
+          "-ctk"
+          cfg.llamaCpp.cacheTypeK
+        ]
+        ++ lib.optionals (cfg.llamaCpp.cacheTypeV != null) [
+          "-ctv"
+          cfg.llamaCpp.cacheTypeV
+        ]
+        ++ lib.optionals cfg.llamaCpp.flashAttention [
+          "--flash-attn"
+          "on"
         ]
         ++ lib.optional cfg.llamaCpp.contextShift "--context-shift"
         ++ lib.optionals (cfg.llamaCpp.gpuLayers > 0 && effectiveAcceleration != "cpu") [
@@ -193,7 +211,17 @@ in
         User = username;
         Group = "users";
         WorkingDirectory = "~";
-        ExecStartPre = "${pkgs.bash}/bin/bash -c '${userHome}/.local/bin/hermes gateway stop 2>/dev/null || true'";
+        ExecStartPre = let
+          preScript = pkgs.writeShellScript "hermes-agent-pre" ''
+            if [ -x "${userHome}/.local/bin/hermes" ]; then
+              ${userHome}/.local/bin/hermes gateway stop 2>/dev/null || true
+              ${lib.optionalString (cfg.hermes.compressionThreshold != null) ''
+                ${userHome}/.local/bin/hermes config set compression.threshold ${toString cfg.hermes.compressionThreshold} 2>/dev/null || true
+                ${userHome}/.local/bin/hermes config set compression.threshold_tokens null 2>/dev/null || true
+              ''}
+            fi
+          '';
+        in "${preScript}";
         ExecStart = "${userHome}/.local/bin/hermes gateway run --replace";
         Restart = "on-failure";
         RestartSec = 10;
@@ -288,7 +316,24 @@ in
       ))
     ];
 
-    # 7. 🔌 Autorisation sudo sans mot de passe pour l'agent Hermes via protocole ACP (VS Code, etc.)
+    # 7. 🐚 Variables de session globales pour les outils CLI llama.cpp (llama-server, llama-cli)
+    #    Empêche les crashs OOM lors d'exécutions manuelles en imposant le contexte borné (32k), le cache Q4 et Flash Attention
+    environment.sessionVariables = lib.mkIf cfg.llamaCpp.enable ({
+      LLAMA_ARG_CTX_SIZE = toString cfg.llamaCpp.contextLength;
+      LLAMA_ARG_N_PARALLEL = "1";
+      LLAMA_ARG_CACHE_RAM = "0";
+      LLAMA_ARG_CTX_CHECKPOINTS = "4";
+    } // lib.optionalAttrs (cfg.llamaCpp.cacheTypeK != null) {
+      LLAMA_ARG_CACHE_TYPE_K = cfg.llamaCpp.cacheTypeK;
+    } // lib.optionalAttrs (cfg.llamaCpp.cacheTypeV != null) {
+      LLAMA_ARG_CACHE_TYPE_V = cfg.llamaCpp.cacheTypeV;
+    } // lib.optionalAttrs cfg.llamaCpp.flashAttention {
+      LLAMA_ARG_FLASH_ATTN = "on";
+    } // lib.optionalAttrs cfg.llamaCpp.contextShift {
+      LLAMA_ARG_CONTEXT_SHIFT = "true";
+    });
+
+    # 8. 🔌 Autorisation sudo sans mot de passe pour l'agent Hermes via protocole ACP (VS Code, etc.)
     #    Usage direct : hermes acp (binaire natif, plus besoin de podman exec)
     security.sudo.extraRules = lib.mkIf cfg.hermes.enable [
       {

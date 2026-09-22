@@ -695,14 +695,32 @@ in
 
           contextLength = lib.mkOption {
             type = lib.types.int;
-            default = 131072;
-            description = "Taille de la fenêtre de contexte en tokens (-c / --ctx-size, défaut 128k pour Hermes Agent).";
+            default = 65536;
+            description = "Taille de la fenêtre de contexte en tokens (-c / --ctx-size, défaut 64k).";
           };
 
           contextShift = lib.mkOption {
             type = lib.types.bool;
-            default = false;
+            default = true;
             description = "Active le glissement dynamique de contexte (--context-shift / --ctx-shift) pour l'inférence continue sans blocage sur dépassement de contexte.";
+          };
+
+          cacheTypeK = lib.mkOption {
+            type = lib.types.enum [ "f32" "f16" "bf16" "q8_0" "q4_0" "q4_1" "iq4_nl" "q5_0" "q5_1" ];
+            default = "q4_0";
+            description = "Type de quantification du cache KV pour les clés K (-ctk / --cache-type-k).";
+          };
+
+          cacheTypeV = lib.mkOption {
+            type = lib.types.enum [ "f32" "f16" "bf16" "q8_0" "q4_0" "q4_1" "iq4_nl" "q5_0" "q5_1" ];
+            default = "q4_0";
+            description = "Type de quantification du cache KV pour les valeurs V (-ctv / --cache-type-v).";
+          };
+
+          flashAttention = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Active Flash Attention (-fa / --flash-attn) pour optimiser les performances et l'empreinte mémoire du cache de contexte.";
           };
 
           gpuLayers = lib.mkOption {
@@ -793,6 +811,13 @@ in
             type = lib.types.nullOr lib.types.str;
             default = null;
             description = "Modèle par défaut utilisé par l'agent Hermes (laisser null pour gérer manuellement via 'hermes model').";
+          };
+
+          compressionThreshold = lib.mkOption {
+            type = lib.types.nullOr (lib.types.numbers.between 0.0 1.0);
+            default = 0.8;
+            example = 0.8;
+            description = "Seuil d'utilisation du contexte (ratio entre 0.0 et 1.0, ex: 0.8 pour 80%) déclenchant la compression automatique de contexte d'Hermes Agent.";
           };
         };
       };

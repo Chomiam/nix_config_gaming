@@ -150,8 +150,14 @@
   iaSuite = {
     enable = true;
     llamaCpp = {
-      contextLength = 65536; # 64k tokens (au lieu de 128k)
+      contextLength = 65536; # 64k tokens
       contextShift = true;   # Active le glissement de contexte (--context-shift)
+      cacheTypeK = "q4_0";   # Cache KV Q4 pour K
+      cacheTypeV = "q4_0";   # Cache KV Q4 pour V
+      flashAttention = true; # Flash Attention
+    };
+    hermes = {
+      compressionThreshold = 0.5; # Compresse le contexte dès 50% (32k tokens) pour préserver la VRAM
     };
   };
 }

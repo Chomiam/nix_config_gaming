@@ -112,8 +112,11 @@
       modelsPreset = null;
       hfRepo = null;
       hfFile = null;
-      contextLength = 131072;
-      contextShift = false;
+      contextLength = 65536;
+      contextShift = true;
+      cacheTypeK = "q4_0";
+      cacheTypeV = "q4_0";
+      flashAttention = true;
       gpuLayers = 99;
       apiKey = null;
       alias = null;
@@ -128,6 +131,7 @@
       apiPort = 8642;
       dashboardPort = 9119;
       defaultModel = null;
+      compressionThreshold = 0.8;
     };
   };
 }

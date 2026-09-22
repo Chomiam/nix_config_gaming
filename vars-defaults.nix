@@ -186,8 +186,11 @@
       modelsPreset = null;
       hfRepo = null;
       hfFile = null;
-      contextLength = 131072;
-      contextShift = false;
+      contextLength = 65536;
+      contextShift = true;
+      cacheTypeK = "q4_0";
+      cacheTypeV = "q4_0";
+      flashAttention = true;
       gpuLayers = 99;
       apiKey = null;
       alias = null;
@@ -205,6 +208,7 @@
       dashboardPassword = "admin";
       apiKey = "hermes-agent-key";
       defaultModel = null;
+      compressionThreshold = 0.8;
     };
   };
 }
