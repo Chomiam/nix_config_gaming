@@ -153,6 +153,7 @@ let
     goverlay = pkgs.goverlay;
     nodejs = pkgs.nodejs;
     ollama = pkgs.ollama-rocm;
+    aichat = pkgs.aichat;
   };
 
   # Helpers de filtrage des paquets non nuls

@@ -148,9 +148,9 @@
   # Service d'inférence LLM local Ollama pour l'autocomplétion de code dans Neovim
   ollama = {
     enable = true;
-    acceleration = "auto"; # "auto" (détection dynamique selon le GPU actif) | "rocm" | "cuda" | "cpu"
+    acceleration = "auto";
     model = "qwen2.5-coder:7b";
-    systemPrompt = null;
-    aichat = false;
+    port = 11434;
+    aichat = true;
   };
 }
