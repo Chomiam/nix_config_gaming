@@ -112,6 +112,12 @@ in
       "btrfs"
       "ext4"
     ];
+
+    extraModprobeConfig = ''
+      # Désactive la mise en veille matérielle des contrôleurs audio HD (HDMI/DisplayPort GPU AMD/Intel/Nvidia et cartes son internes)
+      # Évite la coupure audio HDMI après mise en pause vidéo (Firefox, Brave...) et supprime les bruits de claquement (pops)
+      options snd_hda_intel power_save=0 power_save_controller=N
+    '';
   };
 
   # -------------------------------------------------------------------------
@@ -186,6 +192,32 @@ in
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    wireplumber = {
+      enable = true;
+      extraConfig = {
+        "51-disable-suspension" = {
+          "monitor.alsa.rules" = [
+            {
+              matches = [
+                {
+                  # Désactive la mise en veille des sorties audio ALSA (HDMI, DisplayPort, haut-parleurs, casques)
+                  "node.name" = "~alsa_output.*";
+                }
+                {
+                  # Désactive la mise en veille des entrées audio ALSA (micros)
+                  "node.name" = "~alsa_input.*";
+                }
+              ];
+              actions = {
+                update-props = {
+                  "session.suspend-timeout-seconds" = 0;
+                };
+              };
+            }
+          ];
+        };
+      };
+    };
   };
 
   # Version du système
