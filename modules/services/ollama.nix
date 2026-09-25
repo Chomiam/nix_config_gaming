@@ -67,5 +67,15 @@ in
       # Téléchargement déclaratif automatique du modèle spécifié au démarrage
       loadModels = lib.optional (cfg.model != null && cfg.model != "") cfg.model;
     };
+
+    # 📜 Exposition déclarative du prompt système global pour les scripts, agents et outils locaux
+    environment.etc."ollama/system-prompt.txt" = lib.mkIf (cfg.systemPrompt != null && cfg.systemPrompt != "") {
+      text = cfg.systemPrompt;
+      mode = "0644";
+    };
+
+    environment.sessionVariables = lib.mkIf (cfg.systemPrompt != null && cfg.systemPrompt != "") {
+      OLLAMA_SYSTEM_PROMPT = cfg.systemPrompt;
+    };
   };
 }

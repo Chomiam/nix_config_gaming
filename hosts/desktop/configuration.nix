@@ -143,6 +143,7 @@ nixpkgs.config.allowUnfree = true;
         acceleration = ollamaVars.acceleration or "auto";
         model = ollamaVars.model or "qwen2.5-coder:7b";
         port = ollamaVars.port or 11434;
+        systemPrompt = ollamaVars.systemPrompt or null;
         rocmOverrideGfx =
           if (ollamaVars.rocmOverrideGfx != null) then
             ollamaVars.rocmOverrideGfx

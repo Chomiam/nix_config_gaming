@@ -701,6 +701,13 @@ in
           example = "12.0.1";
           description = "Override d'architecture ROCm (HSA_OVERRIDE_GFX_VERSION) pour cartes AMD si nécessaire.";
         };
+
+        systemPrompt = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "Tu es un assistant de programmation expert et concis.";
+          description = "Prompt système global pour les modèles Ollama et l'autocomplétion de code.";
+        };
       };
     };
   };

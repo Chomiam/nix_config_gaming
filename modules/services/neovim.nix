@@ -5,6 +5,7 @@ let
   ollamaCfg = config.chomiamos.services.ollama;
   ollamaModel = if (ollamaCfg.model != null && ollamaCfg.model != "") then ollamaCfg.model else "qwen2.5-coder:7b";
   ollamaPort = toString ollamaCfg.port;
+  ollamaSystemPrompt = if (ollamaCfg.systemPrompt != null && ollamaCfg.systemPrompt != "") then ollamaCfg.systemPrompt else null;
 in
 {
   # =========================================================================
@@ -429,6 +430,9 @@ in
                   optional = {
                     max_tokens = 128,
                     top_p = 0.9,
+                    ${lib.optionalString (ollamaSystemPrompt != null) ''
+                    system = ${builtins.toJSON ollamaSystemPrompt},
+                    ''}
                   },
                 },
               },

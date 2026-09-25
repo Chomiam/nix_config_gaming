@@ -178,5 +178,6 @@
     acceleration = "auto";
     rocmOverrideGfx = null;
     model = "qwen2.5-coder:7b";
+    systemPrompt = null;
   };
 }
