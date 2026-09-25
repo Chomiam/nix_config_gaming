@@ -151,5 +151,6 @@
     acceleration = "auto"; # "auto" (détection dynamique selon le GPU actif) | "rocm" | "cuda" | "cpu"
     model = "qwen2.5-coder:7b";
     systemPrompt = null;
+    aichat = false;
   };
 }

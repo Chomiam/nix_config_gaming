@@ -708,6 +708,13 @@ in
           example = "Tu es un assistant de programmation expert et concis.";
           description = "Prompt système global pour les modèles Ollama et l'autocomplétion de code.";
         };
+
+        aichat = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          example = true;
+          description = "Active le client CLI IA moderne aichat préconfiguré avec Ollama pour le terminal (Bash, Fish, Zsh).";
+        };
       };
     };
   };

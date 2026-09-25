@@ -144,6 +144,7 @@ nixpkgs.config.allowUnfree = true;
         model = ollamaVars.model or "qwen2.5-coder:7b";
         port = ollamaVars.port or 11434;
         systemPrompt = ollamaVars.systemPrompt or null;
+        aichat = ollamaVars.aichat or false;
         rocmOverrideGfx =
           if (ollamaVars.rocmOverrideGfx != null) then
             ollamaVars.rocmOverrideGfx
