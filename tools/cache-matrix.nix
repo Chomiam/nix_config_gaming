@@ -152,6 +152,7 @@ let
     mpv = pkgs.mpv;
     goverlay = pkgs.goverlay;
     nodejs = pkgs.nodejs;
+    ollama = pkgs.ollama-rocm;
   };
 
   # Helpers de filtrage des paquets non nuls

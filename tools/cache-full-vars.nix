@@ -98,40 +98,11 @@
     bambustudio = true;
   };
 
-  # Suite IA locale (Open WebUI, llama.cpp & Agent IA Hermes)
-  iaSuite = {
+  # Service d'inférence LLM local Ollama pour l'autocomplétion de code dans Neovim
+  ollama = {
     enable = true;
-    openFirewall = false;
-    llamaCpp = {
-      enable = true;
-      port = 11434;
-      acceleration = "auto";
-      rocmOverrideGfx = null;
-      model = null;
-      modelsDir = null;
-      modelsPreset = null;
-      hfRepo = null;
-      hfFile = null;
-      contextLength = 65536;
-      contextShift = true;
-      cacheTypeK = "q4_0";
-      cacheTypeV = "q4_0";
-      flashAttention = true;
-      gpuLayers = 99;
-      apiKey = null;
-      alias = null;
-      extraFlags = [ ];
-    };
-    openWebUI = {
-      enable = true;
-      port = 8085;
-    };
-    hermes = {
-      enable = true;
-      apiPort = 8642;
-      dashboardPort = 9119;
-      defaultModel = null;
-      compressionThreshold = 0.8;
-    };
+    acceleration = "auto";
+    rocmOverrideGfx = null;
+    model = "qwen2.5-coder:7b";
   };
 }

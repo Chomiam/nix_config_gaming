@@ -145,19 +145,10 @@
   kdenlive = false;
   obsStudio = true;
 
-  # Suite IA locale complète (Open WebUI, llama.cpp accéléré par GPU, Agent IA Hermes)
-  # Interfaces : Open WebUI sur http://localhost:8085, llama.cpp sur http://localhost:11434, Hermes Dashboard sur http://localhost:9119
-  iaSuite = {
+  # Service d'inférence LLM local Ollama pour l'autocomplétion de code dans Neovim
+  ollama = {
     enable = true;
-    llamaCpp = {
-      contextLength = 65536; # 64k tokens
-      contextShift = true;   # Active le glissement de contexte (--context-shift)
-      cacheTypeK = "q4_0";   # Cache KV Q4 pour K
-      cacheTypeV = "q4_0";   # Cache KV Q4 pour V
-      flashAttention = true; # Flash Attention
-    };
-    hermes = {
-      compressionThreshold = 0.5; # Compresse le contexte dès 50% (32k tokens) pour préserver la VRAM
-    };
+    acceleration = "auto"; # "auto" (détection dynamique selon le GPU actif) | "rocm" | "cuda" | "cpu"
+    model = "qwen2.5-coder:7b";
   };
 }

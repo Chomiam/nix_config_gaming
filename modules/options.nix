@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, config, pkgs, ... }:
 
 let
   cfg = config.chomiamos;
@@ -87,7 +87,11 @@ in
       };
 
       shell = lib.mkOption {
-        type = lib.types.enum [ "fish" "zsh" "bash" ];
+        type = lib.types.enum [
+          "fish"
+          "zsh"
+          "bash"
+        ];
         default = "fish";
         description = "Shell interactif par défaut de l'utilisateur (fish, zsh ou bash).";
       };
@@ -113,7 +117,14 @@ in
     # Matériel & Graphisme
     hardware = {
       gpu = lib.mkOption {
-        type = lib.types.enum [ "amd" "nvidia" "nvidia-legacy" "intel" "vm" "none" ];
+        type = lib.types.enum [
+          "amd"
+          "nvidia"
+          "nvidia-legacy"
+          "intel"
+          "vm"
+          "none"
+        ];
         default = "amd";
         description = "Sélection du pilote graphique principal et optimisations noyau associées.";
       };
@@ -130,36 +141,62 @@ in
     # Environnement Graphique & Navigateur
     desktop = {
       env = lib.mkOption {
-        type = lib.types.enum [ "gnome" "cosmic" "cinnamon" "kde" "both" "none" ];
+        type = lib.types.enum [
+          "gnome"
+          "cosmic"
+          "cinnamon"
+          "kde"
+          "both"
+          "none"
+        ];
         default = "gnome";
         description = "Environnement de bureau à charger (GNOME, COSMIC Desktop, Cinnamon, KDE Plasma, les deux, ou aucun).";
       };
     };
 
     browser = lib.mkOption {
-      type = lib.types.enum [ "chrome" "firefox" "brave" "zen" "librewolf" "opera" "opera-gx" ];
+      type = lib.types.enum [
+        "chrome"
+        "firefox"
+        "brave"
+        "zen"
+        "librewolf"
+        "opera"
+        "opera-gx"
+      ];
       default = "chrome";
       description = "Navigateur web par défaut du système.";
     };
 
     browserPackageType = lib.mkOption {
-      type = lib.types.enum [ "system" "flatpak" ];
+      type = lib.types.enum [
+        "system"
+        "flatpak"
+      ];
       default = "system";
       description = "Mode d'installation du navigateur : paquet système Nix ou conteneur Flatpak Flathub.";
     };
 
     mailClient = lib.mkOption {
-      type = lib.types.enum [ "thunderbird" "mailspring" "none" ];
+      type = lib.types.enum [
+        "thunderbird"
+        "mailspring"
+        "none"
+      ];
       default = "thunderbird";
       description = "Client de messagerie électronique à installer (Thunderbird, Mailspring ou none).";
     };
 
     discordClient = lib.mkOption {
-      type = lib.types.enum [ "discord" "equibop" "vesktop" "none" ];
+      type = lib.types.enum [
+        "discord"
+        "equibop"
+        "vesktop"
+        "none"
+      ];
       default = "discord";
       description = "Client Discord à installer (discord système, equibop flatpak, vesktop flatpak ou none).";
     };
-
 
     # Gaming & Divertissement
     gaming = {
@@ -241,7 +278,10 @@ in
       };
 
       frontend = lib.mkOption {
-        type = lib.types.enum [ "none" "es-de" ];
+        type = lib.types.enum [
+          "none"
+          "es-de"
+        ];
         default = "es-de";
         description = "Frontend graphique d'émulation (ex: es-de pour EmulationStation Desktop Edition).";
       };
@@ -615,210 +655,51 @@ in
 
       davinciResolve = {
         version = lib.mkOption {
-          type = lib.types.enum [ "none" "free" "studio" ];
+          type = lib.types.enum [
+            "none"
+            "free"
+            "studio"
+          ];
           default = "none";
           description = "Version de DaVinci Resolve à installer (none, free ou studio).";
         };
       };
 
-      iaSuite = {
+      ollama = {
         enable = lib.mkOption {
           type = lib.types.bool;
           default = false;
-          description = "Active la Suite IA locale (Open WebUI, llama.cpp avec accélération GPU, Agent IA Hermes).";
+          description = "Active le service local d'inférence LLM Ollama avec accélération GPU modulaire.";
         };
 
-        openFirewall = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = "Ouvre les ports réseau de la Suite IA dans le pare-feu.";
+        acceleration = lib.mkOption {
+          type = lib.types.enum [
+            "auto"
+            "rocm"
+            "cuda"
+            "cpu"
+          ];
+          default = "auto";
+          description = "Type d'accélération matérielle pour Ollama (auto détecte selon chomiamos.hardware.gpu).";
         };
 
-        llamaCpp = {
-          enable = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Active le serveur d'inférence LLM local llama.cpp (llama-server).";
-          };
-
-          port = lib.mkOption {
-            type = lib.types.port;
-            default = 11434;
-            description = "Port d'écoute du serveur llama.cpp (défaut 11434, compatible avec les clients Ollama/Hermes).";
-          };
-
-          acceleration = lib.mkOption {
-            type = lib.types.enum [ "auto" "rocm" "cuda" "vulkan" "cpu" ];
-            default = "auto";
-            description = "Type d'accélération matérielle pour llama.cpp (auto détecte selon chomiamos.hardware.gpu).";
-          };
-
-          rocmOverrideGfx = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "12.0.1";
-            description = "Force l'architecture GFX de ROCm (HSA_OVERRIDE_GFX_VERSION) pour cartes AMD si nécessaire.";
-          };
-
-          model = lib.mkOption {
-            type = lib.types.nullOr lib.types.path;
-            default = null;
-            example = "/models/hermes-3-8b.gguf";
-            description = "Chemin vers un fichier de modèle .gguf spécifique à charger.";
-          };
-
-          modelsDir = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            description = "Répertoire contenant les modèles GGUF locaux pour le mode routeur (défaut : ~/models).";
-          };
-
-          modelsPreset = lib.mkOption {
-            type = lib.types.nullOr (lib.types.attrsOf lib.types.attrs);
-            default = null;
-            description = "Configuration de presets de modèles passée à llama-server.";
-          };
-
-          hfRepo = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "unsloth/Hermes-3-Llama-3.1-8B-GGUF";
-            description = "Dépôt Hugging Face pour téléchargement et mise en cache automatique du modèle.";
-          };
-
-          hfFile = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "Hermes-3-Llama-3.1-8B-Q4_K_M.gguf";
-            description = "Fichier GGUF spécifique sur le dépôt Hugging Face (optionnel si hfRepo inclut la quantification).";
-          };
-
-          contextLength = lib.mkOption {
-            type = lib.types.int;
-            default = 65536;
-            description = "Taille de la fenêtre de contexte en tokens (-c / --ctx-size, défaut 64k).";
-          };
-
-          contextShift = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Active le glissement dynamique de contexte (--context-shift / --ctx-shift) pour l'inférence continue sans blocage sur dépassement de contexte.";
-          };
-
-          cacheTypeK = lib.mkOption {
-            type = lib.types.enum [ "f32" "f16" "bf16" "q8_0" "q4_0" "q4_1" "iq4_nl" "q5_0" "q5_1" ];
-            default = "q4_0";
-            description = "Type de quantification du cache KV pour les clés K (-ctk / --cache-type-k).";
-          };
-
-          cacheTypeV = lib.mkOption {
-            type = lib.types.enum [ "f32" "f16" "bf16" "q8_0" "q4_0" "q4_1" "iq4_nl" "q5_0" "q5_1" ];
-            default = "q4_0";
-            description = "Type de quantification du cache KV pour les valeurs V (-ctv / --cache-type-v).";
-          };
-
-          flashAttention = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Active Flash Attention (-fa / --flash-attn) pour optimiser les performances et l'empreinte mémoire du cache de contexte.";
-          };
-
-          gpuLayers = lib.mkOption {
-            type = lib.types.int;
-            default = 99;
-            description = "Nombre maximal de couches déchargées sur le GPU (-ngl / --gpu-layers).";
-          };
-
-          apiKey = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            description = "Clé API secrète optionnelle pour sécuriser les requêtes vers llama-server.";
-          };
-
-          alias = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            example = "hermes3,hf.co/unsloth/Qwen3.8-27B-GGUF:UD-IQ2_S";
-            description = "Alias de nom de modèle (séparés par des virgules) pour que l'API réponde aux requêtes clientes sous ce nom (--alias).";
-          };
-
-          extraFlags = lib.mkOption {
-            type = lib.types.listOf lib.types.str;
-            default = [ ];
-            example = [ "--jinja" "--threads" "8" ];
-            description = "Drapeaux de ligne de commande supplémentaires passés à llama-server.";
-          };
+        model = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = "qwen2.5-coder:7b";
+          description = "Modèle de code par défaut à télécharger et précharger pour Neovim.";
         };
 
-        openWebUI = {
-          enable = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Active l'interface Web conversationnelle Open WebUI (conteneur OCI sous Podman).";
-          };
-
-          port = lib.mkOption {
-            type = lib.types.port;
-            default = 8085;
-            description = "Port Web d'Open WebUI (défaut 8085 pour préserver le port 8080 pour le débogage CEF Steam / Decky Loader).";
-          };
-
-          image = lib.mkOption {
-            type = lib.types.str;
-            default = "ghcr.io/open-webui/open-webui:main";
-            description = "Image conteneur OCI pour Open WebUI.";
-          };
+        port = lib.mkOption {
+          type = lib.types.port;
+          default = 11434;
+          description = "Port d'écoute du serveur d'inférence Ollama (défaut : 11434).";
         };
 
-        hermes = {
-          enable = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Active l'agent IA autonome Hermes Nous Research (service systemd natif, nécessite une installation préalable via install.sh).";
-          };
-
-          apiPort = lib.mkOption {
-            type = lib.types.port;
-            default = 8642;
-            description = "Port de l'API passerelle compatible OpenAI d'Hermes Agent.";
-          };
-
-          dashboardPort = lib.mkOption {
-            type = lib.types.port;
-            default = 9119;
-            description = "Port du tableau de bord Web d'Hermes Agent.";
-          };
-
-          dashboardUsername = lib.mkOption {
-            type = lib.types.str;
-            default = "admin";
-            description = "Nom d'utilisateur administrateur pour le Dashboard Web Hermes.";
-          };
-
-          dashboardPassword = lib.mkOption {
-            type = lib.types.str;
-            default = "admin";
-            description = "Mot de passe pour le Dashboard Web Hermes.";
-          };
-
-          apiKey = lib.mkOption {
-            type = lib.types.str;
-            default = "hermes-agent-key";
-            description = "Clé secrète d'accès à l'API passerelle d'Hermes Agent.";
-          };
-
-          defaultModel = lib.mkOption {
-            type = lib.types.nullOr lib.types.str;
-            default = null;
-            description = "Modèle par défaut utilisé par l'agent Hermes (laisser null pour gérer manuellement via 'hermes model').";
-          };
-
-          compressionThreshold = lib.mkOption {
-            type = lib.types.nullOr (lib.types.numbers.between 0.0 1.0);
-            default = 0.8;
-            example = 0.8;
-            description = "Seuil d'utilisation du contexte (ratio entre 0.0 et 1.0, ex: 0.8 pour 80%) déclenchant la compression automatique de contexte d'Hermes Agent.";
-          };
+        rocmOverrideGfx = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "12.0.1";
+          description = "Override d'architecture ROCm (HSA_OVERRIDE_GFX_VERSION) pour cartes AMD si nécessaire.";
         };
       };
     };

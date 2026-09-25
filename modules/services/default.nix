@@ -15,7 +15,7 @@
     ./nix-ld.nix
     ./obs.nix
     ./openssh.nix
-    ./ia-suite.nix
+    ./ollama.nix
     ./podman.nix
     ./samba.nix
     ./virt-manager.nix

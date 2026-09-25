@@ -16,7 +16,6 @@ in
     # Ports TCP autorisés par défaut pour le système
     allowedTCPPorts = [
       53317 # LocalSend (Partage de fichiers local)
-      8085  # OpenWebUI (Interface web IA locale)
       8888  # SearXNG (Moteur de recherche méta privé)
     ];
 

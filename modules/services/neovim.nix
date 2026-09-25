@@ -2,6 +2,9 @@
 
 let
   cfg = config.chomiamos.services.neovim;
+  ollamaCfg = config.chomiamos.services.ollama;
+  ollamaModel = if (ollamaCfg.model != null && ollamaCfg.model != "") then ollamaCfg.model else "qwen2.5-coder:7b";
+  ollamaPort = toString ollamaCfg.port;
 in
 {
   # =========================================================================
@@ -94,6 +97,9 @@ in
 
             # Formatage de code
             conform-nvim
+
+            # Autocomplétion IA locale (Ollama / Qwen 2.5 Coder)
+            minuet-ai-nvim
           ];
         };
 
@@ -402,6 +408,41 @@ in
             vim.keymap.set({ "n", "v" }, "<leader>cf", function()
               conform.format({ async = true, lsp_format = "fallback" })
             end, { desc = "Code: Formater le fichier/sélection" })
+          end
+
+          -----------------------------------------------------------------------
+          -- L. IA AUTOCOMPLÉTION CODE GHOST-TEXT (minuet-ai.nvim + Ollama Qwen)
+          -----------------------------------------------------------------------
+          local minuet_ok, minuet = pcall(require, "minuet")
+          if minuet_ok then
+            minuet.setup({
+              provider = "openai_fim_compatible",
+              n_completions = 1,
+              context_window = 2048,
+              provider_options = {
+                openai_fim_compatible = {
+                  api_key = "TERM",
+                  name = "Ollama",
+                  end_point = "http://127.0.0.1:${ollamaPort}/v1/completions",
+                  model = "${ollamaModel}",
+                  stream = true,
+                  optional = {
+                    max_tokens = 128,
+                    top_p = 0.9,
+                  },
+                },
+              },
+              virtualtext = {
+                auto_trigger_ft = { "*" },
+                keymap = {
+                  accept = "<A-y>",
+                  accept_line = "<A-l>",
+                  prev = "<A-[>",
+                  next = "<A-]>",
+                  dismiss = "<A-e>",
+                },
+              },
+            })
           end
           EOF
         '';

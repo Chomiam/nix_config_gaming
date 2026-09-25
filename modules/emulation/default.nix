@@ -376,6 +376,31 @@ XEMU_BIN_EOF
           ln -sfn "${pkgs.cemu}/bin/cemu" "$homeDir/.local/bin/cemu"
           ln -sfn "${pkgs.cemu}/bin/Cemu" "$homeDir/.local/bin/Cemu"
           chown -h ${cfgUser}:users "$homeDir/.local/bin/cemu"* "$homeDir/.local/bin/Cemu"* || true
+
+          # Préconfiguration Plein Écran pour Cemu (Standalone)
+          cemuConfigDir="$homeDir/.config/Cemu"
+          mkdir -p "$cemuConfigDir"
+          if [ -f "$cemuConfigDir/settings.xml" ]; then
+            if grep -q "<fullscreen>" "$cemuConfigDir/settings.xml"; then
+              sed -i 's|<fullscreen>.*</fullscreen>|<fullscreen>true</fullscreen>|g' "$cemuConfigDir/settings.xml"
+            else
+              sed -i 's|<content>|<content>\n    <fullscreen>true</fullscreen>|g' "$cemuConfigDir/settings.xml"
+            fi
+            if grep -q "<fullscreen_menubar>" "$cemuConfigDir/settings.xml"; then
+              sed -i 's|<fullscreen_menubar>.*</fullscreen_menubar>|<fullscreen_menubar>false</fullscreen_menubar>|g' "$cemuConfigDir/settings.xml"
+            else
+              sed -i 's|<content>|<content>\n    <fullscreen_menubar>false</fullscreen_menubar>|g' "$cemuConfigDir/settings.xml"
+            fi
+          else
+            cat << 'CEMU_INIT_SETTINGS_EOF' > "$cemuConfigDir/settings.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+    <fullscreen>true</fullscreen>
+    <fullscreen_menubar>false</fullscreen_menubar>
+</content>
+CEMU_INIT_SETTINGS_EOF
+          fi
+          chown -R ${cfgUser}:users "$cemuConfigDir" || true
         ''}
 
         ${lib.optionalString cfg.standalone.xenia-canary ''
@@ -478,6 +503,19 @@ RPCS3_BIN_EOF
         <command label="RPCS3 Shortcut (Standalone)">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
         <platform>ps3</platform>
         <theme>ps3</theme>
+    </system>
+
+    <!-- Nintendo Wii U : Cemu (Standalone) par défaut en plein écran -->
+    <system>
+        <name>wiiu</name>
+        <fullname>Nintendo Wii U</fullname>
+        <path>%ROMPATH%/wiiu</path>
+        <extension>.rpx .RPX .wud .WUD .wux .WUX .elf .ELF .iso .ISO .wad .WAD .wua .WUA .7z .7Z .zip .ZIP</extension>
+        <command label="Cemu (Standalone)">%EMULATOR_CEMU% -f -g %ROM%</command>
+        <command label="Cemu Standalone (Direct)">~/.local/bin/cemu -f -g %ROM%</command>
+        <command label="Shortcut or script">%ENABLESHORTCUTS% %EMULATOR_OS-SHELL% %ROM%</command>
+        <platform>wiiu</platform>
+        <theme>wiiu</theme>
     </system>
 </systemList>
 CUSTOM_SYS_EOF
