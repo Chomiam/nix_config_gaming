@@ -101,9 +101,9 @@ let
       else pkgs.blender;
 
     godot =
-      if pkgs-unstable ? godot_4
-      then pkgs-unstable.godot_4
-      else pkgs.godot_4;
+      if pkgs-unstable ? godot
+      then pkgs-unstable.godot
+      else pkgs.godot;
 
     kdenlive = pkgs.kdePackages.kdenlive;
     obsStudio = pkgs.obs-studio;
@@ -180,6 +180,16 @@ let
     paths = validPkgs systemTools;
   };
 
+  # Pack ultra-léger exclusif ChomiamOS (< 600 Mo) : idéal pour respecter le quota gratuit de 5 Go
+  chomiamosCustom = pkgs.symlinkJoin {
+    name = "chomiamos-custom-light-bundle";
+    paths = validPkgs {
+      inherit (systemTools) dashboard wallpapers;
+      esDe = pkgs.callPackage ../pkgs/es-de { };
+      duckstation = emulators.duckstation;
+    };
+  };
+
   # Pack global hors DaVinci (pour préserver le quota 5 Go de Cachix)
   allPackages = pkgs.symlinkJoin {
     name = "chomiamos-all-packages-bundle";
@@ -192,5 +202,5 @@ let
 in
 {
   inherit desktops davinci browsers emulators creation systemTools;
-  inherit allEmulators allCreation allBrowsers allSystemTools allPackages;
+  inherit allEmulators allCreation allBrowsers allSystemTools allPackages chomiamosCustom;
 }

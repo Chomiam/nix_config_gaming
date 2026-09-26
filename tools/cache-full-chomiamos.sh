@@ -50,6 +50,9 @@ build_and_push() {
     --fallback \
     --print-build-logs
 
+  echo -e "${CYAN}⬆ Poussée de la fermeture complète des chemins vers ${CACHE_NAME}... (garantie 100% zéro omission)${NC}"
+  nix path-info -r "$target" 2>/dev/null | cachix push "$CACHE_NAME" || true
+
   echo -e "${GREEN}✓ Cible mise en cache avec succès : ${desc}${NC}"
 }
 
@@ -77,6 +80,7 @@ show_menu() {
   echo -e "${PURPLE}=================================================================${NC}"
   echo -e "Sélectionnez le composant ou la variante de bureau à mettre en cache :"
   echo ""
+  echo -e "  ${GREEN}${BOLD}[L] ⚡ (RECOMMANDÉ - Quota < 600 Mo) Pack Sur-Mesure Léger ChomiamOS (Dashboard, Wallpapers, ES-DE, DuckStation)${NC}"
   echo -e "  ${CYAN}[1]${NC} 🖥️  Bureau KDE Plasma 6 (Toplevel système complet)"
   echo -e "  ${CYAN}[2]${NC} 🖥️  Bureau COSMIC Desktop 1.5+ (Toplevel système complet)"
   echo -e "  ${CYAN}[3]${NC} 🖥️  Bureau Cinnamon (Toplevel système complet)"
@@ -98,6 +102,7 @@ show_menu() {
   read -rp "Votre choix [0-12] : " choice
 
   case "$choice" in
+    L|l|light) build_and_push "$FLAKE_DIR#packages.x86_64-linux.cache-matrix.chomiamosCustom" "Pack Sur-Mesure Ultra-Léger ChomiamOS (< 600 Mo)" ;;
     1) build_and_push "$FLAKE_DIR#nixosConfigurations.kde.config.system.build.toplevel" "ChomiamOS - KDE Plasma 6" ;;
     2) build_and_push "$FLAKE_DIR#nixosConfigurations.cosmic.config.system.build.toplevel" "ChomiamOS - COSMIC Desktop" ;;
     3) build_and_push "$FLAKE_DIR#nixosConfigurations.cinnamon.config.system.build.toplevel" "ChomiamOS - Cinnamon Desktop" ;;
@@ -124,6 +129,7 @@ show_menu() {
 if [ $# -gt 0 ]; then
   ensure_cachix
   case "$1" in
+    --light|--custom-only) build_and_push "$FLAKE_DIR#packages.x86_64-linux.cache-matrix.chomiamosCustom" "Pack Sur-Mesure Ultra-Léger ChomiamOS (< 600 Mo)" ;;
     --kde) build_and_push "$FLAKE_DIR#nixosConfigurations.kde.config.system.build.toplevel" "ChomiamOS - KDE Plasma 6" ;;
     --cosmic) build_and_push "$FLAKE_DIR#nixosConfigurations.cosmic.config.system.build.toplevel" "ChomiamOS - COSMIC Desktop" ;;
     --cinnamon) build_and_push "$FLAKE_DIR#nixosConfigurations.cinnamon.config.system.build.toplevel" "ChomiamOS - Cinnamon Desktop" ;;
