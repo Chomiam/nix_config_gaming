@@ -16,6 +16,7 @@
     ./obs.nix
     ./openssh.nix
     ./ollama.nix
+    ./playwright.nix
     ./podman.nix
     ./samba.nix
     ./virt-manager.nix

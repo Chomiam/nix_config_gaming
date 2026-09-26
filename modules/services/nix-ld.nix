@@ -29,10 +29,33 @@ in
         zlib
         icu
         nss
+        nspr
         openssl
         glib
         pcre2
         libevent
+        # Support pour Playwright, Electron, Chromium et outils graphiques externes
+        atk
+        at-spi2-atk
+        at-spi2-core
+        dbus
+        cups
+        expat
+        libxkbcommon
+        alsa-lib
+        mesa
+        cairo
+        pango
+        libdrm
+        systemd
+        libx11
+        libxcomposite
+        libxdamage
+        libxext
+        libxfixes
+        libxrandr
+        libxcb
+        gtk3
       ];
     };
   };
