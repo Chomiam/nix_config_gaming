@@ -145,6 +145,7 @@ nixpkgs.config.allowUnfree = true;
         port = ollamaVars.port or 11434;
         systemPrompt = ollamaVars.systemPrompt or null;
         aichat = ollamaVars.aichat or false;
+        lmstudio = ollamaVars.lmstudio or false;
         rocmOverrideGfx =
           if (ollamaVars.rocmOverrideGfx != null) then
             ollamaVars.rocmOverrideGfx

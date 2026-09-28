@@ -715,6 +715,13 @@ in
           example = true;
           description = "Active le client CLI IA moderne aichat préconfiguré avec Ollama pour le terminal (Bash, Fish, Zsh).";
         };
+
+        lmstudio = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          example = true;
+          description = "Installe LM Studio, une interface graphique de bureau pour exécuter des LLMs en local avec accélération GPU.";
+        };
       };
     };
   };

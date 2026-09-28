@@ -52,7 +52,7 @@
   firewall = false;
 
   # Environnement de bureau
-  desktopEnv = "gnome";
+  desktopEnv = "cosmic";
 
   # Matériel GPU (Préservé automatiquement)
   gpuDriver = "amd";
@@ -152,5 +152,6 @@
     model = "qwen2.5-coder:7b";
     port = 11434;
     aichat = true;
+    lmstudio = true;
   };
 }

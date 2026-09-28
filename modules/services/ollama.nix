@@ -81,8 +81,13 @@ in
     # =========================================================================
     # 🤖 CLIENT CLI IA AICHAT (PRÉCONFIGURÉ AVEC OLLAMA LOCAL)
     # =========================================================================
-    environment.systemPackages = lib.mkIf cfg.aichat [
-      pkgs.aichat
+    environment.systemPackages = lib.mkMerge [
+      (lib.mkIf cfg.aichat [
+        pkgs.aichat
+      ])
+      (lib.mkIf cfg.lmstudio [
+        pkgs.lmstudio
+      ])
     ];
 
     # Configuration système déclarative d'AIChat connectée à Ollama
