@@ -200,6 +200,19 @@ in
     group = "root";
   };
 
+  # -------------------------------------------------------------------------
+  # 🛡️ POLKIT : Gestion autonome du service sshd pour le dashboard sFTP
+  # -------------------------------------------------------------------------
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id == "org.freedesktop.systemd1.manage-units" &&
+          action.lookup("unit") == "sshd.service" &&
+          subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+      }
+    });
+  '';
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;
