@@ -6,11 +6,13 @@
       "https://chomiamos.cachix.org"
       "https://duckstation.cachix.org"
       "https://chomiamos-dashboard.cachix.org"
+      "https://cosmic.cachix.org/"
     ];
     extra-trusted-public-keys = [
       "chomiamos.cachix.org-1:YB3RyqWQZagZxsfBwdVXcJ2219/yAsMFOGoh0pfSbjk="
       "duckstation.cachix.org-1:tNC6UMoM5ZojxBRDdPNHC3xBlk7hnClCtsGsho3YiY4="
       "chomiamos-dashboard.cachix.org-1:DrjJpGp7tzIMJo6s4dQdwWDopszgo1EFkm34PEN+D+w="
+      "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="
     ];
   };
 
@@ -36,8 +38,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Nixpkgs branche unstable (fournit COSMIC Desktop 1.5+ officiel)
+    # Nixpkgs branche unstable
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    # COSMIC Desktop (flake communautaire nixos-cosmic)
+    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
 
 
     # Jovian-NixOS (Fournit le module et le paquet Decky Loader pour Steam)
@@ -105,6 +110,7 @@
             # 📦 Insertion des modules système tiers
             inputs.nix-flatpak.nixosModules.nix-flatpak
             inputs.home-manager.nixosModules.home-manager
+            inputs.nixos-cosmic.nixosModules.default
 
             # 🏠 Configuration dynamique de Home Manager
             {
