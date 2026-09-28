@@ -138,6 +138,11 @@ in
   # Accélération du boot : éviter que NetworkManager bloque le démarrage pendant 5-10s
   systemd.services.NetworkManager-wait-online.enable = false;
 
+  # Outils système essentiels (WireGuard, outils réseau)
+  environment.systemPackages = with pkgs; [
+    wireguard-tools
+  ];
+
   services.resolved.enable = true;
   time.timeZone = cfg.timeZone;
   console.keyMap = cfg.keyboard.keyMap;

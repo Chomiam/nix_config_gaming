@@ -16,6 +16,8 @@
 
     # Ports UDP personnalisés autorisés
     allowedUDPPorts = [
+    
+      51820 # WireGuard Private Network
     ];
 
     # Plages de ports TCP personnalisées autorisées
