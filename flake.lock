@@ -46,11 +46,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789125459,
-        "narHash": "sha256-S9V0UTps7thp/xG9uqFXYR5EBEj1T6AdH8y8+cAzflU=",
+        "lastModified": 1790625918,
+        "narHash": "sha256-US2AfQpmUpfp2oWIb6p43xXNVn9dO0g5jz3D8ovGxBI=",
         "owner": "Chomiam",
         "repo": "chomiamos-wallpapers",
-        "rev": "14ad286bc620d45da1dd28967c0f9f5172f5f7cb",
+        "rev": "035d77bc221f8e620df2ac5638f43f47fd299bcd",
         "type": "github"
       },
       "original": {
