@@ -224,9 +224,13 @@ in
     };
     "org/gnome/desktop/wm/preferences" = {
       button-layout = "icon:minimize,maximize,close";
+      theme = "catppuccin-mocha-lavender-standard";
     };
     "org/gnome/shell/extensions/user-theme" = {
       name = "catppuccin-mocha-lavender-standard";
+    };
+    "com/solus-project/budgie-panel" = {
+      dark-theme = true;
     };
   };
 

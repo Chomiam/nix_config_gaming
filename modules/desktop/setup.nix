@@ -429,6 +429,35 @@ let
     exec-arg='-e'
   '';
 
+  budgieDefaultsIni = pkgs.writeText "chomiamos-budgie-defaults.ini" ''
+    [org/gnome/desktop/interface]
+    color-scheme='prefer-dark'
+    gtk-theme='catppuccin-mocha-lavender-standard'
+    icon-theme='Papirus-Dark'
+    cursor-theme='catppuccin-mocha-lavender-cursors'
+    cursor-size=24
+
+    [org/gnome/desktop/wm/preferences]
+    theme='catppuccin-mocha-lavender-standard'
+    button-layout='appmenu:minimize,maximize,close'
+
+    [org/gnome/desktop/background]
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
+    picture-uri-dark='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
+    picture-options='zoom'
+    primary-color='#1e1e2e'
+
+    [org/gnome/desktop/screensaver]
+    picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
+    primary-color='#1e1e2e'
+
+    [com/solus-project/budgie-panel]
+    dark-theme=true
+
+    [com/solus-project/budgie-wm]
+    button-layout='appmenu:minimize,maximize,close'
+  '';
+
   # =========================================================================
   # 4. SCRIPTS DE PROVISIONNEMENT ET DE RÉINITIALISATION
   # =========================================================================
@@ -562,6 +591,14 @@ EOF_COSMIC_XKB
       if [ -x "${pkgs.dconf}/bin/dconf" ]; then
         echo "[ChomiamOS] Déploiement des réglages Cinnamon par défaut (fond d'écran, thème, favoris)..."
         ${pkgs.dconf}/bin/dconf load / < "${cinnamonDefaultsIni}" || true
+      fi
+      ''}
+
+      ${lib.optionalString enableBudgie ''
+      # Initialisation Budgie Desktop (dconf / Catppuccin Mocha)
+      if [ -x "${pkgs.dconf}/bin/dconf" ]; then
+        echo "[ChomiamOS] Déploiement du thème Catppuccin Mocha par défaut pour Budgie Desktop..."
+        ${pkgs.dconf}/bin/dconf load / < "${budgieDefaultsIni}" || true
       fi
       ''}
 
