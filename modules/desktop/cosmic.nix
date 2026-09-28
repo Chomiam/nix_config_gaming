@@ -66,13 +66,51 @@ in
     ];
 
     # =========================================================================
+    # 🛡️ FIABILISATION DU GREETER (GREETD / COSMIC-GREETER) & HANDOFF PLYMOUTH
+    # =========================================================================
+
+    # Configuration et fiabilisation de greetd pour cosmic-greeter
+    # Résout les écrans noirs post-Plymouth (handoff Plymouth → cosmic-comp)
+    # et injecte les variables requises dans l'environnement du service système.
+    systemd.services.greetd = {
+      environment = {
+        COSMIC_DATA_CONTROL_ENABLED = "1";
+        COSMIC_DISABLE_DIRECT_SCANOUT = "1";
+        XKB_DEFAULT_LAYOUT = cfg.keyboard.layout;
+        XKB_DEFAULT_VARIANT = cfg.keyboard.variant;
+      };
+
+      # Redémarrage automatique en cas d'échec d'acquisition initiale du signal KMS/DRM
+      serviceConfig = {
+        Restart = lib.mkForce "always";
+        RestartSec = "1s";
+      };
+
+      # Ordre de démarrage strict : attendre que Plymouth ait complètement libéré le framebuffer DRM/KMS
+      unitConfig = {
+        After = [
+          "plymouth-quit-wait.service"
+          "plymouth-quit.service"
+          "systemd-user-sessions.service"
+        ];
+      };
+    };
+
+    # Permissions complètes d'accès aux périphériques DRM et d'entrée pour le greeter (VM & Bare-metal)
+    users.users.cosmic-greeter.extraGroups = [
+      "video"
+      "render"
+      "input"
+    ];
+
+    # =========================================================================
     # ⌨️ CONTOURNE DU LAYOUT CLAVIER ET FIX PRESSE-PAPIER (CLIPBOARD)
     # =========================================================================
 
-    # Variables d'environnement pour COSMIC / Wayland
+    # Variables d'environnement pour la session interactive COSMIC / Wayland
     environment.sessionVariables = {
-      XKB_DEFAULT_LAYOUT = "fr";
-      XKB_DEFAULT_VARIANT = "";
+      XKB_DEFAULT_LAYOUT = cfg.keyboard.layout;
+      XKB_DEFAULT_VARIANT = cfg.keyboard.variant;
 
       # 🔓 Preserving Clipboard: Active le protocole Data Control pour les gestionnaires de presse-papier
       COSMIC_DATA_CONTROL_ENABLED = "1";
@@ -85,7 +123,7 @@ in
     # Correctif B : Fichier de configuration XKB explicite pour le compositeur du greeter
     systemd.tmpfiles.rules = [
       "d /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1 0755 cosmic-greeter cosmic-greeter -"
-      "f+ /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1/xkb_config 0644 cosmic-greeter cosmic-greeter - (\n    rules: \"\",\n    model: \"\",\n    layout: \"fr\",\n    variant: \"\",\n    options: None,\n)"
+      "f+ /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1/xkb_config 0644 cosmic-greeter cosmic-greeter - (\n    rules: \"\",\n    model: \"\",\n    layout: \"${cfg.keyboard.layout}\",\n    variant: \"${cfg.keyboard.variant}\",\n    options: None,\n)"
     ];
   };
 }
