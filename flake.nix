@@ -161,10 +161,13 @@
           system = "x86_64-linux";
           config.allowUnfree = true;
         };
-      in {
-        cache-matrix = import ./tools/cache-matrix.nix {
+        matrix = import ./tools/cache-matrix.nix {
           inherit pkgs inputs self;
         };
+      in {
+        default = matrix.chomiamosCustom;
+        chomiamos-custom = matrix.chomiamosCustom;
+        all-packages = matrix.allPackages;
       };
     };
 }
