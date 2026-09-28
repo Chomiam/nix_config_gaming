@@ -44,6 +44,7 @@ in
         libxkbcommon
         alsa-lib
         mesa
+        libgbm
         cairo
         pango
         libdrm
