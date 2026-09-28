@@ -8,7 +8,7 @@
       "https://chomiamos-dashboard.cachix.org"
     ];
     extra-trusted-public-keys = [
-      "chomiamos.cachix.org-1:YB3RyqWQZagZxsfBwdVXcJ2219/yAsMFOGoh0pfSbjk="
+      "chomiamos.cachix.org-1:sTxyo7Aa4t4l4VVct33qnim13W9sH2YC48HbEfMzcrQ="
       "duckstation.cachix.org-1:tNC6UMoM5ZojxBRDdPNHC3xBlk7hnClCtsGsho3YiY4="
       "chomiamos-dashboard.cachix.org-1:DrjJpGp7tzIMJo6s4dQdwWDopszgo1EFkm34PEN+D+w="
     ];

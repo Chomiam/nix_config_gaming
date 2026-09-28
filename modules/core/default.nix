@@ -35,7 +35,7 @@ in
       "https://duckstation.cachix.org"
     ];
     trusted-public-keys = [
-      "chomiamos.cachix.org-1:YB3RyqWQZagZxsfBwdVXcJ2219/yAsMFOGoh0pfSbjk="
+      "chomiamos.cachix.org-1:sTxyo7Aa4t4l4VVct33qnim13W9sH2YC48HbEfMzcrQ="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmACbuUuRJDTOMs8ayE="
       "chomiamos-dashboard.cachix.org-1:DrjJpGp7tzIMJo6s4dQdwWDopszgo1EFkm34PEN+D+w="

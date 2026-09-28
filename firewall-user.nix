@@ -10,6 +10,8 @@
   networking.firewall = {
     # Ports TCP personnalisés autorisés
     allowedTCPPorts = [
+    
+      22 # sFTP / SSH
     ];
 
     # Ports UDP personnalisés autorisés
