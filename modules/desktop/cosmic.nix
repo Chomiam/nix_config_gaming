@@ -76,6 +76,10 @@ in
 
       # 🔓 Preserving Clipboard: Active le protocole Data Control pour les gestionnaires de presse-papier
       COSMIC_DATA_CONTROL_ENABLED = "1";
+
+      # 🛡️ Désactive le direct scanout pour éviter les pertes de signal / artefacts
+      # sur les GPU AMD RDNA 2/3 lors de l'initialisation de cosmic-comp
+      COSMIC_DISABLE_DIRECT_SCANOUT = "1";
     };
 
     # Correctif B : Fichier de configuration XKB explicite pour le compositeur du greeter
