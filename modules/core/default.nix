@@ -192,6 +192,14 @@ in
     Defaults pwfeedback
   '';
 
+  # Wrapper avec capacité CAP_NET_ADMIN pour permettre la lecture des statistiques WireGuard (handshake) sans mot de passe root
+  security.wrappers.wg = {
+    source = "${pkgs.wireguard-tools}/bin/wg";
+    capabilities = "cap_net_admin+ep";
+    owner = "root";
+    group = "root";
+  };
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;
