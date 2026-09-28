@@ -80,14 +80,23 @@ in
         XKB_DEFAULT_VARIANT = cfg.keyboard.variant;
       };
 
-      # Redémarrage automatique en cas d'échec d'acquisition initiale du signal KMS/DRM
+      # 🛡️ Garantit les permissions complètes de l'utilisateur cosmic-greeter avant chaque démarrage
+      preStart = ''
+        ${pkgs.coreutils}/bin/mkdir -p /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1 /run/cosmic-greeter
+        ${pkgs.coreutils}/bin/chown -R cosmic-greeter:cosmic-greeter /var/lib/cosmic-greeter /run/cosmic-greeter
+        ${pkgs.coreutils}/bin/chmod 750 /var/lib/cosmic-greeter
+      '';
+
+      # Redémarrage automatique avec temporisation pour éviter l'échec immédiat (start-limit-hit)
       serviceConfig = {
         Restart = lib.mkForce "always";
-        RestartSec = "1s";
+        RestartSec = "2s";
       };
 
-      # Ordre de démarrage strict : attendre que Plymouth ait complètement libéré le framebuffer DRM/KMS
+      # Ordre de démarrage strict et tolérance de redémarrage (10 essais en 30s)
       unitConfig = {
+        StartLimitBurst = 10;
+        StartLimitIntervalSec = "30s";
         After = [
           "plymouth-quit-wait.service"
           "plymouth-quit.service"
@@ -120,9 +129,16 @@ in
       COSMIC_DISABLE_DIRECT_SCANOUT = "1";
     };
 
-    # Correctif B : Fichier de configuration XKB explicite pour le compositeur du greeter
+    # Correctif Permissions déclaratif et XKB explicite pour le compositeur du greeter
     systemd.tmpfiles.rules = [
+      "d /var/lib/cosmic-greeter 0750 cosmic-greeter cosmic-greeter -"
+      "d /var/lib/cosmic-greeter/.config 0755 cosmic-greeter cosmic-greeter -"
+      "d /var/lib/cosmic-greeter/.config/cosmic 0755 cosmic-greeter cosmic-greeter -"
+      "d /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp 0755 cosmic-greeter cosmic-greeter -"
       "d /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1 0755 cosmic-greeter cosmic-greeter -"
+      "d /run/cosmic-greeter 0755 cosmic-greeter cosmic-greeter -"
+      "Z /var/lib/cosmic-greeter 0750 cosmic-greeter cosmic-greeter -"
+      "Z /run/cosmic-greeter 0755 cosmic-greeter cosmic-greeter -"
       "f+ /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1/xkb_config 0644 cosmic-greeter cosmic-greeter - (\n    rules: \"\",\n    model: \"\",\n    layout: \"${cfg.keyboard.layout}\",\n    variant: \"${cfg.keyboard.variant}\",\n    options: None,\n)"
     ];
   };

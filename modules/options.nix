@@ -457,6 +457,14 @@ in
         };
       };
 
+      node-global = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Active la compatibilité universelle npm/npx global sous NixOS (prefix écrivable, PATH, nix-ld).";
+        };
+      };
+
       flatpak = {
         enable = lib.mkOption {
           type = lib.types.bool;

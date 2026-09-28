@@ -24,6 +24,8 @@ in
     options = [
       "defaults"
       "nofail"
+      "x-systemd.device-timeout=5s"
+      "x-systemd.mount-timeout=5s"
       "compress=zstd"
       "x-gvfs-show"
     ];

@@ -13,6 +13,7 @@
     ./godot.nix
     ./neovim.nix
     ./nix-ld.nix
+    ./node-global.nix
     ./obs.nix
     ./openssh.nix
     ./ollama.nix
