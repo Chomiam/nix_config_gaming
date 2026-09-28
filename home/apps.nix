@@ -2,22 +2,24 @@
 
 let
   configuredTerminal = vars.terminal or "kitty";
+
+  selectedTerminalPackage =
+    if configuredTerminal == "kitty" then pkgs.kitty
+    else if configuredTerminal == "alacritty" then pkgs.alacritty
+    else if configuredTerminal == "gnome-terminal" then pkgs.gnome-terminal
+    else if configuredTerminal == "konsole" then pkgs.kdePackages.konsole
+    else if configuredTerminal == "cosmic-term" then pkgs.cosmic-term
+    else pkgs.kitty;
 in
 {
   # =========================================================================
   # 📦 PAQUETS UTILISATEUR & PARAMÈTRES D'ENVIRONNEMENT HOME-MANAGER
   # =========================================================================
 
-  # Polices d'écriture utilisateur & Émulateurs de terminaux
-  home.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-
-    # Émulateurs de terminaux supportés
-    kitty
-    gnome-terminal
-    kdePackages.konsole
-    alacritty
-    cosmic-term
+  # Polices d'écriture utilisateur & Émulateur de terminal sélectionné exclusivement
+  home.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+    selectedTerminalPackage
   ];
 
   # Traitement Audio (EasyEffects)

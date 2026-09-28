@@ -13,6 +13,22 @@ let
     accents = [ "lavender" ];
   };
 
+  terminalDesktopFile =
+    if cfg.terminal == "kitty" then "kitty.desktop"
+    else if cfg.terminal == "alacritty" then "Alacritty.desktop"
+    else if cfg.terminal == "gnome-terminal" then "org.gnome.Terminal.desktop"
+    else if cfg.terminal == "konsole" then "org.kde.konsole.desktop"
+    else if cfg.terminal == "cosmic-term" then "com.system76.CosmicTerm.desktop"
+    else "kitty.desktop";
+
+  terminalCosmicId =
+    if cfg.terminal == "kitty" then "kitty"
+    else if cfg.terminal == "alacritty" then "Alacritty"
+    else if cfg.terminal == "gnome-terminal" then "org.gnome.Terminal"
+    else if cfg.terminal == "konsole" then "org.kde.konsole"
+    else if cfg.terminal == "cosmic-term" then "com.system76.CosmicTerm"
+    else "kitty";
+
   nemoDesktopTransparencyCss = pkgs.writeText "nemo-desktop-transparency.css" ''
     /* =========================================================================
      * Correctif de transparence pour Nemo Desktop (Cinnamon)
@@ -165,7 +181,7 @@ let
 
   gnomeFavorites = [
     "chomiamos-dashboard.desktop"
-    "kitty.desktop"
+    terminalDesktopFile
     "org.gnome.Settings.desktop"
     "org.gnome.Nautilus.desktop"
     "io.github.kolunmi.Bazaar.desktop"
@@ -316,7 +332,7 @@ let
 
   cosmicFavorites = [
     "chomiamos-dashboard"
-    "kitty"
+    terminalCosmicId
     "com.system76.CosmicSettings"
     "com.system76.CosmicFiles"
     "io.github.kolunmi.Bazaar"
@@ -353,7 +369,7 @@ let
 
   cinnamonFavorites = [
     "chomiamos-dashboard.desktop"
-    "kitty.desktop"
+    terminalDesktopFile
     "cinnamon-settings.desktop"
     "nemo.desktop"
     "io.github.kolunmi.Bazaar.desktop"
@@ -425,7 +441,7 @@ let
     name='Mint-Y-Dark'
 
     [org/cinnamon/desktop/default-applications/terminal]
-    exec='kitty'
+    exec='${cfg.terminal}'
     exec-arg='-e'
   '';
 

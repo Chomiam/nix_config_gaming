@@ -51,6 +51,7 @@ nixpkgs.config.allowUnfree = true;
 
     browser = vars.browser;
     browserPackageType = vars.browserPackageType or "system";
+    terminal = vars.terminal or "kitty";
     mailClient = vars.mailClient or "thunderbird";
     discordClient = vars.discordClient or "discord";
 

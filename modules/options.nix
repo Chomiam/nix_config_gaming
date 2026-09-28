@@ -178,6 +178,18 @@ in
       description = "Mode d'installation du navigateur : paquet système Nix ou conteneur Flatpak Flathub.";
     };
 
+    terminal = lib.mkOption {
+      type = lib.types.enum [
+        "kitty"
+        "alacritty"
+        "cosmic-term"
+        "gnome-terminal"
+        "konsole"
+      ];
+      default = "kitty";
+      description = "Émulateur de terminal exclusif du système. Tous les autres terminaux sont exclus.";
+    };
+
     mailClient = lib.mkOption {
       type = lib.types.enum [
         "thunderbird"

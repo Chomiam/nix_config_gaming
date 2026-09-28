@@ -14,5 +14,6 @@
     ./budgie.nix
     ./setup.nix
     ./wallpapers.nix
+    ./terminals.nix
   ];
 }

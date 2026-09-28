@@ -2,10 +2,11 @@
 
 let
   isKde = vars.desktopEnv == "kde";
+  configuredTerminal = vars.terminal or "kitty";
 in
 {
   # =========================================================================
-  # 🎨 THÈME GLOBALE CATPPUCCIN (MOCHA / LAVENDER)
+  # 🎨 THÈME GLOBAL CATPPUCCIN (MOCHA / LAVENDER)
   # =========================================================================
 
   catppuccin = {
@@ -14,8 +15,8 @@ in
     flavor = "mocha";
     accent = "lavender";
 
-    kitty.enable = true;
-    alacritty.enable = true;
+    kitty.enable = (configuredTerminal == "kitty");
+    alacritty.enable = (configuredTerminal == "alacritty");
     # Sous KDE, on laisse Plasma gérer librement le style d'application (Breeze, Kvantum, etc.)
     kvantum.enable = !isKde;
   };

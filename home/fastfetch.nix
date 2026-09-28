@@ -170,11 +170,10 @@ in
   # Version ANSI Art du logo (fallback universel)
   xdg.configFile."fastfetch/logo/catppuccin_logo.txt".source = ./catppuccin_logo.txt;
 
-  # Dépendances pour le rendu d'images dans le terminal (Chafa, ImageMagick, Kitty)
+  # Dépendances pour le rendu d'images dans le terminal (Chafa, ImageMagick)
   home.packages = with pkgs; [
     chafa
     imagemagick
-    kitty
   ];
 
   # 1. Profil officiel par défaut ChomiamOS Catppuccin Macchiato
