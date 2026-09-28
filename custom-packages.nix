@@ -3,7 +3,7 @@
   # 📦 PAQUETS NIX PERSONNALISÉS (CHOMIAMOS)
   # =========================================================================
   # Ce fichier est géré par l'onglet Logithèque du Dashboard ChomiamOS.
-  # Vos paquets personnels sont préservés lors des synchronisations GitHub.
+  # Vous pouvez également y ajouter ou supprimer des paquets manuellement.
   #
   # - stable   : Paquets issus de la branche stable (NixOS 26.05)
   # - unstable : Paquets issus de la branche unstable (dernières nouveautés)

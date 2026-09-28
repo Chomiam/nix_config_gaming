@@ -98,9 +98,6 @@
       cemu = true;
       xenia-canary = false;
     };
-    romsDir = "/mnt/Emudeck/Emulation/roms";
-    biosDir = "/mnt/Emudeck/Emulation/bios";
-
   };
 
   # Volants & Simracing
@@ -156,19 +153,5 @@
     port = 11434;
     aichat = true;
     lmstudio = true;
-    rocmOverrideGfx = null;
-    systemPrompt = null;
-
   };
-  # Émulateur de terminal principal
-    # Options disponibles : "kitty" | "gnome-terminal" | "konsole" | "alacritty" | "cosmic-term"
-  terminal = "kitty";
-  # Mode d'installation du navigateur : "system" (Nix) | "flatpak" (Flathub)
-    # Note : Zen et LibreWolf sont gérés exclusivement via Flatpak.
-  browserPackageType = "system";
-  # Client de messagerie e-mail
-    # Options disponibles : "thunderbird" | "mailspring" | "none"
-  mailClient = "thunderbird";
-  openssh = true;
-
 }

@@ -4,14 +4,53 @@ let
   cfg = config.chomiamos;
   enableCosmic = cfg.desktop.env == "cosmic" || cfg.desktop.env == "both";
   username = cfg.user.username;
+  # Source des paquets COSMIC 1.5.0 depuis nixpkgs-unstable
+  pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in
 {
   # =========================================================================
-  # 🚀 ENVIRONNEMENT DE BUREAU : COSMIC DESKTOP (FLAKE COMMUNAUTAIRE)
-  # Source : github:lilyinstarlight/nixos-cosmic
+  # 🚀 ENVIRONNEMENT DE BUREAU : COSMIC DESKTOP 1.5+ (NIXPKGS UNSTABLE)
   # =========================================================================
 
   config = lib.mkIf enableCosmic {
+    # Overlay ciblé : Remplacer l'ensemble des paquets COSMIC par la version 1.5.0 de nixpkgs-unstable
+    nixpkgs.overlays = [
+      (final: prev: {
+        cosmic-app-library = pkgs-unstable.cosmic-app-library;
+        cosmic-applibrary = pkgs-unstable.cosmic-app-library;
+        cosmic-applets = pkgs-unstable.cosmic-applets;
+        cosmic-bg = pkgs-unstable.cosmic-bg;
+        cosmic-comp = pkgs-unstable.cosmic-comp;
+        cosmic-edit = pkgs-unstable.cosmic-edit;
+        cosmic-files = pkgs-unstable.cosmic-files;
+        cosmic-greeter = pkgs-unstable.cosmic-greeter;
+        cosmic-icons = pkgs-unstable.cosmic-icons;
+        cosmic-idle = pkgs-unstable.cosmic-idle;
+        cosmic-initial-setup = pkgs-unstable.cosmic-initial-setup;
+        cosmic-launcher = pkgs-unstable.cosmic-launcher;
+        cosmic-media-player = pkgs-unstable.cosmic-media-player;
+        cosmic-notifications = pkgs-unstable.cosmic-notifications;
+        cosmic-osd = pkgs-unstable.cosmic-osd;
+        cosmic-panel = pkgs-unstable.cosmic-panel;
+        cosmic-player = pkgs-unstable.cosmic-player;
+        cosmic-protocols = pkgs-unstable.cosmic-protocols;
+        cosmic-randr = pkgs-unstable.cosmic-randr;
+        cosmic-reader = pkgs-unstable.cosmic-reader;
+        cosmic-screenshot = pkgs-unstable.cosmic-screenshot;
+        cosmic-session = pkgs-unstable.cosmic-session;
+        cosmic-settings = pkgs-unstable.cosmic-settings;
+        cosmic-settings-daemon = pkgs-unstable.cosmic-settings-daemon;
+        cosmic-sound-theme = pkgs-unstable.cosmic-sound-theme;
+        cosmic-store = pkgs-unstable.cosmic-store;
+        cosmic-term = pkgs-unstable.cosmic-term;
+        cosmic-wallpapers = pkgs-unstable.cosmic-wallpapers;
+        cosmic-workspaces = pkgs-unstable.cosmic-workspaces-epoch;
+        cosmic-workspaces-epoch = pkgs-unstable.cosmic-workspaces-epoch;
+        libcosmicAppHook = pkgs-unstable.libcosmicAppHook;
+        xdg-desktop-portal-cosmic = pkgs-unstable.xdg-desktop-portal-cosmic;
+      })
+    ];
+
     # Activation du bureau COSMIC et du gestionnaire de connexion cosmic-greeter
     services.desktopManager.cosmic.enable = true;
     services.displayManager.cosmic-greeter.enable = true;
