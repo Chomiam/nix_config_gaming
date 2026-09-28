@@ -53,7 +53,8 @@ in
 
     # Activation du bureau COSMIC et du gestionnaire de connexion cosmic-greeter
     services.desktopManager.cosmic.enable = true;
-    services.displayManager.cosmic-greeter.enable = true;
+    # Activer cosmic-greeter uniquement si COSMIC est le bureau exclusif (évite les conflits avec SDDM/GDM si "both")
+    services.displayManager.cosmic-greeter.enable = cfg.desktop.env == "cosmic";
 
     # Exclusion d'applications secondaires non indispensables
     environment.cosmic.excludePackages = with pkgs; [
@@ -64,6 +65,25 @@ in
     users.users."${username}".packages = with pkgs; [
       cosmic-icons
     ];
+
+    # =========================================================================
+    # 🔑 SÉCURITÉ & TROUSSEAU DE CLÉS (GNOME KEYRING)
+    # =========================================================================
+    services.gnome.gnome-keyring.enable = true;
+
+    # =========================================================================
+    # 🌐 ROUTAGE DES PORTAILS XDG (SCREENCAST, FILE PICKER, DISCORD, OBS)
+    # =========================================================================
+    xdg.portal = {
+      enable = true;
+      extraPortals = [
+        pkgs.xdg-desktop-portal-gtk
+      ];
+      config.cosmic = {
+        default = [ "cosmic" "gtk" ];
+        "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+      };
+    };
 
     # =========================================================================
     # 🛡️ FIABILISATION DU GREETER (GREETD / COSMIC-GREETER) & HANDOFF PLYMOUTH
@@ -82,7 +102,7 @@ in
 
       # 🛡️ Garantit les permissions complètes de l'utilisateur cosmic-greeter avant chaque démarrage
       preStart = ''
-        ${pkgs.coreutils}/bin/mkdir -p /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1 /run/cosmic-greeter
+        ${pkgs.coreutils}/bin/mkdir -p /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1 /run/cosmic-greeter/cosmic/com.system76.CosmicSettingsDaemon/v1
         ${pkgs.coreutils}/bin/chown -R cosmic-greeter:cosmic-greeter /var/lib/cosmic-greeter /run/cosmic-greeter
         ${pkgs.coreutils}/bin/chmod 750 /var/lib/cosmic-greeter
       '';
@@ -113,11 +133,21 @@ in
     ];
 
     # =========================================================================
-    # ⌨️ CONTOURNE DU LAYOUT CLAVIER ET FIX PRESSE-PAPIER (CLIPBOARD)
+    # ⌨️ VARIABLES WAYLAND, ACCÉLÉRATION & FIX PRESSE-PAPIER (CLIPBOARD)
     # =========================================================================
 
     # Variables d'environnement pour la session interactive COSMIC / Wayland
     environment.sessionVariables = {
+      # 🚀 Intégration Wayland native universelle (Chromium, Electron, Qt, GTK, SDL)
+      NIXOS_OZONE_WL = "1";
+      ELECTRON_OZONE_PLATFORM_HINT = "auto";
+      QT_QPA_PLATFORM = "wayland;xcb";
+      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+      GDK_BACKEND = "wayland,x11,*";
+      SDL_VIDEODRIVER = "wayland";
+      CLUTTER_BACKEND = "wayland";
+
+      # Disposition du clavier interactif
       XKB_DEFAULT_LAYOUT = cfg.keyboard.layout;
       XKB_DEFAULT_VARIANT = cfg.keyboard.variant;
 
@@ -127,9 +157,17 @@ in
       # 🛡️ Désactive le direct scanout pour éviter les pertes de signal / artefacts
       # sur les GPU AMD RDNA 2/3 lors de l'initialisation de cosmic-comp
       COSMIC_DISABLE_DIRECT_SCANOUT = "1";
+
+      # 🎯 Stabilisation du nœud de rendu DRM principal pour l'import de textures
+      COSMIC_RENDER_DEVICE = "renderD128";
+    } // lib.optionalAttrs (cfg.hardware.gpu == "nvidia") {
+      # 🟢 Correctifs spécifiques Wayland pour cartes NVIDIA
+      LIBVA_DRIVER_NAME = "nvidia";
+      GBM_BACKEND = "nvidia-drm";
+      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     };
 
-    # Correctif Permissions déclaratif et XKB explicite pour le compositeur du greeter
+    # Correctif Permissions déclaratif et XKB explicite pour le compositeur du greeter et de l'utilisateur
     systemd.tmpfiles.rules = [
       "d /var/lib/cosmic-greeter 0750 cosmic-greeter cosmic-greeter -"
       "d /var/lib/cosmic-greeter/.config 0755 cosmic-greeter cosmic-greeter -"
@@ -137,9 +175,18 @@ in
       "d /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp 0755 cosmic-greeter cosmic-greeter -"
       "d /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1 0755 cosmic-greeter cosmic-greeter -"
       "d /run/cosmic-greeter 0755 cosmic-greeter cosmic-greeter -"
+      "d /run/cosmic-greeter/cosmic 0755 cosmic-greeter cosmic-greeter -"
+      "d /run/cosmic-greeter/cosmic/com.system76.CosmicSettingsDaemon 0755 cosmic-greeter cosmic-greeter -"
+      "d /run/cosmic-greeter/cosmic/com.system76.CosmicSettingsDaemon/v1 0755 cosmic-greeter cosmic-greeter -"
       "Z /var/lib/cosmic-greeter 0750 cosmic-greeter cosmic-greeter -"
       "Z /run/cosmic-greeter 0755 cosmic-greeter cosmic-greeter -"
       "f+ /var/lib/cosmic-greeter/.config/cosmic/com.system76.CosmicComp/v1/xkb_config 0644 cosmic-greeter cosmic-greeter - (\n    rules: \"\",\n    model: \"\",\n    layout: \"${cfg.keyboard.layout}\",\n    variant: \"${cfg.keyboard.variant}\",\n    options: None,\n)"
+      # Provisionnement de la disposition clavier utilisateur au premier boot (f = ne pas écraser si déjà personnalisé)
+      "d /home/${username}/.config 0755 ${username} users -"
+      "d /home/${username}/.config/cosmic 0755 ${username} users -"
+      "d /home/${username}/.config/cosmic/com.system76.CosmicComp 0755 ${username} users -"
+      "d /home/${username}/.config/cosmic/com.system76.CosmicComp/v1 0755 ${username} users -"
+      "f /home/${username}/.config/cosmic/com.system76.CosmicComp/v1/xkb_config 0644 ${username} users - (\n    rules: \"\",\n    model: \"\",\n    layout: \"${cfg.keyboard.layout}\",\n    variant: \"${cfg.keyboard.variant}\",\n    options: None,\n    repeat_delay: 600,\n    repeat_rate: 25,\n)"
     ];
   };
 }
