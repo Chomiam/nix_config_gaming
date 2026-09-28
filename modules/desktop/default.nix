@@ -11,6 +11,7 @@
     ./cosmic.nix
     ./cinnamon.nix
     ./kde.nix
+    ./budgie.nix
     ./setup.nix
     ./wallpapers.nix
   ];

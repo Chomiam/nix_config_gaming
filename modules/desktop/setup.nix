@@ -6,6 +6,7 @@ let
   enableCosmic = cfg.desktop.env == "cosmic" || cfg.desktop.env == "both";
   enableCinnamon = cfg.desktop.env == "cinnamon" || cfg.desktop.env == "both";
   enableKde = cfg.desktop.env == "kde" || cfg.desktop.env == "both";
+  enableBudgie = cfg.desktop.env == "budgie";
 
   catppuccinTheme = pkgs.catppuccin-gtk.override {
     variant = "mocha";

@@ -146,11 +146,12 @@ in
           "cosmic"
           "cinnamon"
           "kde"
+          "budgie"
           "both"
           "none"
         ];
         default = "gnome";
-        description = "Environnement de bureau à charger (GNOME, COSMIC Desktop, Cinnamon, KDE Plasma, les deux, ou aucun).";
+        description = "Environnement de bureau à charger (GNOME, COSMIC Desktop, Cinnamon, KDE Plasma, Budgie, les deux, ou aucun).";
       };
     };
 

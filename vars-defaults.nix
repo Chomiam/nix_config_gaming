@@ -76,6 +76,7 @@
   firewall = false;
 
   # Environnement de bureau
+  # Options disponibles : "gnome" | "cosmic" | "cinnamon" | "kde" | "budgie"
   desktopEnv = "gnome";
 
   # Matériel GPU
