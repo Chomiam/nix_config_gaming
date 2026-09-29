@@ -1,0 +1,24 @@
+window.titlebar.padding.height: 8
+window.titlebar.padding.width: 10
+window.active.title.bg.color: #1e1e2e
+window.inactive.title.bg.color: #181825
+window.active.label.text.color: #cdd6f4
+window.inactive.label.text.color: #6c7086
+window.active.border.color: #313244
+window.inactive.border.color: #181825
+border.width: 1
+
+window.button.width: 16
+window.button.height: 16
+window.button.spacing: 8
+window.button.hover.bg.color: transparent
+window.button.hover.bg.corner-radius: 50
+
+menu.items.bg.color: #181825
+menu.items.text.color: #cdd6f4
+menu.items.active.bg.color: #313244
+menu.items.active.text.color: #b4befe
+
+osd.bg.color: #181825
+osd.border.color: #b4befe
+osd.label.text.color: #cdd6f4

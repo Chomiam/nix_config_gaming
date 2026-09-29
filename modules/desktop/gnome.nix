@@ -4,6 +4,39 @@ let
   cfg = config.chomiamos;
   enableGnome = cfg.desktop.env == "gnome" || cfg.desktop.env == "both";
   username = cfg.user.username;
+
+  # Types MIME d'images associés par défaut à Loupe
+  imageMimeTypes = [
+    "image/apng"
+    "image/avif"
+    "image/bmp"
+    "image/gif"
+    "image/heic"
+    "image/heif"
+    "image/jpeg"
+    "image/jpg"
+    "image/jxl"
+    "image/png"
+    "image/svg+xml"
+    "image/svg+xml-compressed"
+    "image/tiff"
+    "image/vnd.microsoft.icon"
+    "image/webp"
+    "image/x-bmp"
+    "image/x-gray"
+    "image/x-icb"
+    "image/x-ico"
+    "image/x-png"
+    "image/x-portable-anymap"
+    "image/x-portable-bitmap"
+    "image/x-portable-graymap"
+    "image/x-portable-pixmap"
+    "image/x-tga"
+    "image/x-xbitmap"
+    "image/x-xpixmap"
+  ];
+  imageMimeAssociations = lib.genAttrs imageMimeTypes (_: "org.gnome.Loupe.desktop");
+  imageMimeAssociationsList = lib.genAttrs imageMimeTypes (_: [ "org.gnome.Loupe.desktop" ]);
 in
 {
   # =========================================================================
@@ -11,6 +44,9 @@ in
   # =========================================================================
 
   config = lib.mkIf enableGnome {
+    # Association par défaut de Loupe pour l'ouverture des images
+    xdg.mime.defaultApplications = imageMimeAssociations;
+
     # Activation X11 & GDM & GNOME
     services.xserver.enable = true;
     services.displayManager.gdm.enable = true;
@@ -29,6 +65,11 @@ in
       gnome-console
     ];
 
+    # Paquet système Loupe
+    environment.systemPackages = [
+      pkgs.loupe
+    ];
+
     # Paquets GNOME & Extensions installés pour l'utilisateur principal
     users.users."${username}".packages = with pkgs; [
       networkmanagerapplet
@@ -42,10 +83,17 @@ in
       gnomeExtensions.arcmenu
       gnomeExtensions.user-themes
       gnomeExtensions.no-overview
+      loupe
     ];
 
     # Paramètres Home-Manager pour l'utilisateur
     home-manager.users."${username}" = { config, ... }: {
+      # Association MIME pour l'utilisateur
+      xdg.mimeApps = {
+        enable = true;
+        defaultApplications = imageMimeAssociationsList;
+      };
+
       # 1. Configuration des dossiers XDG standards en français
       xdg.userDirs = {
         enable = true;

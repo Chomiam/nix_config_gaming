@@ -467,6 +467,10 @@ let
     picture-uri='file:///etc/backgrounds/chomiamos/wallpaper_0007.png'
     primary-color='#1e1e2e'
 
+    [org/gnome/desktop/peripherals/keyboard]
+    numlock-state=true
+    remember-numlock-state=true
+
     [com/solus-project/budgie-panel]
     dark-theme=true
 
@@ -589,6 +593,13 @@ EOF_COSMIC_XKB
         echo "[ChomiamOS] Déploiement des réglages GNOME par défaut (fond d'écran, extensions, dock)..."
         ${pkgs.dconf}/bin/dconf load / < "${gnomeDefaultsIni}" || true
       fi
+
+      # Association par défaut de Loupe pour les images (GNOME)
+      if [ -x "${pkgs.glib}/bin/gio" ]; then
+        for mime in image/png image/jpeg image/jpg image/gif image/webp image/bmp image/tiff image/svg+xml image/avif image/heic image/jxl; do
+          ${pkgs.glib}/bin/gio mime "$mime" org.gnome.Loupe.desktop || true
+        done
+      fi
       ''}
 
       ${lib.optionalString enableCosmic ''
@@ -616,6 +627,29 @@ EOF_COSMIC_XKB
         echo "[ChomiamOS] Déploiement du thème Catppuccin Mocha par défaut pour Budgie Desktop..."
         ${pkgs.dconf}/bin/dconf load / < "${budgieDefaultsIni}" || true
       fi
+
+      # Initialisation du thème de contour de fenêtres labwc pour Budgie
+      echo "[ChomiamOS] Déploiement du thème de fenêtres labwc Catppuccin Mocha Lavender..."
+      mkdir -p "$HOME/.config/budgie-desktop/labwc"
+      mkdir -p "$HOME/.local/share/themes/catppuccin-mocha-lavender-standard/labwc"
+      mkdir -p "$HOME/.local/share/themes/catppuccin-mocha-lavender-standard/openbox-3"
+      cp -r ${./budgie-labwc-theme}/* "$HOME/.local/share/themes/catppuccin-mocha-lavender-standard/labwc/" || true
+      cp -r ${./budgie-labwc-theme}/* "$HOME/.local/share/themes/catppuccin-mocha-lavender-standard/openbox-3/" || true
+      cp ${./budgie-labwc-theme}/themerc "$HOME/.config/budgie-desktop/labwc/themerc-override" || true
+
+      # Association par défaut de Loupe pour les images (Budgie)
+      if [ -x "${pkgs.glib}/bin/gio" ]; then
+        for mime in image/png image/jpeg image/jpg image/gif image/webp image/bmp image/tiff image/svg+xml image/avif image/heic image/jxl; do
+          ${pkgs.glib}/bin/gio mime "$mime" org.gnome.Loupe.desktop || true
+        done
+      fi
+
+      # Correction du WM_CLASS pour Steam (association icône & épinglage dock Budgie)
+      if [ -f "$HOME/.local/share/applications/steam.desktop" ]; then
+        if ! grep -q "^StartupWMClass=" "$HOME/.local/share/applications/steam.desktop"; then
+          sed -i '/^\[Desktop Entry\]/a StartupWMClass=steamwebhelper' "$HOME/.local/share/applications/steam.desktop"
+        fi
+      fi
       ''}
 
       ${lib.optionalString enableKde ''
@@ -632,6 +666,13 @@ EOF_COSMIC_XKB
       fi
       if [ -x "${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-wallpaperimage" ]; then
         ${pkgs.kdePackages.plasma-workspace}/bin/plasma-apply-wallpaperimage /etc/backgrounds/chomiamos/wallpaper_0007.png || true
+      fi
+
+      # Association par défaut de Gwenview pour les images (KDE)
+      if [ -x "${pkgs.glib}/bin/gio" ]; then
+        for mime in image/png image/jpeg image/jpg image/gif image/webp image/bmp image/tiff image/svg+xml image/avif image/heic image/jxl; do
+          ${pkgs.glib}/bin/gio mime "$mime" org.kde.gwenview.desktop || true
+        done
       fi
 
       # Configuration de secours via KWriteConfig6

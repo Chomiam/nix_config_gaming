@@ -14,6 +14,39 @@ let
     flavor = "mocha";
     accent = "lavender";
   };
+
+  # Types MIME d'images associés par défaut à Gwenview
+  imageMimeTypes = [
+    "image/apng"
+    "image/avif"
+    "image/bmp"
+    "image/gif"
+    "image/heic"
+    "image/heif"
+    "image/jpeg"
+    "image/jpg"
+    "image/jxl"
+    "image/png"
+    "image/svg+xml"
+    "image/svg+xml-compressed"
+    "image/tiff"
+    "image/vnd.microsoft.icon"
+    "image/webp"
+    "image/x-bmp"
+    "image/x-gray"
+    "image/x-icb"
+    "image/x-ico"
+    "image/x-png"
+    "image/x-portable-anymap"
+    "image/x-portable-bitmap"
+    "image/x-portable-graymap"
+    "image/x-portable-pixmap"
+    "image/x-tga"
+    "image/x-xbitmap"
+    "image/x-xpixmap"
+  ];
+  imageMimeAssociations = lib.genAttrs imageMimeTypes (_: "org.kde.gwenview.desktop");
+  imageMimeAssociationsList = lib.genAttrs imageMimeTypes (_: [ "org.kde.gwenview.desktop" ]);
 in
 {
   # =========================================================================
@@ -21,6 +54,9 @@ in
   # =========================================================================
 
   config = lib.mkIf enableKde {
+    # Association par défaut de Gwenview pour l'ouverture des images
+    xdg.mime.defaultApplications = imageMimeAssociations;
+
     # 1. Activation de KDE Plasma 6
     services.desktopManager.plasma6.enable = true;
 
@@ -42,6 +78,11 @@ in
       discover
     ];
 
+    # Paquet système Gwenview
+    environment.systemPackages = [
+      pkgs.kdePackages.gwenview
+    ];
+
     # 5. Paquets minimaux & thèmes Catppuccin
     users.users."${username}".packages = with pkgs; [
       catppuccinKdeMocha
@@ -57,6 +98,7 @@ in
       kdePackages.partitionmanager
       kdePackages.bluedevil
       kdePackages.bluez-qt
+      kdePackages.gwenview
     ];
 
     # Activation automatique du pavé numérique (NumLock) dans la session KDE Plasma
@@ -65,8 +107,14 @@ in
       NumLock=0
     '';
 
-    # 5. Configuration Home Manager
+    # 6. Configuration Home Manager
     home-manager.users."${username}" = { config, ... }: {
+      # Association MIME pour l'utilisateur
+      xdg.mimeApps = {
+        enable = true;
+        defaultApplications = imageMimeAssociationsList;
+      };
+
       xdg.userDirs = {
         enable = true;
         createDirectories = true;

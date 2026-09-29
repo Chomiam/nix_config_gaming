@@ -15,6 +15,17 @@ in
   # =========================================================================
 
   config = lib.mkIf cfg.gaming.enable {
+    # Overlay pour associer correctement la fenêtre Steam (steamwebhelper) au lanceur steam.desktop (docks/taskbars Wayland & X11)
+    nixpkgs.overlays = lib.optional cfg.gaming.launchers.steam (final: prev: {
+      steam-unwrapped = prev.steam-unwrapped.overrideAttrs (oldAttrs: {
+        postInstall = (oldAttrs.postInstall or "") + ''
+          substituteInPlace $out/share/applications/steam.desktop \
+            --replace-fail "[Desktop Entry]" "[Desktop Entry]
+StartupWMClass=steamwebhelper"
+        '';
+      });
+    });
+
     # Support du matériel Steam (Manettes, Steam Deck / Controller, etc.)
     hardware.steam-hardware.enable = cfg.gaming.launchers.steam;
 

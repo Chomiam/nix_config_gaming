@@ -52,7 +52,7 @@
   firewall = false;
 
   # Environnement de bureau
-  desktopEnv = "cosmic";
+  desktopEnv = "budgie";
 
   # Matériel GPU (Préservé automatiquement)
   gpuDriver = "amd";
@@ -87,15 +87,15 @@
     standalone = {
       duckstation = true;
       eden = true;
-      dolphin = true;
+      dolphin = false;
       pcsx2 = true;
       ppsspp = true;
-      melonds = true;
-      mgba = true;
-      azahar = true;
-      rpcs3 = true;
-      xemu = true;
-      cemu = true;
+      melonds = false;
+      mgba = false;
+      azahar = false;
+      rpcs3 = false;
+      xemu = false;
+      cemu = false;
       xenia-canary = false;
     };
   };
