@@ -57,6 +57,16 @@ in
         libxrandr
         libxcb
         gtk3
+        # Support étendu pour Chrome, Playwright, Electron, Chromium et outils graphiques
+        libglvnd
+        vulkan-loader
+        pipewire
+        wayland
+        libxshmfence
+        libXScrnSaver
+        libXtst
+        fontconfig
+        freetype
       ];
     };
   };
