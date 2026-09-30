@@ -1,7 +1,9 @@
 {
   # =========================================================================
   # ⚙️ VARIABLES DU SYSTÈME CHOMIAMOS GAMING EDITION
-  # Modifié via le Dashboard ChomiamOS
+  # Ce fichier contient les personnalisations locales de votre machine.
+  # Modifié via le Dashboard ChomiamOS ou manuellement.
+  # Les variables non définies ici héritent automatiquement de vars-defaults.nix.
   # =========================================================================
 
   # Nom d'hôte de la machine (Hostname)
@@ -24,7 +26,7 @@
   # Profil utilisateur principal (Préservé automatiquement)
   user = {
     username = "chomiam";
-    fullName = "Axel Valens";
+    fullName = "ChomiamOS User";
     homeDirectory = "/home/chomiam";
     shell = "fish";
     initialHashedPassword = null;
@@ -39,19 +41,33 @@
 
   # Virtualisation
   virtualisation = {
-    enable = true;
+    enable = false;
   };
 
   # Navigateur web principal
+  # Options disponibles : "chrome" | "firefox" | "brave" | "zen" | "librewolf"
   browser = "chrome";
 
+  # Émulateur de terminal principal
+  # Options disponibles : "kitty" | "gnome-terminal" | "konsole" | "alacritty" | "cosmic-term"
+  terminal = "kitty";
+
+  # Mode d'installation du navigateur : "system" (Nix) | "flatpak" (Flathub)
+  # Note : Zen et LibreWolf sont gérés exclusivement via Flatpak.
+  browserPackageType = "system";
+
+  # Client de messagerie e-mail
+  # Options disponibles : "thunderbird" | "mailspring" | "none"
+  mailClient = "thunderbird";
+
   # Client Discord
-  discordClient = "vesktop";
+  discordClient = "discord";
 
   # Pare-feu réseau
   firewall = false;
 
   # Environnement de bureau
+  # Options disponibles : "gnome" | "cosmic" | "cinnamon" | "kde" | "budgie"
   desktopEnv = "gnome";
 
   # Matériel GPU (Préservé automatiquement)
@@ -65,18 +81,18 @@
       steam = true;
       lutris = true;
       heroic = true;
-      faugus = false;
+      faugus = true;
     };
-    deckyLoader = true;
-    geforceNow = false;
+    deckyLoader = false;
+    geforceNow = true;
     mountGamesDisk = true;
     sunshine = false;
-    sober = true;
+    sober = false;
   };
 
   # Suite d'Émulation & Rétrogaming
   emulation = {
-    enable = true;
+    enable = false;
     frontend = "es-de";
     autoCheckUpdates = true;
 
@@ -87,12 +103,12 @@
     standalone = {
       duckstation = true;
       eden = true;
-      dolphin = false;
+      dolphin = true;
       pcsx2 = true;
       ppsspp = true;
-      melonds = false;
-      mgba = false;
-      azahar = false;
+      melonds = true;
+      mgba = true;
+      azahar = true;
       rpcs3 = false;
       xemu = false;
       cemu = false;
@@ -101,31 +117,20 @@
   };
 
   # Volants & Simracing
-  steeringWheelSupport = false;
+  steeringWheelSupport = true;
 
   # Montage vidéo DaVinci Resolve
   davinciResolve = "none";
 
   # Logiciels de Création 3D & Moteur de jeu
-  blender = true;
-  godot = true;
+  blender = false;
+  godot = false;
 
   # Applications Réseau & Partage
-  tailscale = false;
-  flatseal = true;
-  goverlay = false;
-  audacity = false;
-  ardour = false;
+  tailscale = true;
+  openssh = true;
   localsend = true;
-  motrix = false;
-
-  # Impression 3D & Slicers
-  slicers = {
-    orcaslicer = false;
-    prusaslicer = false;
-    cura = false;
-    bambustudio = false;
-  };
+  motrix = true;
 
   # Multimédia & Streaming
   stremio = true;
@@ -136,22 +141,39 @@
   ide = {
     zed = true;
     antigravity = true;
-    vscode = true;
+    vscode = false;
   };
   antigravity = true;
   zed = true;
-  vscode = true;
+  vscode = false;
   pearDesktop = true;
   kdenlive = false;
   obsStudio = true;
+  goverlay = true;
+  flatseal = true;
+  audacity = false;
+  ardour = false;
+
+  # Impression 3D & Slicers
+  slicers = {
+    orcaslicer = false;
+    prusaslicer = false;
+    cura = false;
+    bambustudio = false;
+  };
 
   # Service d'inférence LLM local Ollama pour l'autocomplétion de code dans Neovim
   ollama = {
-    enable = true;
+    enable = false;
     acceleration = "auto";
+    rocmOverrideGfx = null;
     model = "qwen2.5-coder:7b";
+    systemPrompt = null;
     port = 11434;
-    aichat = true;
-    lmstudio = true;
+    aichat = false;
+    lmstudio = false;
   };
+
+  # Pilote Playwright & Chromium pour agents IA (agent-browser, automatisation)
+  playwright = false;
 }

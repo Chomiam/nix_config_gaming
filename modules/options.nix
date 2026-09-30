@@ -478,6 +478,14 @@ in
         };
       };
 
+      playwright = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Active le pilote Playwright, Chromium et les liens Chrome FHS pour les agents d'automatisation IA (agent-browser, browser subagent).";
+        };
+      };
+
       flatpak = {
         enable = lib.mkOption {
           type = lib.types.bool;

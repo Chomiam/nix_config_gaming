@@ -183,4 +183,7 @@
     aichat = false;
     lmstudio = false;
   };
+
+  # Pilote Playwright, Chromium & Agent Chrome pour l'automatisation IA (désactivé par défaut)
+  playwright = false;
 }

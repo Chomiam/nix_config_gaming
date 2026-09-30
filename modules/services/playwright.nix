@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
+  cfg = config.chomiamos.services.playwright;
+
   playwrightDriver157 = pkgs.stdenv.mkDerivation rec {
     pname = "playwright-driver";
     version = "1.57.0";
@@ -30,39 +32,42 @@ in
 {
   # =========================================================================
   # 🎭 MODULE PLAYWRIGHT & BROWSER SUBAGENT POUR CHOMIAMOS / ANTIGRAVITY
+  # Activé uniquement si config.chomiamos.services.playwright.enable = true
   # =========================================================================
 
-  environment.systemPackages = [
-    playwrightBrowsersWithAliases
-    playwrightDriver157
-    pkgs.google-chrome
-  ];
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [
+      playwrightBrowsersWithAliases
+      playwrightDriver157
+      pkgs.google-chrome
+    ];
 
-  environment.sessionVariables = {
-    CHROME_PATH = "${pkgs.google-chrome}/bin/google-chrome";
-    PLAYWRIGHT_BROWSERS_PATH = "${playwrightBrowsersWithAliases}";
-    PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
-    PLAYWRIGHT_NODEJS_PATH = "${pkgs.nodejs}/bin/node";
-    PLAYWRIGHT_DRIVER_PATH = "${playwrightDriver157}";
+    environment.sessionVariables = {
+      CHROME_PATH = "${pkgs.google-chrome}/bin/google-chrome";
+      PLAYWRIGHT_BROWSERS_PATH = "${playwrightBrowsersWithAliases}";
+      PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+      PLAYWRIGHT_NODEJS_PATH = "${pkgs.nodejs}/bin/node";
+      PLAYWRIGHT_DRIVER_PATH = "${playwrightDriver157}";
+    };
+
+    # Déploie automatiquement les liens de compatibilité FHS dans /usr/bin
+    # pour résoudre le bug classique de path sous NixOS (scripts et outils attendant /usr/bin/google-chrome)
+    systemd.tmpfiles.rules = [
+      "L+ /usr/bin/google-chrome - - - - ${pkgs.google-chrome}/bin/google-chrome"
+      "L+ /usr/bin/google-chrome-stable - - - - ${pkgs.google-chrome}/bin/google-chrome-stable"
+      "L+ /usr/bin/chromium - - - - ${pkgs.google-chrome}/bin/google-chrome"
+      "L+ /usr/bin/chromium-browser - - - - ${pkgs.google-chrome}/bin/google-chrome"
+    ];
+
+    # Déploie automatiquement le driver Playwright 1.57.0 et lie les binaires Chromium patchés
+    systemd.user.tmpfiles.rules = [
+      "L+ %h/.cache/ms-playwright-go/1.57.0 - - - - ${playwrightDriver157}"
+      "L+ %h/.cache/ms-playwright/chromium-1200 - - - - ${playwrightBrowsersWithAliases}/chromium-1217"
+      "L+ %h/.cache/ms-playwright/chromium-1217 - - - - ${playwrightBrowsersWithAliases}/chromium-1217"
+      "L+ %h/.cache/ms-playwright/chromium-1243 - - - - ${playwrightBrowsersWithAliases}/chromium-1217"
+      "L+ %h/.cache/ms-playwright/chromium_headless_shell-1200 - - - - ${playwrightBrowsersWithAliases}/chromium_headless_shell-1217"
+      "L+ %h/.cache/ms-playwright/chromium_headless_shell-1217 - - - - ${playwrightBrowsersWithAliases}/chromium_headless_shell-1217"
+      "L+ %h/.cache/ms-playwright/chromium_headless_shell-1243 - - - - ${playwrightBrowsersWithAliases}/chromium_headless_shell-1217"
+    ];
   };
-
-  # Déploie automatiquement les liens de compatibilité FHS dans /usr/bin
-  # pour résoudre le bug classique de path sous NixOS (scripts et outils attendant /usr/bin/google-chrome)
-  systemd.tmpfiles.rules = [
-    "L+ /usr/bin/google-chrome - - - - ${pkgs.google-chrome}/bin/google-chrome"
-    "L+ /usr/bin/google-chrome-stable - - - - ${pkgs.google-chrome}/bin/google-chrome-stable"
-    "L+ /usr/bin/chromium - - - - ${pkgs.google-chrome}/bin/google-chrome"
-    "L+ /usr/bin/chromium-browser - - - - ${pkgs.google-chrome}/bin/google-chrome"
-  ];
-
-  # Déploie automatiquement le driver Playwright 1.57.0 et lie les binaires Chromium patchés
-  systemd.user.tmpfiles.rules = [
-    "L+ %h/.cache/ms-playwright-go/1.57.0 - - - - ${playwrightDriver157}"
-    "L+ %h/.cache/ms-playwright/chromium-1200 - - - - ${playwrightBrowsersWithAliases}/chromium-1217"
-    "L+ %h/.cache/ms-playwright/chromium-1217 - - - - ${playwrightBrowsersWithAliases}/chromium-1217"
-    "L+ %h/.cache/ms-playwright/chromium-1243 - - - - ${playwrightBrowsersWithAliases}/chromium-1217"
-    "L+ %h/.cache/ms-playwright/chromium_headless_shell-1200 - - - - ${playwrightBrowsersWithAliases}/chromium_headless_shell-1217"
-    "L+ %h/.cache/ms-playwright/chromium_headless_shell-1217 - - - - ${playwrightBrowsersWithAliases}/chromium_headless_shell-1217"
-    "L+ %h/.cache/ms-playwright/chromium_headless_shell-1243 - - - - ${playwrightBrowsersWithAliases}/chromium_headless_shell-1217"
-  ];
 }

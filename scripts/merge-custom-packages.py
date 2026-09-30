@@ -96,9 +96,14 @@ def main():
         except Exception as e:
             print(f"⚠️ Avertissement : impossible de lire {target_path} ({e})")
 
-    # Fusion des listes (Union sans doublons)
-    merged_stable = sorted(set(backup_stable + target_stable))
-    merged_unstable = sorted(set(backup_unstable + target_unstable))
+    # Préservation absolue des paquets locaux de l'utilisateur (la sauvegarde prime)
+    # Empêche toute injection de paquets distants dans la logithèque personnelle
+    if os.path.exists(backup_path):
+        merged_stable = sorted(set(backup_stable))
+        merged_unstable = sorted(set(backup_unstable))
+    else:
+        merged_stable = sorted(set(target_stable))
+        merged_unstable = sorted(set(target_unstable))
 
     print(f"📦 Fusion Logithèque : {len(merged_stable)} paquet(s) stable, {len(merged_unstable)} paquet(s) unstable.")
 

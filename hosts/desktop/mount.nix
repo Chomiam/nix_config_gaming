@@ -7,6 +7,7 @@ in
   # =========================================================================
   # 💾 MONTAGES DE DISQUES PERSISTANTS (GÉRÉS PAR CHOMIAMOS DASHBOARD)
   # Ce fichier est préservé automatiquement lors des synchronisations GitHub.
+  # Les disques configurés dans le Dashboard sont enregistrés ici localement.
   # =========================================================================
 
   systemd.tmpfiles.rules = [
@@ -14,22 +15,7 @@ in
     "z /mnt 0775 root users -"
     "d /media 0775 root users -"
     "z /media 0775 root users -"
-    "d /mnt/Emudeck 0775 ${username} users -"
-    "z /mnt/Emudeck 0775 ${username} users -"
   ];
-
-  fileSystems."/mnt/Emudeck" = {
-    device = "/dev/disk/by-uuid/5e42df83-3aff-45c8-a8e6-b25e07ba0130";
-    fsType = "btrfs";
-    options = [
-      "defaults"
-      "nofail"
-      "x-systemd.device-timeout=5s"
-      "x-systemd.mount-timeout=5s"
-      "compress=zstd"
-      "x-gvfs-show"
-    ];
-  };
 
   systemd.services.systemd-tmpfiles-setup.after = [ "local-fs.target" ];
 }

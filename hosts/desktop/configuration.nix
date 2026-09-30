@@ -107,6 +107,7 @@ nixpkgs.config.allowUnfree = true;
       samba.enable = true;
       podman.enable = true;
       nix-ld.enable = true;
+      playwright.enable = vars.playwright or false;
       flatpak.enable = true;
       obs.enable = vars.obsStudio or true;
       neovim.enable = true;
