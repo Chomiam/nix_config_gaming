@@ -78,8 +78,8 @@ StartupWMClass=steamwebhelper"
       ludusavi
       pkgs-unstable.protonplus
       pkgs-unstable.mangohud
-      pkgs-unstable.goverlay
     ]
+    ++ lib.optional cfg.services.goverlay.enable pkgs-unstable.goverlay
     ++ lib.optional cfg.gaming.launchers.lutris lutris
     ++ lib.optional cfg.gaming.launchers.heroic (heroic.override {
       extraPkgs = pkgs: with pkgs; [
