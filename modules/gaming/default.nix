@@ -36,7 +36,7 @@ StartupWMClass=steamwebhelper"
       dedicatedServer.openFirewall = true;
       gamescopeSession.enable = cfg.gaming.gamescopeSession && (cfg.hardware.gpu != "nvidia" && cfg.hardware.gpu != "nvidia-legacy");
       extraPackages = with pkgs; [
-        pkgs-unstable.mangohud
+        mangohud
       ];
     };
 
@@ -77,7 +77,7 @@ StartupWMClass=steamwebhelper"
     users.users."${cfg.user.username}".packages = with pkgs; [
       ludusavi
       pkgs-unstable.protonplus
-      pkgs-unstable.mangohud
+      mangohud
     ]
     ++ lib.optional cfg.services.goverlay.enable pkgs-unstable.goverlay
     ++ lib.optional cfg.gaming.launchers.lutris lutris
