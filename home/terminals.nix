@@ -3,6 +3,8 @@
 let
   configuredTerminal = vars.terminal or "kitty";
   gnomeProfileUuid = "95894cfd-82f7-430d-af6e-84d168bc34f5";
+  userShell = vars.user.shell or "bash";
+  enableKonsole = (configuredTerminal == "konsole") || ((vars.desktopEnv or "") == "kde") || ((vars.desktopEnv or "") == "both");
 in
 {
   # =========================================================================
@@ -60,7 +62,7 @@ in
   };
 
   # 3. KONSOLE (Terminal KDE Plasma, Sixel & Chafa)
-  xdg.dataFile = lib.mkIf (configuredTerminal == "konsole") {
+  xdg.dataFile = lib.mkIf enableKonsole {
     "konsole/catppuccin-mocha.colorscheme".text = ''
       [Background]
       Color=30,30,46
@@ -166,6 +168,7 @@ in
       Font=JetBrainsMono Nerd Font,11,-1,5,50,0,0,0,0,0
 
       [General]
+      Command=/run/current-system/sw/bin/${userShell}
       Name=Catppuccin Mocha
       Parent=FALLBACK/
     '';
@@ -221,7 +224,7 @@ in
 
   # 5. CONFIGURATION FICHIERS XDG (Konsole & COSMIC Terminal)
   xdg.configFile = lib.mkMerge [
-    (lib.mkIf (configuredTerminal == "konsole") {
+    (lib.mkIf enableKonsole {
       "konsolerc".text = ''
         [Desktop Entry]
         DefaultProfile=Catppuccin-Mocha.profile
