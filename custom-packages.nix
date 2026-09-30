@@ -11,6 +11,7 @@
 
   # Paquets issus de la branche Stable (NixOS 26.05)
   stable = [
+    "prismlauncher"
   ];
 
   # Paquets issus de la branche Unstable (Dernières versions)

@@ -52,7 +52,7 @@
   firewall = false;
 
   # Environnement de bureau
-  desktopEnv = "budgie";
+  desktopEnv = "gnome";
 
   # Matériel GPU (Préservé automatiquement)
   gpuDriver = "amd";
@@ -113,7 +113,7 @@
   # Applications Réseau & Partage
   tailscale = false;
   flatseal = true;
-  goverlay = true;
+  goverlay = false;
   audacity = false;
   ardour = false;
   localsend = true;
